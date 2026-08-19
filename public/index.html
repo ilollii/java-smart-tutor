@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سِنَاد Senad | المنصة التعليمية الذكية لطلاب كليات علوم الحاسب وتقنية المعلومات</title>
+  <meta name="description" content="منصة سِنَاد (Senad) التعليمية التفاعلية الذكية الموحدة لتبسيط وشرح لغة جافا، تحليل الأكواد، محاكاة الذاكرة، ومساعد السلايدات لطلاب الجامعات.">
+
+  <!-- Google Fonts: Cairo, Outfit, Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Real OCR Engine: Tesseract.js v5 (WASM Neural OCR) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <!-- Real PDF Engine: PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+
+  <!-- DOMPurify: Standard HTML/DOM Security Sanitizer (XSS Prevention) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+
+  <!-- Custom Design System CSS -->
+  <link rel="stylesheet" href="css/style.css?v=2026.2">
+</head>
+<body>
+
+  <!-- Ambient Glow Elements -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- ==========================================================================
+       1. FULLSCREEN INITIAL LOGIN / UNIVERSAL SSO GATEWAY
+       ========================================================================== -->
+  <div id="initial-login-portal">
+    <div class="login-card-container" style="max-width: 480px;">
+      
+      <!-- Brand Header -->
+      <div class="login-brand-header">
+        <div class="login-univ-crest">
+          <i class="fab fa-java"></i>
+        </div>
+        <h2>بوابة سِنَاد Senad الموحدة للجامعات</h2>
+        <p>المنصة الذكية لتعليم البرمجة لطلاب كليات علوم الحاسب وتقنية المعلومات</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="login-tab-switcher">
+        <button id="tab-btn-student" class="login-tab-btn active" onclick="window.AUTH.switchLoginTab('universal')">
+          <i class="fas fa-user-graduate"></i> الدخول / التسجيل بالبريد
+        </button>
+        <button id="tab-btn-demo" class="login-tab-btn" onclick="window.AUTH.switchLoginTab('demo')">
+          <i class="fas fa-bolt"></i> حسابات جامعية جاهزة
+        </button>
+      </div>
+
+      <!-- Form 1: Universal Student Login with University Selection -->
+      <div id="form-student-login">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label"><i class="fas fa-user"></i> الاسم الكامل / المستعار:</label>
+          <input type="text" id="init-name" class="chat-input" style="width: 100%;" value="عبدالرحمن الشمري" placeholder="أدخل اسمك الكريم">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label"><i class="fas fa-envelope"></i> البريد الإلكتروني (جامعي أو شخصي):</label>
+          <input type="email" id="init-email" class="chat-input" style="width: 100%; direction: ltr;" value="student@university.edu.sa" placeholder="name@domain.edu.sa أو name@gmail.com">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label"><i class="fas fa-lock"></i> كلمة المرور:</label>
+          <input type="password" id="init-password" class="chat-input" style="width: 100%; direction: ltr;" value="••••••••" placeholder="Password">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label"><i class="fas fa-university"></i> اختر الجامعة التي تدرس بها:</label>
+          <select id="init-univ-select" class="chat-input" style="width: 100%;" onchange="window.AUTH.onUniversityChange()">
+            <option value="imsiu" selected>جامعة الإمام محمد بن سعود الإسلامية (IMSIU)</option>
+            <option value="ksu">جامعة الملك سعود (KSU)</option>
+            <option value="kfupm">جامعة الملك فهد للبترول والمعادن (KFUPM)</option>
+            <option value="kau">جامعة الملك عبدالعزيز (KAU)</option>
+            <option value="pnu">جامعة الأميرة نورة بنت عبدالرحمن (PNU)</option>
+            <option value="kfu">جامعة الملك فيصل (KFU)</option>
+            <option value="uqu">جامعة أم القرى (UQU)</option>
+            <option value="qu">جامعة القصيم (QU)</option>
+            <option value="taibah">جامعة طيبة (Taibah)</option>
+            <option value="kku">جامعة الملك خالد (KKU)</option>
+            <option value="iau">جامعة الإمام عبدالرحمن بن فيصل (IAU)</option>
+            <option value="uj">جامعة جدة (UJ)</option>
+            <option value="seu">الجامعة السعودية الإلكترونية (SEU)</option>
+            <option value="psu">جامعة الأمير سلطان (PSU)</option>
+            <option value="alfaisal">جامعة الفيصل (Alfaisal)</option>
+            <option value="other">🏛️ جامعة أخرى / كلية خاصة أو دولية...</option>
+          </select>
+        </div>
+
+        <!-- Custom University Name Input (Shown if other selected) -->
+        <div id="custom-univ-group" class="form-group" style="display: none; margin-bottom: 12px;">
+          <label class="form-label"><i class="fas fa-pen"></i> اكتب اسم جامعتك أو كليتك:</label>
+          <input type="text" id="init-custom-univ" class="chat-input" style="width: 100%;" placeholder="مثال: جامعة تبوك / كليات الشرق العربي">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label"><i class="fas fa-laptop-code"></i> التخصص الأكاديمي:</label>
+          <select id="init-major-select" class="chat-input" style="width: 100%;">
+            <option value="cs" selected>علوم الحاسب (Computer Science)</option>
+            <option value="is">نظم المعلومات (Information Systems)</option>
+            <option value="swe">هندسة البرمجيات (Software Engineering)</option>
+            <option value="ai">الذكاء الاصطناعي وعلوم البيانات (AI & Data Science)</option>
+            <option value="cyber">الأمن السيبراني (Cybersecurity)</option>
+            <option value="it">تقنية المعلومات (Information Technology)</option>
+            <option value="ce">هندسة الحاسب (Computer Engineering)</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 700;" onclick="window.AUTH.submitInitialCredentials()">
+          <i class="fas fa-sign-in-alt"></i> الدخول ومتابعة التحقق (2FA) 🚀
+        </button>
+      </div>
+
+      <!-- Form 2: Fast One-Click Multi-University Demo Logins -->
+      <div id="form-demo-login" style="display: none;">
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">اختر حساباً تجريبياً من أي جامعة للدخول الفوري:</div>
+        
+        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('imsiu_cs')">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">عبدالرحمن الشمري (جامعة الإمام)</div>
+            <div style="font-size: 11px; color: var(--primary);">علوم الحاسب • معدل: 4.82/5.00</div>
+          </div>
+          <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
+        </div>
+
+
+        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('ksu_swe')">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">فيصل الدوسري (جامعة الملك سعود - KSU)</div>
+            <div style="font-size: 11px; color: #60a5fa;">هندسة البرمجيات • معدل: 4.91/5.00</div>
+          </div>
+          <i class="fas fa-arrow-left" style="color: #60a5fa;"></i>
+        </div>
+
+        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('kfupm_ai')">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">عمر الغامدي (جامعة الملك فهد - KFUPM)</div>
+            <div style="font-size: 11px; color: #34d399;">الذكاء الاصطناعي • معدل: 3.94/4.00</div>
+          </div>
+          <i class="fas fa-arrow-left" style="color: #34d399;"></i>
+        </div>
+
+        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('pnu_is')">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">نورة السبيعي (جامعة الأميرة نورة - PNU)</div>
+            <div style="font-size: 11px; color: var(--accent);">نظم المعلومات • معدل: 4.96/5.00</div>
+          </div>
+          <i class="fas fa-arrow-left" style="color: var(--accent);"></i>
+        </div>
+
+        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('kau_cyber')">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">روان الزهراني (جامعة الملك عبدالعزيز - KAU)</div>
+            <div style="font-size: 11px; color: #f472b6;">الأمن السيبراني • معدل: 4.88/5.00</div>
+          </div>
+          <i class="fas fa-arrow-left" style="color: #f472b6;"></i>
+        </div>
+      </div>
+
+      <!-- Step: 2FA OTP Code Verification -->
+      <div id="form-2fa-step" style="display: none;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <i class="fas fa-mobile-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 8px;"></i>
+          <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main);">التحقق بخطوتين (2FA)</h4>
+          <p style="font-size: 12px; color: var(--text-muted);">أدخل رمز التحقق (OTP) المرسل إلى رقم جوالك الجامعي المعتمد</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <input type="text" id="init-otp-input" class="chat-input" style="width: 100%; text-align: center; font-size: 22px; font-family: var(--font-code); letter-spacing: 6px; font-weight: 700;" maxlength="6" value="482910">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 8px;">
+            <span>صلاحية الرمز: <strong id="init-otp-timer" style="color: var(--accent);">00:60</strong></span>
+            <span style="color: var(--primary); cursor: pointer;" onclick="window.AUTH.startOtpTimer(); window.APP.showToast('تمت إعادة إرسال الرمز', 'info');">إعادة الإرسال</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary" style="flex: 1;" onclick="window.AUTH.verifyInitial2FA()">
+            <i class="fas fa-check-circle"></i> تأكيد الدخول والدخول للمنصة
+          </button>
+          <button class="btn btn-secondary" onclick="window.AUTH.switchLoginTab('student')">
+            رجوع
+          </button>
+        </div>
+      </div>
+
+      <!-- Security Trust Footer -->
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-dim);">
+        <span><i class="fas fa-lock" style="color: var(--primary);"></i> تشفير AES-256</span>
+        <span><i class="fas fa-shield-alt" style="color: var(--info);"></i> متوافق مع نظام PDPL</span>
+        <span><i class="fas fa-server" style="color: var(--accent);"></i> استضافة KSA</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       2. MAIN APPLICATION DASHBOARD (Loaded after Login)
+       ========================================================================== -->
+  <div id="app-container" style="display: none;">
+
+    <!-- Top Navigation Header -->
+    <header class="top-header">
+      <div class="brand-section" onclick="window.APP.switchView('dashboard')">
+        <div class="brand-logo-icon">
+          <i class="fab fa-java"></i>
+        </div>
+        <div class="brand-text">
+          <h1>
+            سِنَاد | Senad AI
+            <span id="brand-univ-badge" class="brand-badge"><i class="fas fa-university"></i> المنصة الجامعية الموحدة</span>
+          </h1>
+          <p>المنصة الذكية لتعليم البرمجة لطلاب كليات علوم الحاسب وتقنية المعلومات</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Quick Command Palette Launcher (Ctrl + K) -->
+        <button class="command-palette-trigger" onclick="window.APP.openCommandPalette()" title="فتح شريط الأوامر السريع (Ctrl + K)">
+          <i class="fas fa-search" style="color: var(--primary);"></i>
+          <span>البحث والأوامر...</span>
+          <kbd>Ctrl + K</kbd>
+        </button>
+
+        <!-- XP & Streak Badges -->
+        <div class="student-stat-pill">
+          <i class="fas fa-fire stat-icon-gold"></i>
+          <span class="user-streak-val">12 يوم 🔥</span>
+        </div>
+
+        <div class="student-stat-pill">
+          <i class="fas fa-bolt stat-icon-gold"></i>
+          <span class="user-xp-val">2850 XP</span>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" class="icon-btn" onclick="window.APP.toggleTheme()" title="تبديل الوضع الليلي/النهاري">
+          <i class="fas fa-sun"></i>
+        </button>
+
+        <!-- User Profile Pill & Logout -->
+        <div class="user-profile-btn" onclick="window.AUTH.logout()" title="انقر لتسجيل الخروج أو تبديل الحساب">
+          <div class="user-avatar" id="header-user-avatar">ع</div>
+          <div class="user-info">
+            <div class="user-name" id="header-user-name">عبدالرحمن الشمري</div>
+            <div class="user-role" id="header-user-role">علوم الحاسب - المستوى 4</div>
+          </div>
+          <i class="fas fa-sign-out-alt" style="font-size: 13px; color: var(--danger); margin-right: 4px;"></i>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-wrapper">
+
+      <!-- Navigation Sidebar -->
+      <aside class="sidebar">
+        <div class="nav-section-title">التنقل الرئيسي</div>
+        
+        <a class="nav-item active" data-view-target="dashboard">
+          <i class="fas fa-th-large"></i>
+          <span>لوحة التحكم</span>
+        </a>
+
+        <a class="nav-item" data-view-target="analyzer">
+          <i class="fas fa-laptop-code"></i>
+          <span>محلل أكواد جافا</span>
+          <span class="nav-badge">Java 24 Pro</span>
+        </a>
+
+        <a class="nav-item" data-view-target="slides">
+          <i class="fas fa-file-powerpoint"></i>
+          <span>مساعد السلايدات</span>
+          <span class="nav-badge" style="background: rgba(245, 158, 11, 0.2); color: var(--accent);">Mock Exam</span>
+        </a>
+
+        <a class="nav-item" data-view-target="ocr">
+          <i class="fas fa-camera"></i>
+          <span>القارئ البصري OCR</span>
+        </a>
+
+        <a class="nav-item" data-view-target="chat">
+          <i class="fas fa-robot"></i>
+          <span>المعلم البرمجي الذكي</span>
+          <span class="nav-badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc;">AI Copilot</span>
+        </a>
+
+        <div class="nav-section-title">المحاكاة والاختبارات المتقدمة</div>
+
+        <a class="nav-item" data-view-target="challenges">
+          <i class="fas fa-trophy"></i>
+          <span>التحديات ولوحة الشرف</span>
+          <span class="nav-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">Daily XP</span>
+        </a>
+
+        <div class="nav-section-title">الأداء الأكاديمي</div>
+
+        <a class="nav-item" data-view-target="tracker">
+          <i class="fas fa-chart-line"></i>
+          <span>تتبع المواد والمعدل</span>
+          <span id="header-gpa-badge" class="nav-badge" style="background: rgba(245, 158, 11, 0.2); color: var(--accent);">4.82 / 5</span>
+        </a>
+
+        <a class="nav-item" data-view-target="badges">
+          <i class="fas fa-medal"></i>
+          <span>الشارات والإنجازات</span>
+        </a>
+
+
+        <!-- Sidebar Gamification Widget -->
+        <div class="sidebar-footer">
+          <div class="gamification-widget">
+            <div class="gw-header">
+              <span class="gw-title"><i class="fas fa-crown"></i> مسار التقدم</span>
+              <span class="gw-level user-level-val">المستوى 7</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="sidebar-xp-fill" class="progress-bar-fill"></div>
+            </div>
+            <div class="gw-footer">
+              <span id="sidebar-current-xp">2850 XP</span>
+              <span id="sidebar-next-xp">3500 XP</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Dynamic Content Views -->
+      <main class="content-area">
+
+        <!-- ==================== VIEW 1: DASHBOARD ==================== -->
+        <section id="view-dashboard" class="view-section active">
+          <!-- Hero Banner -->
+          <div class="hero-banner">
+            <div class="hero-title">
+              مرحباً بك يا بطل البرمجة! 👋
+              <span style="font-size: 13px; font-weight: 600; padding: 4px 12px; background: rgba(16, 185, 129, 0.2); color: var(--primary); border-radius: var(--radius-full);">الفصل الدراسي الثاني 1447هـ</span>
+            </div>
+            <p class="hero-desc">
+              أنت الآن متصل بمنصة سناد الذكية. حلل أكواد جافا سطر بسطر، لخص سلايدات المحاضرات للاختبارات القادمة، وتابع معدلك التراكمي لحظة بلحظة مع المعلم البرمجي الذكي.
+            </p>
+            <div style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn btn-primary" onclick="window.APP.switchView('analyzer')">
+                <i class="fas fa-code"></i> فتح محلل أكواد جافا
+              </button>
+              <button class="btn btn-secondary" onclick="window.APP.switchView('slides')">
+                <i class="fas fa-file-upload"></i> رفع سلايدات المحاضرة
+              </button>
+              <button class="btn btn-accent" onclick="window.APP.switchView('chat')">
+                <i class="fas fa-comments"></i> استشارة المعلم الذكي
+              </button>
+            </div>
+          </div>
+
+          <!-- Academic Quick Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-card-icon stat-icon-emerald">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">4.82 / 5.00</div>
+                <div class="stat-label">المعدل التراكمي الحالي (ممتاز مرتفع)</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon stat-icon-blue">
+                <i class="fas fa-laptop-code"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">34 كود</div>
+                <div class="stat-label">تم تحليله بنجاح سطر بسطر</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon stat-icon-amber">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value user-xp-val">2850 XP</div>
+                <div class="stat-label">نقاط الخبرة والإنجاز</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-card-icon stat-icon-purple">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">5 مقررات</div>
+                <div class="stat-label">المواد الدراسية المسجلة هذا الفصل</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Grid: Recent Activities & Sample Topics -->
+          <div class="analyzer-grid">
+            <!-- Sample Java Curriculums for IMSIU -->
+            <div class="glass-panel">
+              <div class="glass-panel-header">
+                <div class="panel-title">
+                  <i class="fas fa-book-reader"></i>
+                  موضوعات جافا المقترحة للتحليل السريع
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="window.APP.switchView('analyzer')">عرض الكل</button>
+              </div>
+              <div id="dash-sample-codes"></div>
+            </div>
+
+            <!-- AI Mentor Quick Assistant Card -->
+            <div class="glass-panel">
+              <div class="glass-panel-header">
+                <div class="panel-title">
+                  <i class="fas fa-robot"></i>
+                  نصائح وتوجيهات المعلم البرمجي الذكي
+                </div>
+              </div>
+              <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
+                <div style="font-weight: 700; color: #a5b4fc; font-size: 14px; margin-bottom: 6px;">
+                  💡 نصيحة اليوم لمقرر CS141 (البرمجة الشيئية):
+                </div>
+                <p style="font-size: 13px; color: var(--text-main); line-height: 1.6;">
+                  تذكر أن الكلاسات المجردة (Abstract Classes) تستخدم لتوفير قالب موحد للكلاسات المشتقة، بينما الواجهات (Interfaces) تسمح بتطبيق أكثر من نموذج وتدعم الوراثة المتعددة سلوكياً.
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="window.APP.switchView('chat'); window.CHAT.sendQuickPrompt('اشرح لي مفهوم الـ Polymorphism بالتفصيل');">
+                  🌟 شرح Polymorphism
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.APP.switchView('chat'); window.CHAT.sendQuickPrompt('كيف أستعد لميد جافا العملي والنظري؟');">
+                  📝 الاستعداد للميد
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.APP.switchView('tracker')">
+                  📊 حساب المعدل المستهدف
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 2: JAVA CODE ANALYZER PRO ==================== -->
+        <section id="view-analyzer" class="view-section">
+          <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div class="hero-title" style="font-size: 20px;">
+                  <i class="fas fa-laptop-code" style="color: var(--primary);"></i>
+                  محلل أكواد جافا الذكي وبيئة التشغيل (Java 24 Sandbox Pro)
+                </div>
+                <p class="hero-desc" style="font-size: 13px;">
+                  محرر ومحلل مخصص لأكوادك الخاصة: اكتب أو الصق أي كود جافا لتحليله سطر بسطر، تتبع حركة الذاكرة، والتنفيذ المباشر عبر Java 24.
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-primary btn-sm" onclick="window.ANALYZER.analyzeCode()" style="font-weight: 700;">
+                  <i class="fas fa-microchip"></i> تحليل الكود سطر بسطر
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.ANALYZER.pasteCode()" title="لصق الكود من الحافظة">
+                  <i class="fas fa-paste"></i> لصق
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.ANALYZER.clearEditor()" title="مسح المحرر والبدء من جديد">
+                  <i class="fas fa-trash-alt"></i> مسح المحرر
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.ANALYZER.formatCode()" title="تنسيق الكود"><i class="fas fa-magic"></i> تنسيق</button>
+                <button class="btn btn-secondary btn-sm" onclick="window.ANALYZER.copyCode()" title="نسخ الكود"><i class="fas fa-copy"></i> نسخ</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Samples (Optional Dropdown) & UML Generator -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.6); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 12px; color: var(--text-muted);"><i class="fas fa-folder-open" style="color: var(--primary);"></i> نماذج أكواد جاهزة (اختياري):</span>
+              <select id="sample-code-selector" class="chat-input" style="padding: 4px 10px; font-size: 12px; width: auto; border-radius: 6px; background: #0f172a; color: #f8fafc;" onchange="if(this.value!=='') window.ANALYZER.loadSample(parseInt(this.value))">
+                <option value="">-- اختياري: اختر نموذجاً تعليمياً لتجربته --</option>
+                <option value="0">1. BankAccount (OOP & Encapsulation)</option>
+                <option value="1">2. Shapes (Polymorphism & Abstract)</option>
+                <option value="2">3. BinarySearchTree (Data Structures)</option>
+                <option value="3">4. Recursion Fibonacci (الخوارزميات)</option>
+              </select>
+            </div>
+            <button class="btn btn-accent btn-sm" onclick="window.ANALYZER.generateUMLDiagram()" style="font-weight: 700;">
+              <i class="fas fa-sitemap"></i> توليد مخطط الكلاسات UML 🏛️
+            </button>
+          </div>
+
+          <!-- Main Dual Pane Grid -->
+          <div class="analyzer-grid">
+            <!-- Left Pane: Code Editor & Step Visualizer -->
+            <div class="code-editor-box">
+              <div class="code-editor-header">
+                <div class="code-tabs">
+                  <span style="font-size: 12px; color: var(--primary); font-weight: 700;"><i class="fab fa-java"></i> Java 24 Source</span>
+                  <span id="active-code-complexity" style="font-size: 11px; padding: 2px 6px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-radius: 4px; font-family: var(--font-code);">جاهز</span>
+                </div>
+                <div class="code-actions">
+                  <button id="btn-step-code" class="btn btn-secondary btn-sm" onclick="window.ANALYZER.startStepVisualizer()">
+                    <i class="fas fa-shoe-prints"></i> تتبع بالخطوات
+                  </button>
+                  <button id="btn-run-code" class="btn btn-primary btn-sm" onclick="window.ANALYZER.runCode()">
+                    <i class="fas fa-play"></i> تشغيل الكود (Run Java 24)
+                  </button>
+                </div>
+              </div>
+
+              <div class="code-editor-body">
+                <div id="editor-line-numbers" class="line-numbers">
+                  <div>1</div>
+                </div>
+                <textarea id="java-code-input" class="code-textarea" spellcheck="false" placeholder="// الصق كود جافا الخاص بك هنا (أو اكتبه مباشرة)...&#10;// ثم اضغط على &quot;تشغيل الكود&quot; أو &quot;تحليل الكود سطر بسطر&quot;"></textarea>
+              </div>
+
+              <!-- Step Execution Variable State Box -->
+              <div style="background: #090e1a; padding: 12px 16px; border-top: 1px solid var(--border-color);">
+                <div style="font-size: 11px; color: var(--primary); font-weight: 700; margin-bottom: 8px;">
+                  <i class="fas fa-microchip"></i> سجل حالة المتغيرات في الذاكرة (Live Variable Stack State):
+                </div>
+                <div id="step-variables-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                  <div style="color: #64748b; font-size: 12px; padding: 4px 0;"><i class="fas fa-info-circle"></i> بانتظار تشغيل كودك لمراقبة وتتبع المتغيرات في الذاكرة.</div>
+                </div>
+              </div>
+
+              <!-- Interactive JVM Memory Stack / Heap / Metaspace Visualizer -->
+              <div class="jvm-visualizer-container">
+                <div class="jvm-visualizer-header">
+                  <div style="font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-layer-group" style="color: #38bdf8;"></i>
+                    <span>محاكي الذاكرة الحي (Interactive JVM Memory Allocator)</span>
+                    <span class="glow-pill-accent"><i class="fas fa-circle-dot fa-fade"></i> Live Tracking</span>
+                  </div>
+                  <div style="font-size: 11px; color: #94a3b8; font-family: var(--font-code);">
+                    Runtime: <strong style="color: #34d399;">HotSpot 64-bit Tiered</strong>
+                  </div>
+                </div>
+                <div class="jvm-zones-grid">
+                  <!-- Zone 1: Call Stack Frames -->
+                  <div class="jvm-zone-card jvm-zone-stack">
+                    <div class="jvm-zone-title">
+                      <span><i class="fas fa-cubes-stacked"></i> Call Stack (Frames)</span>
+                      <span id="jvm-stack-count" style="font-size: 10px; background: rgba(56, 189, 248, 0.2); padding: 1px 6px; border-radius: 4px;">1 Frame</span>
+                    </div>
+                    <div id="jvm-stack-frames" class="jvm-stack-frames-list">
+                      <div class="jvm-stack-frame-box">
+                        <div style="font-weight: 700; color: #38bdf8; margin-bottom: 2px;">main(String[] args)</div>
+                        <div style="font-size: 10px; color: #94a3b8;">Local Vars: args: String[]</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Zone 2: Heap Objects -->
+                  <div class="jvm-zone-card jvm-zone-heap">
+                    <div class="jvm-zone-title">
+                      <span><i class="fas fa-memory"></i> Heap Memory (Objects)</span>
+                      <span id="jvm-heap-size" style="font-size: 10px; background: rgba(52, 211, 153, 0.2); padding: 1px 6px; border-radius: 4px;">Allocated: ~180 KB</span>
+                    </div>
+                    <div id="jvm-heap-objects" class="jvm-heap-objects-grid">
+                      <div class="jvm-heap-obj-box">
+                        <div style="font-weight: 700; color: #34d399;">String[]</div>
+                        <div style="font-size: 9px; color: #94a3b8;">@0x7f4a (args)</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Zone 3: Metaspace & GC -->
+                  <div class="jvm-zone-card jvm-zone-metaspace">
+                    <div class="jvm-zone-title">
+                      <span><i class="fas fa-microchip"></i> Metaspace & GC</span>
+                      <span style="font-size: 10px; background: rgba(251, 191, 36, 0.2); padding: 1px 6px; border-radius: 4px;">Active</span>
+                    </div>
+                    <div class="jvm-metaspace-meter">
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span>Class Metadata:</span>
+                        <strong style="color: #fbbf24;">Main.class</strong>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span>GC Cycles:</span>
+                        <strong style="color: #34d399;">0 Major / 1 Minor</strong>
+                      </div>
+                      <div style="font-size: 10px; color: #94a3b8; margin-top: 6px;">
+                        <i class="fas fa-shield-alt" style="color: var(--primary);"></i> Sandbox Isolated
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Terminal Output Console (Expanded & Ultra Clear) -->
+              <div class="terminal-output" id="main-terminal-box">
+                <div class="terminal-header-bar">
+                  <div class="terminal-window-dots">
+                    <span class="dot dot-red" title="إغلاق"></span>
+                    <span class="dot dot-yellow" title="تصغير"></span>
+                    <span class="dot dot-green" title="تكبير"></span>
+                  </div>
+                  <div class="terminal-title">
+                    <i class="fas fa-terminal" style="color: var(--primary);"></i>
+                    <span>مخرجات الكونسول والتشغيل (Java 24 Execution Terminal)</span>
+                    <span id="terminal-status-chip" class="terminal-status-chip">LTS 24 Ready</span>
+                  </div>
+                  <div class="terminal-actions">
+                    <button class="terminal-btn" onclick="window.ANALYZER.toggleTerminalFontSize()" title="تغيير حجم خط الكونسول">
+                      <i class="fas fa-text-height"></i> حجم الخط
+                    </button>
+                    <button class="terminal-btn" onclick="window.ANALYZER.copyTerminalOutput()" title="نسخ مخرجات الكونسول">
+                      <i class="fas fa-copy"></i> نسخ
+                    </button>
+                    <button class="terminal-btn" onclick="window.ANALYZER.clearTerminal()" title="مسح شاشة الكونسول">
+                      <i class="fas fa-eraser"></i> مسح
+                    </button>
+                  </div>
+                </div>
+                <div class="terminal-body-wrapper">
+                  <pre id="terminal-output-content" class="terminal-content-pre">[جاهز للتشغيل] اكتب أو الصق كودك واضغط على "تشغيل الكود" لتنفيذه في بيئة Java 24.</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Pane: Line-by-Line Breakdown & Dynamic Quizzes -->
+            <div class="analysis-container">
+              <!-- Detected Concepts Tags -->
+              <div class="glass-panel" style="padding: 16px; margin-bottom: 0;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px;">
+                  <i class="fas fa-tags" style="color: var(--primary);"></i> المفاهيم البرمجية المكتشفة في كودك:
+                </div>
+                <div id="analysis-concepts-row" class="concept-tags-row">
+                  <div style="color: #64748b; font-size: 12px; padding: 4px 0;">بانتظار إدخال الكود والضغط على "تحليل الكود"...</div>
+                </div>
+              </div>
+
+              <!-- Line by Line Analysis Feed -->
+              <div class="glass-panel" style="padding: 18px; max-height: 440px; overflow-y: auto;">
+                <div class="panel-title" style="font-size: 15px; margin-bottom: 14px;">
+                  <i class="fas fa-list-ol"></i>
+                  الشرح المفصل للأكواد (سطر بسطر)
+                </div>
+                <div id="analysis-results-box">
+                  <div style="text-align: center; padding: 36px 16px; color: #64748b;">
+                    <i class="fas fa-code" style="font-size: 36px; margin-bottom: 12px; color: #334155; display: block;"></i>
+                    <div style="font-weight: 600; color: #94a3b8;">المحلل جاهز لاستقبال كودك الخاص.</div>
+                    <div style="font-size: 12px; margin-top: 6px; color: #64748b;">اكتب أو الصق أي كود واضغط على <strong>"تحليل الكود سطر بسطر"</strong>.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dynamic Quiz Box -->
+              <div id="dynamic-quiz-box"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 3: SLIDE STUDY ASSISTANT ==================== -->
+        <section id="view-slides" class="view-section">
+          <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div class="hero-title" style="font-size: 20px;">
+                  <i class="fas fa-file-powerpoint" style="color: var(--accent);"></i>
+                  مساعد المذاكرة الذكي من السلايدات والمحاضرات
+                </div>
+                <p class="hero-desc" style="font-size: 13px;">
+                  ارفع ملفات الـ PDF وسلايدات الدكاترة لتلخيصها، واستخراج بنك الأسئلة، وتوليد اختبارات تجريبية شاملة.
+                </p>
+              </div>
+              <button class="btn btn-accent" onclick="window.SLIDES.openMockExamModal()">
+                <i class="fas fa-pen-alt"></i> توليد اختبار فصلي تجريبي (Mock Exam)
+              </button>
+            </div>
+          </div>
+
+          <div class="analyzer-grid">
+            <!-- Left Side: Upload & Saved Slides -->
+            <div>
+              <div id="slide-dropzone" class="dropzone-box" style="margin-bottom: 20px;">
+                <input type="file" id="slide-file-input" style="display: none;" accept=".pdf,.ppt,.pptx,.png,.jpg,.jpeg">
+                <i class="fas fa-cloud-upload-alt dropzone-icon"></i>
+                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">اسحب وأفلت سلايدات المحاضرة هنا</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">يدعم ملفات PDF، عروض PowerPoint، والصور (فحص أمني فوري ضد البرمجيات الخبيثة)</p>
+                <div style="display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap;">
+                  <button class="btn btn-secondary btn-sm" onclick="document.getElementById('slide-file-input').click()">
+                    <i class="fas fa-folder-open"></i> استعراض ملف PDF / PPT
+                  </button>
+                  <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); window.SLIDES.openPasteTextModal()">
+                    <i class="fas fa-paste"></i> لصق نص السلايدات مباشرة
+                  </button>
+                </div>
+              </div>
+
+              <div class="panel-title" style="font-size: 15px; margin-bottom: 12px;">
+                <i class="fas fa-history"></i> محاضرات وسلايدات جاهزة للمذاكرة:
+              </div>
+              <div id="saved-slides-list"></div>
+            </div>
+
+            <!-- Right Side: Active Slide Summary & Exam Prep -->
+            <div>
+              <div class="glass-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                  <div>
+                    <span id="active-slide-meta" style="font-size: 12px; color: var(--primary); font-weight: 700;"></span>
+                    <h2 id="active-slide-title" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 4px;"></h2>
+                  </div>
+                  <button class="btn btn-primary" onclick="window.SLIDES.openMockExamModal()" style="font-weight: 800; box-shadow: 0 4px 15px rgba(99,102,241,0.4); padding: 8px 16px;">
+                    <i class="fas fa-file-signature"></i> بدء الاختبار الفصلي التجريبي (Mock Exam) 🎯
+                  </button>
+                </div>
+
+                <div style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px;">
+                  <i class="fas fa-align-right"></i> الملخص التنفيذي للمحاضرة:
+                </div>
+                <p id="active-slide-summary" style="font-size: 13px; color: var(--text-main); line-height: 1.6; margin-bottom: 18px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: var(--radius-sm);"></p>
+
+                <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px;">
+                  <i class="fas fa-star"></i> أهم النقاط والمفاهيم المحورية (Key Takeaways):
+                </div>
+                <ul id="active-slide-keypoints" style="list-style: none; padding: 0; font-size: 13px; margin-bottom: 20px;"></ul>
+
+                <div style="font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 10px;">
+                  <i class="fas fa-graduation-cap"></i> أسئلة متوقعة لاختبارات الميد والفاينل (Exam Review):
+                </div>
+                <div id="active-slide-exam-questions"></div>
+
+                <!-- Flashcards with Mastery Score -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 10px;">
+                  <div style="font-size: 13px; font-weight: 700; color: var(--info);">
+                    <i class="fas fa-clone"></i> بطاقات المذاكرة التفاعلية (3D Flashcards):
+                  </div>
+                  <span id="flashcard-mastery-score" style="font-size: 12px; font-weight: 700; color: var(--primary);">0% إتقان</span>
+                </div>
+                <div id="active-slide-flashcards" class="flashcards-grid"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 4: VISION OCR CODE SCANNER ==================== -->
+        <section id="view-ocr" class="view-section">
+          <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 18px;">
+            <div class="hero-title" style="font-size: 20px;">
+              <i class="fas fa-camera" style="color: var(--primary);"></i>
+              التعرف البصري الحقيقي على الأكواد ولقطات الشاشة (Real OCR & Neural Vision Studio)
+            </div>
+            <p class="hero-desc" style="font-size: 13px;">
+              التقط صورة لورقة اختبارك، أو ارفع ملف صورة، أو الصق لقطة شاشة مباشرة (<code style="direction: ltr; font-family: var(--font-code); color: var(--primary);">Ctrl+V</code>) ليقوم محرك OCR الحقيقي (Tesseract.js LSTM / Gemini Vision AI) باستخراج كود جافا وتصحيحه برمجياً.
+            </p>
+          </div>
+
+          <!-- Engine Selector & Controls Toolbar -->
+          <div class="ocr-toolbar-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: rgba(15, 23, 42, 0.65); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <!-- OCR Engine Selector -->
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);"><i class="fas fa-microchip"></i> محرك الـ OCR:</span>
+              <div class="engine-pills-group" style="display: flex; gap: 6px;">
+                <button id="ocr-engine-tesseract" class="btn btn-sm btn-primary" onclick="window.OCR.setEngine('tesseract')">
+                  <i class="fas fa-bolt"></i> Tesseract.js (محلي فوري)
+                </button>
+                <button id="ocr-engine-gemini" class="btn btn-sm btn-secondary" onclick="window.OCR.setEngine('gemini')">
+                  <i class="fas fa-brain"></i> Gemini Vision AI (سحابي)
+                </button>
+                <button id="ocr-engine-hybrid" class="btn btn-sm btn-secondary" onclick="window.OCR.setEngine('hybrid')">
+                  <i class="fas fa-magic"></i> هجين ذكي (Hybrid)
+                </button>
+              </div>
+            </div>
+
+            <!-- Canvas Preprocessing Filters -->
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);"><i class="fas fa-sliders-h"></i> فلاتر المعالجة:</span>
+              <button class="btn btn-secondary btn-sm" onclick="window.OCR.applyFilter('contrast')" title="زيادة تباين الحبر">تباين +</button>
+              <button class="btn btn-secondary btn-sm" onclick="window.OCR.applyFilter('grayscale')" title="تحويل لأبيض وأسود ثنائي">Binarize</button>
+              <button class="btn btn-secondary btn-sm" onclick="window.OCR.applyFilter('invert')" title="عكس الألوان">Invert</button>
+              <button class="btn btn-secondary btn-sm" onclick="window.OCR.applyFilter('reset')" title="إعادة ضبط">Reset</button>
+            </div>
+
+            <!-- Sample Selector -->
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-secondary btn-sm" onclick="window.OCR.loadSampleOCR(0)">
+                <i class="fas fa-pen-nib"></i> نموذج خط يد
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="window.OCR.loadSampleOCR(1)">
+                <i class="fas fa-laptop-code"></i> نموذج IDE
+              </button>
+            </div>
+          </div>
+
+          <!-- Real-time Progress & Status Bar -->
+          <div id="ocr-progress-container" style="display: none; margin-bottom: 16px; background: rgba(2, 6, 23, 0.85); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; align-items: center;">
+              <span id="ocr-progress-status" style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-main);">
+                <i class="fas fa-spinner fa-spin" style="color: var(--primary);"></i> جاري استخراج الحروف عبر نموذج التعرف البصري...
+              </span>
+              <span id="ocr-progress-pct" style="font-weight: 800; color: var(--primary); font-family: var(--font-code);">0%</span>
+            </div>
+            <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;">
+              <div id="ocr-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #38bdf8); transition: width 0.2s ease;"></div>
+            </div>
+          </div>
+
+          <div class="ocr-preview-container">
+            <!-- Image Drop & Preview -->
+            <div class="glass-panel">
+              <div class="glass-panel-header" style="margin-bottom: 12px;">
+                <div class="panel-title" style="font-size: 15px;">
+                  <i class="fas fa-file-image"></i>
+                  معاينة الصورة والمسح الضوئي (يدعم Ctrl+V):
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="window.OCR.reprocessCurrent()" title="إعادة تشغيل الـ OCR">
+                  <i class="fas fa-sync-alt"></i> إعادة المسح
+                </button>
+              </div>
+
+              <div id="ocr-dropzone" class="dropzone-box" style="padding: 16px; margin-bottom: 14px; cursor: pointer;">
+                <input type="file" id="ocr-file-input" style="display: none;" accept="image/*">
+                <i class="fas fa-camera dropzone-icon" style="font-size: 32px; margin-bottom: 6px;"></i>
+                <div style="font-size: 13px; font-weight: 700;">اسحب صورة أو انقر للاختيار، أو الصق (Ctrl+V)</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">يدعم PNG, JPG, WebP, SVG وصور الأوراق والسبورة</div>
+              </div>
+
+              <div class="ocr-image-preview">
+                <div id="ocr-scan-line" class="ocr-scan-line"></div>
+                <img id="ocr-preview-img" src="" alt="OCR Preview">
+              </div>
+            </div>
+
+            <!-- Extracted Java Code & Actions -->
+            <div class="glass-panel" style="display: flex; flex-direction: column;">
+              <div class="glass-panel-header" style="margin-bottom: 12px;">
+                <div class="panel-title" style="font-size: 15px;">
+                  <i class="fas fa-code"></i>
+                  الكود البرمجي المستخرج (Java Clean Code):
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <span id="ocr-badge-engine" style="font-size: 11px; padding: 3px 8px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-radius: var(--radius-full); font-weight: 700;">Tesseract.js v5 (WASM)</span>
+                  <span id="ocr-badge-confidence" style="font-size: 11px; padding: 3px 8px; background: rgba(16, 185, 129, 0.15); color: var(--primary); border-radius: var(--radius-full); font-weight: 700;">دقة: 98.4%</span>
+                </div>
+              </div>
+
+              <textarea id="ocr-extracted-code" class="code-textarea" style="background: #050811; border: 1px solid var(--border-color); border-radius: var(--radius-md); flex: 1; min-height: 280px; margin-bottom: 14px;" placeholder="// الكود المستخرج بالـ OCR الفعلي سيظهر هنا فور معالجة الصورة..."></textarea>
+
+              <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="window.OCR.autoFixSyntax()">
+                  <i class="fas fa-wrench"></i> إصلاح أخطاء رموز OCR (Auto-Fix)
+                </button>
+                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="window.OCR.formatCode()">
+                  <i class="fas fa-align-left"></i> إعادة تنسيق الكود (Beautify)
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="window.OCR.transferToAnalyzer()">
+                  <i class="fas fa-arrow-right"></i> إرسال إلى محلل الأكواد والشرح
+                </button>
+                <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.getElementById('ocr-extracted-code').value); window.APP.showToast('تم نسخ الكود المستخرج', 'success');">
+                  <i class="fas fa-copy"></i> نسخ
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 5: AI CHATBOT MENTOR ==================== -->
+        <section id="view-chat" class="view-section">
+          <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <div class="hero-title" style="font-size: 20px;">
+                  <i class="fas fa-robot" style="color: #818cf8;"></i>
+                  المعلم البرمجي الجامعي الذكي (Senad AI Conversational Mentor)
+                </div>
+                <p class="hero-desc" style="font-size: 13px;">
+                  مساعد أكاديمي حقيقي مدعوم بنماذج Gemini Generative AI، يدعم الإدخال الصوتي، التحليل سطر بسطر، وتجربة الأكواد في الـ Sandbox مباشرة.
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary btn-sm" onclick="window.CHAT.openSettingsModal()" title="إعدادات المفتاح والنموذج">
+                  <i class="fas fa-cog"></i> إعدادات AI
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.CHAT.exportChat()" title="تصدير المحادثة بتنسيق Markdown">
+                  <i class="fas fa-download"></i> تصدير
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-container">
+            <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #6366f1); display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">
+                  <i class="fas fa-user-graduate"></i>
+                </div>
+                <div>
+                  <div style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    سِنَاد Senad AI
+                  </div>
+                  <div style="font-size: 11px; color: var(--primary);"><i class="fas fa-circle" style="font-size: 8px;"></i> متصل ومستعد للمساعدة الأكاديمية (صوتي + نصي)</div>
+                </div>
+              </div>
+
+              <!-- Controls Toolbar -->
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 20px; color: #34d399; font-size: 12px; font-weight: 700; box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);">
+                  <i class="fas fa-bolt" style="color: #fbbf24; font-size: 11px;"></i>
+                  <span>Gemini 3.5 Flash (نشط وذكي 🚀)</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="window.CHAT.attachCurrentCode()" title="إرفاق الكود المكتوب في المحرر حالياً">
+                  <i class="fas fa-paperclip"></i> إرفاق كود
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="window.CHAT.clearHistory()" title="بدء جلسة جديدة">
+                  <i class="fas fa-redo"></i> محادثة جديدة
+                </button>
+              </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="chat-messages-box" class="chat-messages"></div>
+
+            <!-- Suggestion Chips (Bilingual AR + EN) -->
+            <div class="chat-suggestion-chips">
+              <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('اشرح لي مفهوم تعدد الأشكال Polymorphism في جافا مع مثال واقعي')">🌟 شرح Polymorphism</span>
+              <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('Explain Polymorphism in Java with a real-world code example')">🇺🇸 Explain Polymorphism</span>
+              <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('ما هو الفرق بين الكلاس المجرد Abstract Class والـ Interface؟')">🏛️ Abstract vs Interface</span>
+              <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('Write a Binary Search algorithm in Java')">🇺🇸 Binary Search Code</span>
+              <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('اكتب لي كود يوضح مفهوم التغليف Encapsulation مع Getters و Setters')">🔒 كود Encapsulation</span>
+              <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('How does Garbage Collection and Stack vs Heap work in Java?')">🇺🇸 Stack vs Heap</span>
+              <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('كيف أحسب معدلي التراكمي الفصلي من 5.00؟')">📊 حساب المعدل 5.00</span>
+            </div>
+
+            <!-- Input Row with Bilingual Voice & Send -->
+            <div class="chat-input-row">
+              <button id="chat-lang-btn" class="btn btn-secondary" onclick="window.CHAT.toggleVoiceLang()" title="تبديل لغة الصوت والإدخال (عربي / English)" style="min-width: 58px; font-weight: 700; font-size: 11px; padding: 6px 10px;">
+                🇸🇦 AR
+              </button>
+              <button id="chat-mic-btn" class="btn btn-secondary" onclick="window.CHAT.toggleVoiceInput()" title="تحدث صوتياً (Voice Input - Speech-to-Text)">
+                <i class="fas fa-microphone"></i>
+              </button>
+              <input type="text" id="chat-user-input" class="chat-input" placeholder="اسأل المعلم الذكي عن أي كود، خطأ، أو مفهوم برمجي (العربية / English)..." onkeydown="if(event.key==='Enter'){event.preventDefault(); window.CHAT.sendMessage();}">
+              <button id="chat-send-btn" class="btn btn-primary" onclick="window.CHAT.sendMessage()">
+                <i class="fas fa-paper-plane"></i> إرسال
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VIEW 6: GRADE & GPA TRACKER ==================== -->
+        <section id="view-tracker" class="view-section">
+          <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div class="hero-title" style="font-size: 20px;">
+                  <i class="fas fa-chart-line" style="color: var(--accent);"></i>
+                  تتبع المواد الأكاديمية وحساب المعدل التراكمي (Saudi 5.00 GPA)
+                </div>
+                <p class="hero-desc" style="font-size: 13px;">
+                  حساب تراكمي دقيق متعدد الفصول، تتبع أوزان التقييمات، وتصدير السجل الأكاديمي الموحد.
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary btn-sm" onclick="window.TRACKER.exportTranscript()"><i class="fas fa-file-export"></i> تصدير السجل</button>
+                <button class="btn btn-primary" onclick="window.TRACKER.openAddCourseModal()"><i class="fas fa-plus"></i> إضافة مادة</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- GPA Hero Card & Target Simulator -->
+          <div class="analyzer-grid" style="margin-bottom: 20px;">
+            <div class="gpa-hero-card">
+              <div class="gpa-circle-gauge">
+                <svg width="130" height="130" viewBox="0 0 120 120" style="transform: rotate(-90deg);">
+                  <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                  <circle id="gpa-progress-ring" cx="60" cy="60" r="54" fill="none" stroke="var(--primary)" stroke-width="10" stroke-linecap="round" stroke-dasharray="339.29" stroke-dashoffset="30"/>
+                </svg>
+                <div style="position: absolute; text-align: center;">
+                  <div id="gpa-main-val" class="gpa-number-val">4.82</div>
+                  <div class="gpa-scale-text">من 5.00</div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+                  التقدير التراكمي: ممتاز مرتفع (A+)
+                </div>
+                <div id="gpa-semester-val" style="font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 4px;">المعدل الفصلي: 4.88</div>
+                <div id="gpa-total-credits" style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">64 ساعة إجمالية</div>
+                <span style="font-size: 12px; padding: 4px 10px; background: rgba(16, 185, 129, 0.2); color: var(--primary); border-radius: var(--radius-full); font-weight: 700;">
+                  <i class="fas fa-award"></i> مرتبة الشرف الأولى
+                </span>
+              </div>
+            </div>
+
+            <!-- Target GPA Simulator -->
+            <div class="glass-panel" style="margin-bottom: 0;">
+              <div class="panel-title" style="font-size: 15px; margin-bottom: 12px;">
+                <i class="fas fa-bullseye" style="color: var(--accent);"></i>
+                محاكي تحقيق المعدل المستهدف (GPA Goal Simulator):
+              </div>
+              <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <input type="number" id="target-gpa-input" class="chat-input" step="0.05" min="2.00" max="5.00" value="4.95" placeholder="المعدل المستهدف (مثلاً 4.95)">
+                <button class="btn btn-accent" onclick="window.TRACKER.simulateTargetGPA()">
+                  <i class="fas fa-calculator"></i> محاكاة واقعية
+                </button>
+              </div>
+              <div id="target-gpa-result"></div>
+            </div>
+          </div>
+
+          <!-- Courses Breakdown Table -->
+          <div class="glass-panel">
+            <div class="glass-panel-header">
+              <div class="panel-title" style="font-size: 16px;">
+                <i class="fas fa-table"></i>
+                سجل درجات المقررات الدراسية (الفصل الحالي):
+              </div>
+            </div>
+            <div class="course-table-container">
+              <table class="course-table">
+                <thead>
+                  <tr>
+                    <th>المقرر الدراسي</th>
+                    <th>الساعات</th>
+                    <th>ميد 1 (20)</th>
+                    <th>ميد 2 (20)</th>
+                    <th>كويزات (10)</th>
+                    <th>واجبات (10)</th>
+                    <th>مشروع (10)</th>
+                    <th>فاينل (30)</th>
+                    <th>المجموع</th>
+                    <th>التقدير</th>
+                    <th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="courses-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==================== VIEW 8: BADGES & ACHIEVEMENTS ==================== -->
+        <section id="view-badges" class="view-section">
+          <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 18px;">
+            <div class="hero-title" style="font-size: 20px;">
+              <i class="fas fa-medal" style="color: var(--imsiu-gold);"></i>
+              سجل الشارات والأوسمة الأكاديمية (Achievements Room)
+            </div>
+            <p class="hero-desc" style="font-size: 13px;">
+              اجمع نقاط الخبرة (XP)، حافظ على سلسلة المذاكرة اليومية (Streak)، وافتح أوسمة التميز في لغة جافا وهندسة البرمجيات.
+            </p>
+          </div>
+
+          <div id="badges-grid-container" class="stats-grid"></div>
+        </section>
+
+        <!-- ==================== VIEW 11: DAILY CHALLENGES & LEADERBOARD ==================== -->
+        <section id="view-challenges" class="view-section">
+          <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <div class="hero-title" style="font-size: 20px;">
+                  <i class="fas fa-trophy" style="color: #fbbf24;"></i>
+                  تحديات البرمجة اليومية ولوحة الشرف (Daily Java Bytes & Leaderboard)
+                </div>
+                <p class="hero-desc" style="font-size: 13px;">
+                  حل مسائل برمجية يومية، تجاوز حالات الاختبار (Test Cases)، اكسب الـ XP، وتصدر قائمة أبطال البرمجة!
+                </p>
+              </div>
+              <div style="background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #fbbf24;">
+                🔥 سلسلتك الحالية: 5 أيام متتالية
+              </div>
+            </div>
+          </div>
+
+          <div class="analyzer-grid">
+            <!-- Left Pane: Daily Problem & Test Runner -->
+            <div class="code-editor-box">
+              <div style="padding: 16px; border-bottom: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.4);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="challenge-counter" style="font-size: 12px; font-weight: 700; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 6px;">المسألة 1 من 6</span>
+                    <span id="challenge-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700;">متوسط</span>
+                    <span id="challenge-xp-badge" class="glow-pill-accent">+50 XP</span>
+                  </div>
+                  <div style="display: flex; gap: 6px;">
+                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.prevChallenge()" title="المسألة السابقة">
+                      <i class="fas fa-chevron-right"></i> السابقة
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.nextChallenge()" title="المسألة التالية">
+                      التالية <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.resetCurrentChallengeCode()" title="استعادة القالب الأولي للكود">
+                      <i class="fas fa-undo"></i> إعادة تعيين
+                    </button>
+                  </div>
+                </div>
+                <h3 id="challenge-title" style="margin: 0 0 6px; font-size: 18px; color: #fff; font-weight: 800;">توازن الأقواس (Valid Parentheses)</h3>
+                <div id="challenge-desc" style="font-size: 13px; color: var(--text-main); line-height: 1.6;"></div>
+              </div>
+
+              <!-- Test Cases Preview -->
+              <div style="padding: 12px 16px; background: rgba(0,0,0,0.25); border-bottom: 1px solid var(--border-color);">
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-list-check" style="color: var(--primary);"></i> حالات الاختبار النموذجية (Sample Test Cases):
+                </div>
+                <div id="challenge-test-cases"></div>
+              </div>
+
+              <!-- Code Editor -->
+              <div class="code-editor-body" style="height: 250px;">
+                <textarea id="challenge-code-editor" class="code-textarea" spellcheck="false" style="font-size: 13.5px; font-family: var(--font-code); line-height: 1.6;"></textarea>
+              </div>
+
+              <!-- Action & Run Tests -->
+              <div style="padding: 12px 16px; background: #090e1a; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <button class="btn btn-primary" onclick="window.CHALLENGES.runTestCases()" style="font-weight: 800; padding: 8px 20px; box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);">
+                  <i class="fas fa-play"></i> فحص الحل وتشغيل حالات الاختبار (Run Tests)
+                </button>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.nextChallenge()">
+                    المسألة التالية <i class="fas fa-arrow-left"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Test Results Box -->
+              <div class="terminal-output" style="max-height: 180px; overflow-y: auto;">
+                <div class="terminal-title"><i class="fas fa-check-double"></i> نتائج التحقق وتشغيل الـ Sandbox:</div>
+                <div id="challenge-run-output" style="font-family: inherit; font-size: 12px;">
+                  <span style="color: var(--text-muted);">// اكتب حلك واضغط على "فحص الحل وتشغيل حالات الاختبار" للتحقق...</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Pane: College Leaderboard -->
+            <div class="glass-panel" style="padding: 18px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 14px;">
+                <h4 style="margin: 0; font-size: 15px; color: #fff;">
+                  <i class="fas fa-ranking-star" style="color: #fbbf24;"></i> لوحة المتصدرين (كلية علوم الحاسب)
+                </h4>
+                <span style="font-size: 11px; color: #818cf8; background: rgba(99,102,241,0.15); padding: 2px 8px; border-radius: 4px;">محدثة فورياً</span>
+              </div>
+
+              <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                  <thead>
+                    <tr style="color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right;">
+                      <th style="padding: 8px; text-align: center;">الترتيب</th>
+                      <th style="padding: 8px;">الطالب</th>
+                      <th style="padding: 8px;">النقاط (XP)</th>
+                      <th style="padding: 8px;">الـ Streak</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaderboard-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal 1: Mock Exam Modal -->
+  <div id="mock-exam-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-graduation-cap" style="color: var(--accent);"></i>
+          الاختبار الفصلي التجريبي الشامل (IMSIU Mock Exam)
+        </div>
+        <button class="modal-close-btn" onclick="window.SLIDES.closeMockExamModal()">&times;</button>
+      </div>
+
+      <div id="mock-exam-active-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent); padding: 10px 16px; border-radius: var(--radius-md); margin-bottom: 18px;">
+          <span style="font-size: 13px; font-weight: 700; color: var(--accent);">مؤقت الاختبار المتبقي:</span>
+          <span id="mock-exam-timer" style="font-family: var(--font-code); font-size: 18px; font-weight: 800; color: var(--text-main);">10:00</span>
+        </div>
+
+        <div id="mock-exam-questions-container"></div>
+
+        <div style="display: flex; gap: 10px; margin-top: 18px;">
+          <button class="btn btn-primary" style="flex: 1;" onclick="window.SLIDES.submitMockExam()">
+            <i class="fas fa-paper-plane"></i> تسليم الاختبار وتصحيحه فورياً
+          </button>
+          <button class="btn btn-secondary" onclick="window.SLIDES.closeMockExamModal()">
+            إلغاء
+          </button>
+        </div>
+      </div>
+
+      <div id="mock-exam-results-view" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Add Course Modal -->
+  <div id="add-course-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-plus-circle" style="color: var(--primary);"></i>
+          إضافة مقرر دراسي جديد
+        </div>
+        <button class="modal-close-btn" onclick="window.TRACKER.closeAddCourseModal()">&times;</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+        <div>
+          <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">رمز المقرر (مثال CS 212):</label>
+          <input type="text" id="new-course-code" class="chat-input" style="width: 100%; direction: ltr;" placeholder="CS 212">
+        </div>
+        <div>
+          <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">اسم المقرر:</label>
+          <input type="text" id="new-course-name" class="chat-input" style="width: 100%;" placeholder="تصميم الخوارزميات">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">الساعات:</label>
+          <input type="number" id="new-course-credits" class="chat-input" style="width: 100%;" value="3">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">ميد 1 (من 20):</label>
+          <input type="number" id="new-course-m1" class="chat-input" style="width: 100%;" value="19">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">ميد 2 (من 20):</label>
+          <input type="number" id="new-course-m2" class="chat-input" style="width: 100%;" value="18.5">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px;">
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">كويزات (10):</label>
+          <input type="number" id="new-course-quizzes" class="chat-input" style="width: 100%;" value="9.5">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">واجبات (10):</label>
+          <input type="number" id="new-course-assign" class="chat-input" style="width: 100%;" value="10">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">مشروع (10):</label>
+          <input type="number" id="new-course-project" class="chat-input" style="width: 100%;" value="9.5">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">فاينل (30):</label>
+          <input type="number" id="new-course-final" class="chat-input" style="width: 100%;" value="28">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="window.TRACKER.saveNewCourse()">
+          <i class="fas fa-save"></i> حفظ المادة وحساب المعدل
+        </button>
+        <button class="btn btn-secondary" onclick="window.TRACKER.closeAddCourseModal()">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: PDPL Policy & Compliance Governance -->
+  <div id="pdpl-policy-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 550px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-shield-alt" style="color: var(--primary);"></i>
+          وثيقة حماية البيانات والامتثال لنظام PDPL السعودي
+        </div>
+        <button class="modal-close-btn" onclick="window.SECURITY.closePDPLPolicyModal()">&times;</button>
+      </div>
+      <div style="font-size: 13px; color: var(--text-main); line-height: 1.7; max-height: 340px; overflow-y: auto; padding-left: 6px;">
+        <p><strong>1. الغرض والمشروعية:</strong> تُجمع البيانات الأكاديمية والدرجات لأغراض التتبع التعليمي والمساعدة البرمجية فقط بموافقة الطالب الصريحة.</p>
+        <p><strong>2. التشفير والحماية:</strong> جميع السجلات والدرجات مشفرة بخوارزمية AES-256 مع قنوات اتصال محمية بـ TLS 1.3.</p>
+        <p><strong>3. سياسة التدمير المؤقت:</strong> تحذف الصور والسلايدات والأكواد المرفوعة مؤقتاً بصورة تلقائية ولا يتم تخزينها في خوادم دائمة إلا برغبة الطالب.</p>
+        <p><strong>4. السيادة الرقمية:</strong> جميع معالجات البيانات تتم محلياً داخل المملكة العربية السعودية دون مشاركة مع أي جهة خارجية.</p>
+      </div>
+      <div style="margin-top: 18px; text-align: left;">
+        <button class="btn btn-primary" onclick="window.SECURITY.closePDPLPolicyModal()">
+          موافق ومفهوم
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: AI Chatbot & Gemini Settings Modal -->
+  <div id="ai-settings-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-robot" style="color: #818cf8;"></i>
+          إعدادات المعلم البرمجي الذكي (Senad AI Settings)
+        </div>
+        <button class="modal-close-btn" onclick="window.CHAT.closeSettingsModal()">&times;</button>
+      </div>
+
+      <div style="font-size: 13px; color: var(--text-main); margin-bottom: 16px;">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label"><i class="fas fa-key"></i> مفتاح Google Gemini API الخاص بك (اختياري):</label>
+          <input type="password" id="custom-gemini-key" class="chat-input" style="width: 100%; direction: ltr;" placeholder="AIzaSy... (اتركه فارغاً لاستخدام الخادم التلقائي)">
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">يتم حفظ المفتاح محلياً في متصفحك فقط ولا يُشارك مع أي طرف آخر.</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label"><i class="fas fa-microchip"></i> محرك ونموذج الذكاء الاصطناعي الأساسي:</label>
+          <div style="padding: 10px 14px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); color: #34d399; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-bolt" style="color: #fbbf24;"></i>
+            <span>Gemini 3.5 Flash (نشط وذكي 🚀)</span>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label"><i class="fas fa-user-tie"></i> أسلوب ونبرة المعلم:</label>
+          <select id="modal-persona-style" class="chat-input" style="width: 100%;">
+            <option value="friendly">☕ جامعي ودود ومحفز (لهجة بيضاء مريحة + أمثلة واقعية)</option>
+            <option value="academic">🏛️ أكاديمي دقيق ورسمي (مصطلحات برمجية ومراجع)</option>
+            <option value="concise">⚡ مباشر وموجز (أكواد وحلول فورية)</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="window.CHAT.saveSettings()">
+          <i class="fas fa-check"></i> حفظ التفضيلات
+        </button>
+        <button class="btn btn-secondary" onclick="window.CHAT.closeSettingsModal()">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal 6: UML Class Diagram Modal -->
+  <div id="uml-diagram-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 960px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-sitemap" style="color: var(--accent);"></i>
+          مخطط الكلاسات والعلاقات الذكي (Auto UML Class Diagram - GenAI Powered)
+        </div>
+        <button class="modal-close-btn" onclick="window.ANALYZER.closeUMLModal()">&times;</button>
+      </div>
+      <div id="uml-diagram-content"></div>
+      <div style="text-align: left; margin-top: 16px;">
+        <button class="btn btn-secondary" onclick="window.ANALYZER.closeUMLModal()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 7: Slide Mock Exam Modal -->
+  <div id="mock-exam-modal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 860px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-file-signature" style="color: var(--primary);"></i>
+          <span>الاختبار الفصلي التجريبي المولد من السلايدات (AI Mock Exam)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 13px; font-weight: 800; background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 3px 12px; border-radius: 20px;">
+            <i class="fas fa-clock"></i> <span id="mock-exam-timer">10:00</span>
+          </span>
+          <button class="modal-close-btn" onclick="window.SLIDES.closeMockExamModal()">&times;</button>
+        </div>
+      </div>
+
+      <div id="mock-exam-active-view">
+        <div style="background: rgba(99, 102, 241, 0.1); border-right: 3px solid var(--primary); padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; color: #cbd5e1;">
+          <i class="fas fa-info-circle" style="color: var(--primary);"></i> الأسئلة التالية مستخرجة بالذكاء الاصطناعي مباشرة من السلايدات والمحاضرة التي قمت بإضافتها. أجب عليها لقياس جاهزيتك للميد:
+        </div>
+        <div id="mock-exam-questions-container"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <button class="btn btn-secondary" onclick="window.SLIDES.closeMockExamModal()">إلغاء</button>
+          <button class="btn btn-primary" onclick="window.SLIDES.submitMockExam()" style="font-weight: 800; padding: 10px 24px; box-shadow: 0 4px 15px rgba(99,102,241,0.4);">
+            <i class="fas fa-paper-plane"></i> تسليم الاختبار ورصد الدرجة
+          </button>
+        </div>
+      </div>
+
+      <div id="mock-exam-results-view" style="display: none;"></div>
+    </div>
+  </div>
+
+
+  <!-- Modal 8: Command Palette (Ctrl + K / Quick Action Search Launcher) -->
+  <div id="command-palette-modal" class="command-modal-overlay" onclick="if(event.target === this) window.APP.closeCommandPalette()">
+    <div class="command-modal-box">
+      <div class="command-input-wrapper">
+        <i class="fas fa-search" style="color: var(--primary); font-size: 16px;"></i>
+        <input type="text" id="command-search-input" class="command-search-input" placeholder="ابحث عن موضوع، أمر سريع، سلايدات، أو اسأل المعلم الذكي... (اكتب للبحث)" autofocus>
+        <span style="font-size: 11px; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 6px; color: #94a3b8; font-family: var(--font-code);">ESC للإغلاق</span>
+      </div>
+      <div id="command-results-container" class="command-results-list">
+        <!-- Dynamic populated results -->
+      </div>
+      <div class="command-modal-footer">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span><kbd style="background: rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 4px;">↑</kbd> <kbd style="background: rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 4px;">↓</kbd> للتنقل</span>
+          <span><kbd style="background: rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 4px;">Enter</kbd> للاختيار</span>
+        </div>
+        <span style="color: var(--primary); font-weight: 600;"><i class="fas fa-bolt"></i> سِنَاد Command AI</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Application Scripts with Cache-Busting -->
+  <script src="js/sound.js?v=2026.3"></script>
+  <script src="js/confetti.js?v=2026.3"></script>
+  <script src="js/data.js?v=2026.3"></script>
+  <script src="js/api.js?v=2026.3"></script>
+  <script src="js/auth.js?v=2026.3"></script>
+  <script src="js/analyzer.js?v=2026.3"></script>
+  <script src="js/exams.js?v=2026.3"></script>
+  <script src="js/challenges.js?v=2026.3"></script>
+  <script src="js/slides.js?v=2026.3"></script>
+  <script src="js/ocr.js?v=2026.3"></script>
+  <script src="js/chat.js?v=2026.3"></script>
+  <script src="js/tracker.js?v=2026.3"></script>
+  <script src="js/gamification.js?v=2026.3"></script>
+  <script src="js/security.js?v=2026.3"></script>
+  <script src="js/app.js?v=2026.3"></script>
+
+</body>
+</html>
