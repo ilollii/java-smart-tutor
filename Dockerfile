@@ -1,4 +1,4 @@
-# Use official Eclipse Temurin JDK 21 (includes javac for code compilation sandbox)
+# Use official Eclipse Temurin JDK 21 (includes javac compiler for java sandbox)
 FROM eclipse-temurin:21-jdk-jammy
 
 # Set working directory
@@ -12,13 +12,9 @@ COPY data/ ./data/
 # Compile all Java backend sources into out/ with explicit UTF-8 encoding
 RUN mkdir -p out && javac -encoding UTF-8 -d out server/*.java
 
-# Render provides the PORT environment variable dynamically
+# Default port (Render overrides this with dynamic PORT environment variable)
 ENV PORT=8080
 EXPOSE 8080
-
-# Health check to ensure server is responding
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${PORT}/api/health || exit 1
 
 # Start the SmartTutorServer
 CMD ["java", "-cp", "out", "server.SmartTutorServer"]
