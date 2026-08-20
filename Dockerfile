@@ -9,8 +9,8 @@ COPY server/ ./server/
 COPY public/ ./public/
 COPY data/ ./data/
 
-# Compile all Java backend sources into out/
-RUN mkdir -p out && javac -d out server/*.java
+# Compile all Java backend sources into out/ with explicit UTF-8 encoding
+RUN mkdir -p out && javac -encoding UTF-8 -d out server/*.java
 
 # Render provides the PORT environment variable dynamically
 ENV PORT=8080
