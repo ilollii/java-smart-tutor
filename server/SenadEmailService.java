@@ -47,7 +47,11 @@ public class SenadEmailService {
 
         // 2. Try SMTP if host and credentials are provided
         if (smtpHost != null && !smtpHost.trim().isEmpty() && smtpUser != null && !smtpUser.trim().isEmpty()) {
-            boolean success = sendViaSmtp(smtpHost.trim(), smtpPort, smtpUser.trim(), smtpPass.trim(), senderEmail, recipientEmail, subject, htmlBody);
+            String smtpSender = senderEmail.contains("<") && senderEmail.contains(">") 
+                ? senderEmail.substring(senderEmail.indexOf("<") + 1, senderEmail.indexOf(">")).trim() 
+                : (senderEmail.isEmpty() ? smtpUser.trim() : senderEmail.trim());
+            String cleanPass = smtpPass != null ? smtpPass.replaceAll("\\s+", "") : "";
+            boolean success = sendViaSmtp(smtpHost.trim(), smtpPort, smtpUser.trim(), cleanPass, smtpSender, recipientEmail, subject, htmlBody);
             if (success) {
                 System.out.println(" [📧] تم إرسال رمز التحقق (" + otp + ") بنجاح إلى: " + recipientEmail + " عبر SMTP (" + smtpHost + ")");
                 return true;
@@ -155,14 +159,22 @@ public class SenadEmailService {
             readSmtpResponse(tlsReader);
 
             // Send Headers and Body
-            String messageId = "<" + System.currentTimeMillis() + "." + Math.abs(new SecureRandom().nextLong()) + "@senad.ai>";
-            tlsWriter.write("From: =?UTF-8?B?" + Base64.getEncoder().encodeToString("منصة سِنَاد الذكية".getBytes(StandardCharsets.UTF_8)) + "?= <" + from + ">\r\n");
+            String cleanFrom = from.contains("<") && from.contains(">") 
+                ? from.substring(from.indexOf("<") + 1, from.indexOf(">")).trim() 
+                : from.trim();
+            String messageId = "<" + System.currentTimeMillis() + "." + Math.abs(new SecureRandom().nextLong()) + "@gmail.com>";
+            String dateHeader = java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME.format(java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC));
+
+            tlsWriter.write("Date: " + dateHeader + "\r\n");
+            tlsWriter.write("From: =?UTF-8?B?" + Base64.getEncoder().encodeToString("منصة سِنَاد الذكية".getBytes(StandardCharsets.UTF_8)) + "?= <" + cleanFrom + ">\r\n");
+            tlsWriter.write("Reply-To: <" + cleanFrom + ">\r\n");
             tlsWriter.write("To: <" + to + ">\r\n");
             tlsWriter.write("Subject: =?UTF-8?B?" + Base64.getEncoder().encodeToString(subject.getBytes(StandardCharsets.UTF_8)) + "?=\r\n");
             tlsWriter.write("Message-ID: " + messageId + "\r\n");
             tlsWriter.write("MIME-Version: 1.0\r\n");
             tlsWriter.write("Content-Type: text/html; charset=UTF-8\r\n");
-            tlsWriter.write("Content-Transfer-Encoding: 8bit\r\n\r\n");
+            tlsWriter.write("Content-Transfer-Encoding: 8bit\r\n");
+            tlsWriter.write("X-Mailer: Senad AI Academic Tutor v2.4\r\n\r\n");
             tlsWriter.write(html);
             tlsWriter.write("\r\n.\r\n");
             tlsWriter.flush();
