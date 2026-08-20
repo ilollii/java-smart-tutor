@@ -1,0 +1,8 @@
+.git
+.env
+.env.*
+out/
+out-*/
+scratch/
+*.class
+*.log

@@ -401,11 +401,11 @@ window.OCR = {
         if (this.activeFilter === 'contrast' || this.activeFilter === 'grayscale') {
           const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const d = imgData.data;
-          
+
           for (let i = 0; i < d.length; i += 4) {
             // Luminance
             const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-            
+
             if (this.activeFilter === 'grayscale') {
               // High contrast binarization (Otsu threshold approx)
               const v = gray > 130 ? 255 : 0;
