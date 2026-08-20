@@ -12,9 +12,9 @@ COPY data/ ./data/
 # Compile all Java backend sources into out/ with explicit UTF-8 encoding
 RUN mkdir -p out && javac -encoding UTF-8 -d out server/*.java
 
-# Default port (Render overrides this with dynamic PORT environment variable)
+# Default port (Render injects dynamic PORT environment variable)
 ENV PORT=8080
-EXPOSE 8080
+EXPOSE 8080 10000
 
 # Start the SmartTutorServer
 CMD ["java", "-cp", "out", "server.SmartTutorServer"]

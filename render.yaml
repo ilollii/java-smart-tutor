@@ -6,8 +6,6 @@ services:
     region: frankfurt
     dockerfilePath: ./Dockerfile
     envVars:
-      - key: PORT
-        value: 8080
       - key: SESSION_SECRET
         generateValue: true
       - key: GEMINI_API_KEY
