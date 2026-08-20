@@ -408,24 +408,31 @@ window.CHAT = {
   /**
    * Enhanced Secure Markdown Parser with Interactive Code Sandbox Blocks (XSS Protected)
    */
-  formatMarkdown(text, msgIdx) {
-    if (!text) return '';
+  formatMarkdown(rawText, msgIdx) {
+    if (!rawText) return '';
+
+    // 0. Completely Strip any Thinking & Reasoning Tags or Blocks (Hidden from user)
+    let formatted = (rawText || '')
+      .replace(/<thought>[\s\S]*?<\/thought>/gi, '')
+      .replace(/<thinking>[\s\S]*?<\/thinking>/gi, '')
+      .replace(/\[THINKING\][\s\S]*?\[\/THINKING\]/gi, '');
 
     // 1. Extract & Protect Code Blocks
     const codeBlocks = [];
-    let formatted = text.replace(/```(?:java)?([\s\S]*?)```/gi, (match, code) => {
+    formatted = formatted.replace(/```(?:([a-zA-Z0-9_-]+)?\n)?([\s\S]*?)```/g, (match, lang, code) => {
       const idx = codeBlocks.length;
-      const cleanCode = code.trim();
+      const cleanLang = (lang || 'java').toLowerCase().trim();
+      const cleanCode = (code || '').replace(/^\n+|\n+$/g, '');
       const encoded = encodeURIComponent(cleanCode);
+
       codeBlocks.push(`
-        <div style="position: relative; margin: 12px 0; border-radius: var(--radius-md); overflow: hidden; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 4px 14px rgba(0,0,0,0.35);">
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #0b1120; padding: 6px 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <i class="fab fa-java" style="color: #f59e0b;"></i>
-              <span style="font-size: 11px; color: #94a3b8; font-family: var(--font-code); font-weight: 600;">Java 24 Sandbox Ready</span>
-            </div>
+        <div class="code-block-wrapper" style="margin: 12px 0; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; overflow: hidden;">
+          <div class="code-block-header" style="background: rgba(0,0,0,0.5); padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <span style="font-size: 11px; font-family: var(--font-code); color: var(--primary); font-weight: 700;">
+              <i class="fab fa-java"></i> ${cleanLang.toUpperCase()}
+            </span>
             <div style="display: flex; gap: 6px;">
-              <button class="btn btn-primary btn-sm" style="font-size: 10px; padding: 2px 8px;" onclick="window.CHAT.runCodeDirectly('${encoded}')" title="تنفيذ الكود في الساندبوكس مباشرة">
+              <button class="btn btn-primary btn-sm" style="font-size: 10px; padding: 2px 8px;" onclick="window.CHAT.runCodeDirectly('${encoded}')" title="تشغيل الكود مباشرة في Java 24 Sandbox">
                 <i class="fas fa-play"></i> تشغيل
               </button>
               <button class="btn btn-secondary btn-sm" style="font-size: 10px; padding: 2px 8px;" onclick="window.CHAT.insertCodeToAnalyzer('${encoded}')" title="فتح الكود في المحلل والشرح سطر بسطر">
@@ -453,7 +460,7 @@ window.CHAT = {
     // 3. HTML-Escape all raw text content to neutralize XSS
     formatted = this.escapeHtml(formatted);
 
-    // 4. Format Deep Thinking & Reasoning Panel
+    // 4. Filter blockquotes - completely hide/suppress any Thinking/Reasoning blockquotes
     const lines2 = formatted.split('\n');
     let inBlock = false;
     let blockLines = [];
@@ -464,21 +471,15 @@ window.CHAT = {
       const blockText = blockLines.join('\n');
       const hasThinking = blockText.includes('🧠') || blockText.includes('التفكير') ||
                           blockText.includes('Thinking') || blockText.includes('Reasoning') ||
-                          blockText.includes('Verification') || blockText.includes('تحليل مختصر');
-      if (hasThinking) {
-        const firstLineMatch = blockText.match(/^&gt;\s*(?:🧠\s*)?\*\*([^*]+)\*\*/m) || blockText.match(/^>\s*(?:🧠\s*)?\*\*([^*]+)\*\*/m);
-        const title = firstLineMatch ? firstLineMatch[1].trim() : 'التفكير والتحليل 🧠';
-        const bodyLines2 = blockLines.slice(1);
-        const cleanBody = bodyLines2.map(line => {
-          const c = line.replace(/^(?:&gt;|>)\s*[-•*]?\s*/, '').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').trim();
-          if (!c) return '';
-          return `<div style="margin:5px 0;display:flex;gap:6px;align-items:flex-start;"><span style="color:#818cf8;flex-shrink:0;">▸</span><span>${c}</span></div>`;
-        }).filter(Boolean).join('\n');
-        const uid = `thought_${Math.random().toString(36).substr(2, 9)}`;
-        outputLines.push(`<div class="thought-panel"><div class="thought-header" onclick="const b=document.getElementById('${uid}');const i=this.querySelector('.toggle-icon');if(b.style.display==='none'){b.style.display='block';i.className='fas fa-chevron-up toggle-icon';}else{b.style.display='none';i.className='fas fa-chevron-down toggle-icon';}"><div class="thought-title"><i class="fas fa-brain" style="color:#a78bfa;font-size:14px;"></i><span>${title}</span><span class="thought-badge">مسار التفكير والتحليل الأكاديمي 🧠</span></div><i class="fas fa-chevron-up toggle-icon" style="color:#94a3b8;font-size:11px;"></i></div><div id="${uid}" class="thought-body">${cleanBody}</div></div>`);
-      } else {
-        blockLines.forEach(l => outputLines.push(l));
+                          blockText.includes('Verification') || blockText.includes('تحليل مختصر') ||
+                          blockText.includes('الهدف والمطلوب') || blockText.includes('استراتيجية الحل');
+      if (!hasThinking) {
+        blockLines.forEach(l => {
+          const c = l.replace(/^(?:&gt;|>)\s*/, '');
+          outputLines.push(`<div class="academic-note" style="border-right: 3px solid var(--primary); padding: 6px 12px; margin: 6px 0; background: rgba(16, 185, 129, 0.08); border-radius: 4px;">${c}</div>`);
+        });
       }
+      // If hasThinking: completely suppressed
       blockLines = [];
       inBlock = false;
     };
@@ -494,6 +495,11 @@ window.CHAT = {
       }
     }
     if (inBlock) flushBlock();
+
+    // Strip leading blank lines
+    while (outputLines.length > 0 && !outputLines[0].trim()) {
+      outputLines.shift();
+    }
     formatted = outputLines.join('\n');
 
     // 5. Bold & Emphasis

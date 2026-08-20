@@ -1,7 +1,7 @@
 /**
  * Universal Multi-University Authentication Portal & Session Manager
  * Allows students from ANY university to register/login with their email, password,
- * chosen university, and major.
+ * chosen university, major, and starting academic status (freshman vs advanced).
  */
 
 window.AUTH = {
@@ -12,7 +12,7 @@ window.AUTH = {
   otpTimeRemaining: 60,
 
   init() {
-    // Check if real student session exists in localStorage
+    // Check if student session exists in localStorage
     const saved = localStorage.getItem('senad_universal_user_session');
     if (saved) {
       try {
@@ -25,7 +25,7 @@ window.AUTH = {
         localStorage.removeItem('senad_universal_user_session');
       }
     }
-    // Show real registration / login gateway for student
+    // Show registration / login gateway for student
     this.showInitialLogin();
   },
 
@@ -39,7 +39,7 @@ window.AUTH = {
     if (appContainer) appContainer.style.display = 'none';
 
     // Reset login steps
-    this.switchLoginTab('universal');
+    this.switchLoginTab('student');
     this.resetOtpTimer();
   },
 
@@ -52,6 +52,19 @@ window.AUTH = {
     if (appContainer) appContainer.style.display = 'flex';
 
     this.updateUI();
+
+    // Re-initialize GPA Tracker and Gamification for this specific active student
+    if (window.TRACKER) {
+      window.TRACKER.syncWithCurrentStudent();
+      window.TRACKER.init();
+    }
+    if (window.GAMIFICATION) {
+      window.GAMIFICATION.init();
+    }
+    if (window.APP && typeof window.APP.updateDashboardStats === 'function') {
+      window.APP.updateDashboardStats();
+    }
+
     if (window.SOUNDS) window.SOUNDS.playSuccess();
     if (window.CONFETTI) window.CONFETTI.launch(40);
   },
@@ -76,6 +89,18 @@ window.AUTH = {
     }
   },
 
+  onAcademicStatusChange() {
+    const statusSelect = document.getElementById('init-academic-status');
+    const advancedGroup = document.getElementById('advanced-academic-group');
+    if (!statusSelect || !advancedGroup) return;
+
+    if (statusSelect.value === 'advanced') {
+      advancedGroup.style.display = 'block';
+    } else {
+      advancedGroup.style.display = 'none';
+    }
+  },
+
   async submitInitialCredentials() {
     const nameInput = document.getElementById('init-name');
     const emailInput = document.getElementById('init-email');
@@ -83,9 +108,12 @@ window.AUTH = {
     const univSelect = document.getElementById('init-univ-select');
     const customUnivInput = document.getElementById('init-custom-univ');
     const majorSelect = document.getElementById('init-major-select');
+    const statusSelect = document.getElementById('init-academic-status');
+    const prevGpaInput = document.getElementById('init-prev-gpa');
+    const prevCreditsInput = document.getElementById('init-prev-credits');
 
     const name = nameInput ? nameInput.value.trim() : 'طالب جامعي';
-    const email = emailInput ? emailInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
     const password = passInput ? passInput.value : '';
 
     if (!email || !email.includes('@')) {
@@ -106,8 +134,17 @@ window.AUTH = {
     }
 
     const major = majorSelect ? majorSelect.options[majorSelect.selectedIndex].text : 'علوم الحاسب والمعلومات';
+    const isAdvanced = statusSelect && statusSelect.value === 'advanced';
+    const gpaScale = (university.includes('البترول') || university.includes('KFUPM')) ? 4.00 : 5.00;
 
-    // Store pending user
+    let previousGpa = 0.00;
+    let previousCredits = 0;
+    if (isAdvanced) {
+      previousGpa = prevGpaInput && parseFloat(prevGpaInput.value) ? parseFloat(prevGpaInput.value) : (gpaScale === 4.00 ? 3.50 : 4.50);
+      previousCredits = prevCreditsInput && parseInt(prevCreditsInput.value) ? parseInt(prevCreditsInput.value) : 48;
+    }
+
+    // Initialize fresh student profile
     this.pendingUser = {
       name: name || email.split('@')[0],
       studentId: email.split('@')[0],
@@ -115,18 +152,23 @@ window.AUTH = {
       university: university,
       college: "كلية الحاسب وتقنية المعلومات",
       major: major,
-      level: "طالب جامعي",
-      gpa: 4.85,
-      previousGpa: 4.80,
-      previousCredits: 60,
-      currentCredits: 16,
-      gpaScale: university.includes('البترول') || university.includes('KFUPM') ? 4.00 : 5.00,
-      xp: 1200,
-      levelNumber: 4,
-      streakDays: 3,
+      level: isAdvanced ? "طالب جامعي (مستوى متقدم)" : "المستوى الأول (مستجد)",
+      gpa: previousGpa,
+      previousGpa: previousGpa,
+      previousCredits: previousCredits,
+      currentCredits: 0,
+      gpaScale: gpaScale,
+      xp: 50, // Welcome bonus for registration & 2FA
+      levelNumber: 1,
+      streakDays: 1,
+      isFreshUser: true,
       badges: [
-        { id: "java_pioneer", name: "رائد لغة جافا", icon: "☕", desc: "بدأت رحلة التعلم في المنصة", unlocked: true },
-        { id: "security_sentinel", name: "حارس الخصوصية PDPL", icon: "🛡️", desc: "فعلت التحقق الثنائي والمصادقة الموحدة", unlocked: true }
+        { id: "java_pioneer", name: "رائد لغة جافا", icon: "☕", desc: "بدأت رحلة التعلم في منصة سِنَاد", unlocked: true },
+        { id: "security_sentinel", name: "حارس الخصوصية PDPL", icon: "🛡️", desc: "فعلت التحقق الثنائي والمصادقة الموحدة", unlocked: true },
+        { id: "oop_master", name: "مهندس الكائنات OOP", icon: "🏛️", desc: "أتقنت مفاهيم الوراثة والبوليمورفيزم", unlocked: false },
+        { id: "quiz_champ", name: "بطل الكويزات", icon: "🎯", desc: "حققت 100% في كويزات الكود", unlocked: false },
+        { id: "slide_guru", name: "قاهر السلايدات", icon: "📚", desc: "لخصت محاضرات جامعية كاملة", unlocked: false },
+        { id: "tracker_scholar", name: "العالم الأكاديمي", icon: "🎓", desc: "أضفت موادك وحسبت خطة المعدل الفصلي والتراكمي", unlocked: false }
       ]
     };
 
@@ -253,18 +295,30 @@ window.AUTH = {
     this.is2FAVerified = true;
     localStorage.setItem('senad_universal_user_session', JSON.stringify(this.currentUser));
 
+    // For fresh registered student: if no existing courses saved for this email, ensure fresh empty list
+    const studentCourseKey = 'senad_student_courses_' + this.currentUser.email;
+    if (!localStorage.getItem(studentCourseKey)) {
+      localStorage.setItem(studentCourseKey, JSON.stringify([]));
+    }
+
     // Persist real student profile to Server-Side SenadDatabase
     if (window.API && typeof window.API.saveStudentToDB === 'function') {
       window.API.saveStudentToDB(this.currentUser);
     }
 
     this.showDashboard();
-    if (window.APP) window.APP.showToast(`مرحباً بك يا ${this.currentUser.name} من (${this.currentUser.university})! 🚀`, 'success');
+    if (window.APP) window.APP.showToast(`مرحباً بك يا ${this.currentUser.name} من (${this.currentUser.university})! تم إنشاء سجلك الأكاديمي بنجاح 🚀`, 'success');
   },
 
   async loginAsProfile(profileKey) {
     const profile = Object.assign({}, window.APP_DATA.profiles[profileKey] || window.APP_DATA.profiles.imsiu_cs);
     this.currentUser = profile;
+
+    // For demo profile: ensure demo courses are loaded if not previously saved
+    const studentCourseKey = 'senad_student_courses_' + profile.email;
+    if (!localStorage.getItem(studentCourseKey)) {
+      localStorage.setItem(studentCourseKey, JSON.stringify(window.APP_DATA.courses));
+    }
 
     // Acquire signed academic session token from backend
     try {
@@ -317,7 +371,7 @@ window.AUTH = {
     if (nameEl) nameEl.textContent = this.currentUser.name;
     if (roleEl) roleEl.textContent = `${this.currentUser.university} • ${this.currentUser.major}`;
     if (avatarEl) avatarEl.textContent = this.currentUser.name.charAt(0);
-    if (gpaBadge) gpaBadge.textContent = `${(this.currentUser.gpa || 4.85).toFixed(2)} / ${(this.currentUser.gpaScale || 5.00).toFixed(2)}`;
+    if (gpaBadge) gpaBadge.textContent = `${(this.currentUser.gpa || 0.00).toFixed(2)} / ${(this.currentUser.gpaScale || 5.00).toFixed(2)}`;
     if (univBadge) univBadge.innerHTML = `<i class="fas fa-university"></i> ${this.escapeHtml(this.currentUser.university || 'جامعة الإمام')}`;
   },
 

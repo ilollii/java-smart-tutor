@@ -270,7 +270,8 @@ window.ANALYZER = {
         window.APP.showToast('تم تجميع وتشغيل كود جافا الحقيقي بنجاح! (+25 XP)', 'success');
         if (window.SOUNDS) window.SOUNDS.playSuccess();
         if (window.CONFETTI) window.CONFETTI.launch(25);
-        window.GAMIFICATION.addXP(25, 'تشغيل كود جافا في البيئة الآمنة');
+        if (window.GAMIFICATION) window.GAMIFICATION.addXP(25, 'تشغيل كود جافا في البيئة الآمنة');
+        if (window.APP && typeof window.APP.recordCodeActivity === 'function') window.APP.recordCodeActivity();
       } else {
         if (statusChip) {
           statusChip.textContent = '❌ Error';
@@ -663,6 +664,9 @@ ${originalCode}
     if (data && data.quizzes && data.quizzes.length > 0) {
       this.renderQuizzes(data.quizzes);
     }
+
+    if (window.GAMIFICATION) window.GAMIFICATION.addXP(20, 'تحليل كود جافا تفصيلي');
+    if (window.APP && typeof window.APP.recordCodeActivity === 'function') window.APP.recordCodeActivity();
   },
 
   currentQuizzes: [],

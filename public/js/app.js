@@ -151,6 +151,56 @@ window.APP = {
         </div>
       `).join('');
     }
+    this.updateDashboardStats();
+  },
+
+  updateDashboardStats() {
+    const student = (window.AUTH && window.AUTH.currentUser) || (window.APP_DATA && window.APP_DATA.student) || {};
+    const emailKey = student.email ? student.email.toLowerCase() : 'default_student';
+
+    // 1. GPA
+    const gpaStatEl = document.getElementById('dash-gpa-stat');
+    if (gpaStatEl) {
+      const gpa = typeof student.gpa === 'number' ? student.gpa : 0.00;
+      const scale = student.gpaScale || 5.00;
+      gpaStatEl.textContent = `${gpa.toFixed(2)} / ${scale.toFixed(2)}`;
+    }
+
+    // 2. Courses Count
+    const coursesStatEl = document.getElementById('dash-courses-count');
+    if (coursesStatEl && window.TRACKER) {
+      const count = (window.TRACKER.courses && window.TRACKER.courses.length) || 0;
+      coursesStatEl.textContent = `${count} مقرر${count > 2 && count < 11 ? 'ات' : ''}`;
+    }
+
+    // 3. Codes analyzed
+    const codesStatEl = document.getElementById('dash-codes-count');
+    if (codesStatEl) {
+      const count = parseInt(localStorage.getItem(`senad_codes_analyzed_${emailKey}`)) || (student.studentId === "441019284" ? 34 : 0);
+      codesStatEl.textContent = `${count} كود`;
+    }
+
+    // 4. XP
+    const xpStatEl = document.getElementById('dash-xp-stat');
+    if (xpStatEl && window.GAMIFICATION) {
+      xpStatEl.textContent = `${window.GAMIFICATION.xp} XP`;
+    }
+  },
+
+  recordCodeActivity() {
+    const student = (window.AUTH && window.AUTH.currentUser) || (window.APP_DATA && window.APP_DATA.student) || {};
+    const emailKey = student.email ? student.email.toLowerCase() : 'default_student';
+    let current = parseInt(localStorage.getItem(`senad_codes_analyzed_${emailKey}`)) || (student.studentId === "441019284" ? 34 : 0);
+    current++;
+    localStorage.setItem(`senad_codes_analyzed_${emailKey}`, String(current));
+    this.updateDashboardStats();
+  },
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
   },
 
   showToast(message, type = 'info') {

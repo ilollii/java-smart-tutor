@@ -18,7 +18,7 @@
 4. تتبع المواد: ساعده في تنظيم مواد البرمجة وحساب درجاته وتوزيعها عند الطلب.
 كن دائماً دقيقاً، داعماً، وابتعد عن التعقيد المفرط.`;
 
-  const RESPONSE_CHECK_PROMPT = `قبل الإجابة، اكتب ملخص تحقق قصيراً ومرئياً من ثلاث نقاط: المطلوب، القيود والحالات الخاصة، وكيف تحققت من صحة الإجابة. لا تعرض تفكيراً داخلياً مطولاً ولا تخترع معلومات، واذكر عدم اليقين إذا كانت المعطيات ناقصة. ثم قدم الإجابة النهائية بلغة المستخدم نفسها.`;
+  const RESPONSE_CHECK_PROMPT = `أجب مباشرة وبأسلوب تعليمي أكاديمي واضح وممتع بلغة المستخدم دون كتابة مسار تفكير داخلي أو ملخصات تحقق مسبقة.`;
 
   const API = {
     baseUrl: (function() {
@@ -427,17 +427,9 @@
     },
 
     addVerificationSummary(message, reply) {
-      if (!reply || reply.includes('التفكير والتحليل المنطقي') || reply.includes('Thinking & Reasoning') || reply.includes('تحليل مختصر قبل الإجابة') || reply.includes('Verification summary')) {
-        return reply;
-      }
-      const isArabic = /[\u0600-\u06FF]/.test(message || '');
-      let cleanQ = (message || '').trim();
-      if (cleanQ.length > 60) cleanQ = cleanQ.substring(0, 57) + "...";
-
-      const summary = isArabic
-        ? `> 🧠 **التفكير والتحليل المنطقي (Thinking & Reasoning):**\n> - **الهدف والمطلوب:** فهم وتوضيح [${cleanQ}] وتقديم إجابة منهجية متكاملة.\n> - **فحص القيود والحالات الخاصة:** فحص نوع المدخلات، القيود البرمجية، وتجنب الأخطاء الشائعة.\n> - **استراتيجية الحل والتحقق:** تفكيك المسألة خطوة بخطوة وتقديم شرح تحليلي مع أمثلة برمجية وتطبيقية.\n\n`
-        : `> 🧠 **Cognitive Thinking & Reasoning Process:**\n> - **Objective:** Address [${cleanQ}] with an optimal, rigorous solution.\n> - **Constraints & Edge Cases:** Validate parameters, boundary conditions, and complexity bounds.\n> - **Solution Strategy:** Break down the concept into structured logic with runnable code & verification.\n\n`;
-      return summary + reply;
+      if (!reply) return '';
+      // Strip any residual thinking headers if present
+      return reply.replace(/^\s*>\s*(?:🧠\s*)?\*\*(?:التفكير والتحليل|Thinking & Reasoning|Cognitive Thinking)[^*]*\*\*[\s\S]*?\n\n/i, '').trimStart();
     },
 
     /**

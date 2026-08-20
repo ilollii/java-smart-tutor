@@ -1628,19 +1628,13 @@ public class SmartTutorServer {
 
             String systemPrompt = "You are 'Senad AI - The Elite Smart University Programming & Academic Mentor' (سِنَاد - المعلم البرمجي والأكاديمي الذكي المتقدم لطلاب الجامعات وكليات علوم الحاسب).\n" +
                     "Your mission is to provide 100% ACCURATE, rigorously verified, production-grade solutions tailored precisely to what the student asks for.\n\n" +
-                    "MANDATORY THINKING & REASONING PROTOCOL:\n" +
-                    "Always begin your response with an explicit, structured cognitive thinking panel in blockquote format:\n" +
-                    "> 🧠 **التفكير والتحليل المنطقي (Thinking & Reasoning):**\n" +
-                    "> - **الهدف والمطلوب الدقيق:** [فهم وتفكيك السؤال المطلوب بدقة 100% وتحديد نواتج التعلم المستهدفة]\n" +
-                    "> - **فحص القيود والحالات الخاصة والتعقيد:** [فحص شروط المدخلات، الحدود، الحالات الشاذة (Edge Cases/Null/Negative/Overflow)، والتعقيد الزمني O(N) والمكاني]\n" +
-                    "> - **استراتيجية الحل والتحقق البرمجي:** [المنهجية العلمية والخطوات الدقيقة للحل والتحقق الرياضي والمنطقي من صحة الكود قبل تقديمه]\n\n" +
                     "CORE ANSWER STANDARDS (100% ACCURACY REQUIREMENT):\n" +
-                    "1. Provide a crystal-clear, masterclass academic explanation with formal theoretical depth and practical clarity.\n" +
+                    "1. Provide a crystal-clear, masterclass academic explanation with formal theoretical depth and practical clarity directly without any internal thought/reasoning prefixes or meta tags.\n" +
                     "2. If code is requested or relevant, provide complete, compilable, runnable code (Java 24 by default, or the requested language) in markdown code blocks with rich inline comments.\n" +
                     "3. Include a Line-by-Line breakdown of the most critical statements.\n" +
                     "4. Adhere strictly to clean code conventions (Meaningful naming, modular methods, exception handling).\n" +
                     "5. Include 1 checkpoint question (سؤال تحقق تفاعلي) at the very end to reinforce student retention.\n\n" +
-                    "CRITICAL: Always reply in the EXACT SAME LANGUAGE as the student's prompt (Arabic for Arabic, English for English).";
+                    "CRITICAL: Always reply in the EXACT SAME LANGUAGE as the student's prompt (Arabic for Arabic, English for English) directly without any thinking process headers.";
 
             if ("academic".equalsIgnoreCase(persona)) {
                 systemPrompt += "\nStyle: Academic, deep, rigorous with formal theoretical foundation.";
@@ -1667,24 +1661,9 @@ public class SmartTutorServer {
     }
 
     private static String addVerificationSummary(String question, String reply) {
-        if (reply == null || reply.isBlank() || reply.contains("التفكير والتحليل المنطقي") || reply.contains("Thinking & Reasoning") || reply.contains("تحليل مختصر قبل الإجابة") || reply.contains("Verification summary")) {
-            return reply;
-        }
-
-        boolean isArabic = question != null && question.matches(".*[\\u0600-\\u06FF].*");
-        String cleanQ = question != null ? question.trim() : "";
-        if (cleanQ.length() > 60) cleanQ = cleanQ.substring(0, 57) + "...";
-
-        if (isArabic) {
-            return "> 🧠 **التفكير والتحليل المنطقي (Thinking & Reasoning):**\n" +
-                    "> - **الهدف والمطلوب:** فهم وتوضيح [" + cleanQ + "] وتقديم إجابة منهجية متكاملة.\n" +
-                    "> - **فحص القيود والحالات الخاصة:** فحص نوع المدخلات، القيود البرمجية، وتجنب الأخطاء الشائعة.\n" +
-                    "> - **استراتيجية الحل والتحقق:** تفكيك المسألة خطوة بخطوة وتقديم شرح تحليلي مع أمثلة برمجية وتطبيقية.\n\n" + reply;
-        }
-        return "> 🧠 **Cognitive Thinking & Reasoning Process:**\n" +
-                "> - **Objective:** Address [" + cleanQ + "] with an optimal, rigorous solution.\n" +
-                "> - **Constraints & Edge Cases:** Validate parameters, boundary conditions, and complexity bounds.\n" +
-                "> - **Solution Strategy:** Break down the concept into structured logic with runnable code & verification.\n\n" + reply;
+        if (reply == null) return "";
+        // Strip any residual thinking headers if present
+        return reply.replaceAll("(?s)^\\s*>\\s*(?:🧠\\s*)?\\*\\*(?:التفكير والتحليل|Thinking & Reasoning|Cognitive Thinking)[^*]*\\*\\*.*?\\n\\n", "").stripLeading();
     }
 
     private static String generateLocalAcademicReply(String query) {
