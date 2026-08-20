@@ -1626,11 +1626,15 @@ public class SmartTutorServer {
                 model = "openai/gpt-4o-mini";
             }
 
-            String systemPrompt = "You are 'Senad AI - The Elite Smart University Programming & Academic Mentor' (سِنَاد - المعلم البرمجي والأكاديمي الذكي المتقدم لطلاب الجامعات وكليات علوم الحاسب).\n" +
-                    "Your mission is to provide 100% ACCURATE, rigorously verified, production-grade solutions tailored precisely to what the student asks for.\n\n" +
-                    "CORE ANSWER STANDARDS (100% ACCURACY REQUIREMENT):\n" +
+            String systemPrompt = "You are 'Senad AI - The Elite Smart University Programming & Java Mentor' (سِنَاد - المعلم البرمجي والأكاديمي الذكي المخصص حصرياً للغات البرمجة ولغة جافا لطلاب كليات علوم الحاسب وتقنية المعلومات).\n\n" +
+                    "STRICT DOMAIN SCOPE & RESTRICTION POLICY (CRITICAL MANDATE):\n" +
+                    "1. You are EXCLUSIVELY a programming, Java, coding, data structures, algorithms, and Computer Science academic assistant.\n" +
+                    "2. If the user asks about ANY topic outside of programming and Computer Science (such as English language grammar/rules/explanations, non-programming languages, general knowledge, history, cooking, medical advice, entertainment, politics, etc.), you MUST POLITELY APOLOGIZE and state clearly that you are an assistant specialized ONLY in programming languages and Java.\n" +
+                    "3. When declining non-programming requests in Arabic, use this tone: 'أعتذر منك يا بطل! 🙏 أنا **سِنَاد**، معلم أكاديمي ذكي مخصص حصرياً **للغات البرمجة ولغة جافا وعلوم الحاسب** ☕💻.\nيسعدني جداً مساعدتك في أي كود برمجي، خوارزمية، هياكل بيانات، أو مفاهيم برمجية. تفضل بسؤالي في أي موضوع برمجي وسأجيبك فوراً! 🚀'\n" +
+                    "4. When declining non-programming requests in English, use: 'I apologize! 🙏 I am **Senad AI**, an academic mentor dedicated **exclusively to Programming Languages, Java, and Computer Science** ☕💻.\nI would be delighted to assist you with any coding questions, algorithms, or computer science concepts. Please feel free to ask any programming-related question! 🚀'\n\n" +
+                    "CORE ANSWER STANDARDS FOR PROGRAMMING QUESTIONS (100% ACCURACY REQUIREMENT):\n" +
                     "1. Provide a crystal-clear, masterclass academic explanation with formal theoretical depth and practical clarity directly without any internal thought/reasoning prefixes or meta tags.\n" +
-                    "2. If code is requested or relevant, provide complete, compilable, runnable code (Java 24 by default, or the requested language) in markdown code blocks with rich inline comments.\n" +
+                    "2. If code is requested or relevant, provide complete, compilable, runnable code (Java 24 by default, or the requested programming language) in markdown code blocks with rich inline comments.\n" +
                     "3. Include a Line-by-Line breakdown of the most critical statements.\n" +
                     "4. Adhere strictly to clean code conventions (Meaningful naming, modular methods, exception handling).\n" +
                     "5. Include 1 checkpoint question (سؤال تحقق تفاعلي) at the very end to reinforce student retention.\n\n" +
@@ -2499,31 +2503,28 @@ public class SmartTutorServer {
                    "💡 يمكنك الانتقال لتبويب **\"حاسبة المعدل\"** في القائمة لإدخال موادك ومتابعة رسمك البياني فورياً!";
         }
 
-        // 16. Universal Multi-Domain Fact & Conceptual Synthesizer (NO FAKE JAVA CLASS)
-        String cleanSubject = query.replaceAll("[؟?؟!]", "").trim();
-        String displaySubject = cleanSubject.length() > 60 ? cleanSubject.substring(0, 60) + "..." : cleanSubject;
-
+        // 16. Strict Domain Scope Refusal for Non-Programming Queries (e.g. English explanations, general topics)
         if (isEng) {
-            return "### 💡 Academic & Conceptual Guide: " + displaySubject + "\n\n" +
-                   "Here is a clear and structured answer regarding **\"" + displaySubject + "\"**:\n\n" +
-                   "1. **Core Concept**: **" + cleanSubject + "** involves understanding fundamental principles, best practices, and systematic approaches to achieve optimal results.\n" +
-                   "2. **Key Guidelines**:\n" +
-                   "   - **Clarity**: Define clear objectives and verify constraints before starting.\n" +
-                   "   - **Structure**: Break complex problems into organized, logical stages.\n" +
-                   "   - **Verification**: Test edge cases and validate outcomes thoroughly.\n" +
-                   "3. **Practical Tip**: In academic and professional work, always adhere to clean standards and continuous testing.\n\n" +
-                   "🎯 *Feel free to ask for a specific code implementation, step-by-step tutorial, or detailed exam questions!* 🚀";
+            return "### ☕ Senad AI Scope & Specialty\n\n" +
+                   "I apologize! 🙏 I am **Senad AI**, an academic mentor dedicated **exclusively to Programming Languages, Java, and Computer Science** 💻.\n\n" +
+                   "I specialize only in computing topics and cannot provide tutoring for non-programming subjects (such as English language grammar, history, cooking, or general non-technical topics).\n\n" +
+                   "💡 **I am delighted to help you with:**\n" +
+                   "- ☕ **Java & OOP Mastery**: Inheritance, Polymorphism, Encapsulation, Generics, Collections, and Streams.\n" +
+                   "- 💻 **Coding & Debugging**: Writing, tracing, fixing, and optimizing code in Java, Python, C++, SQL, Web.\n" +
+                   "- 🔍 **Data Structures & Algorithms**: Linked Lists, Trees, Stacks, Queues, Graphs, Sorting, Dynamic Programming.\n" +
+                   "- 📝 **University Exam Prep**: Midterm/Final mock exams, Code Output Tracing, and Slide summaries.\n\n" +
+                   "🎯 *Please feel free to ask any programming or Java question, and I will be happy to solve and explain it for you!* 🚀";
         }
 
-        return "### 💡 إجابة المعلم الأكاديمي سِنَاد عن: " + displaySubject + "\n\n" +
-               "إليك الإجابة والشرح المنظم والدقيق حول **\"" + displaySubject + "\"**:\n\n" +
-               "1. **المفهوم والأساس**: يرتبط **" + cleanSubject + "** باتباع منهجية دقيقة ومنظمة لتحقيق الفهم الشامل وتطبيق أفضل المعايير الأكاديمية والعملية.\n" +
-               "2. **أهم النقاط والقواعد**:\n" +
-               "   - **الوضوح والتركيز**: تحديد الأهداف الأساسية وفهم المتطلبات بدقة.\n" +
-               "   - **التطبيق المنطقي**: تقسيم الموضوع إلى خطوات متسلسلة يسهل التعامل معها ومراجعتها.\n" +
-               "   - **المراجعة والتحقق**: فحص التفاصيل والتأكد من صحة النتائج.\n" +
-               "3. **نصيحة عملية**: احرص دائماً على الممارسة والتطبيق العملي لترسيخ المعلومة في دراستك ومشاريعك.\n\n" +
-               "🎯 *إذا كنت ترغب في كود برمجي محدد، أو مسألة اختبارية، أو شرح تفصيلي إضافي، أخبرني فوراً وسأقدمه لك!* 🚀";
+        return "### ☕ نطاق واختصاص منصة سِنَاد (Senad AI)\n\n" +
+               "أعتذر منك يا بطل! 🙏 أنا **سِنَاد**، معلم أكاديمي وذكي مخصص ومبرمج حصرياً **للغات البرمجة، ولغة جافا، ومناهج علوم الحاسب وتقنية المعلومات** 💻.\n\n" +
+               "لذلك أعتذر عن الإجابة على أي استفسارات خارج مجال البرمجة والحاسب (مثل: شرح وقواعد اللغة الإنجليزية، الموضوعات العامة، التاريخ، الطبخ، وغيرها).\n\n" +
+               "💡 **يسعدني ويشرفني دائماً مساعدتك في كل ما يتعلق بالبرمجة:**\n" +
+               "- ☕ **لغة جافا والبرمجة الكائنية (OOP)**: الكلاسات، الوراثة، تعدد الأشكال (Polymorphism)، والواجهات (Interfaces).\n" +
+               "- 💻 **كتابة وتصحيح الأكواد البرمجية**: بلغة Java، Python، C++، SQL، وتطوير المواقع والأنظمة.\n" +
+               "- 🔍 **الخوارزميات وهياكل البيانات**: الأشجار (Trees)، المكدس (Stack)، الطابور (Queue)، والبحث والترتيب.\n" +
+               "- 📝 **الاستعداد للاختبارات الجامعية**: حل المسائل، تتبع مخرجات الكود (Tracing)، وتلخيص سلايدات المواد.\n\n" +
+               "🎯 *تفضل بسؤالي في أي موضوع أو مسألة برمجية وسأشرحها وأكتب لك الكود فوراً!* 🚀";
     }
 
     // --- GenAI UML Diagram Generator Handler ---

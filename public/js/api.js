@@ -10,13 +10,13 @@
   const FALLBACK_MODEL = "gemini-2.0-flash";
   const VISION_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
 
-  const SYSTEM_PERSONA_PROMPT = `أنت "سِنَاد Senad - المعلم البرمجي الجامعي الذكي"، مساعد أكاديمي افتراضي تفاعلي مخصص لطلاب علوم الحاسب ونظم المعلومات في جامعة الإمام محمد بن سعود الإسلامية (الفئة العمرية 19-26 سنة).
+  const SYSTEM_PERSONA_PROMPT = `أنت "سِنَاد Senad - المعلم البرمجي والأكاديمي الذكي"، مساعد أكاديمي تفاعلي مخصص حصرياً للغات البرمجة، ولغة جافا، وعلوم الحاسب لطلاب الجامعات.
+قاعدة التخصص الصارمة (إلزامية):
+أنت مخصص حصرياً للبرمجة وكتابة الأكواد ومناهج علوم الحاسب. إذا سألك المستخدم عن أي موضوع خارج البرمجة ولغة جافا (مثل شرح وقواعد اللغة الإنجليزية، الموضوعات العامة، التاريخ، الطبخ، إلخ)، يجب أن تعتذر بلطف وتوضح أنك مساعد مخصص فقط للغات البرمجة ولغة جافا، وترشده لسؤالك في أي موضوع برمجي.
 مهامك الأساسية:
-1. تحليل أكواد جافا (Java): عندما يرسل المستخدم كوداً أو سؤالاً برمجياً، قم بتحليله وشرحه بالتفصيل المفيد سطر بسطر، ثم اطرح 2-3 أسئلة اختبارية (Quizzes) تختبر فهمه وانتظر إجابته لتقييمها وتصحيحها بأسلوب مشجع.
-2. المذاكرة الذكية: إذا أرسل المستخدم ملفات أو صور سلايدات، قم بتبسيط المفهوم، استخراج النقاط الهامة، وصياغة أسئلة متوقعة للاختبارات.
-3. الدعم عبر الشات: تحدث بلغة عربية بيضاء مريحة، ودودة، ومحترفة، وتفاعل كصديق وموجه أكاديمي ذكي.
-4. تتبع المواد: ساعده في تنظيم مواد البرمجة وحساب درجاته وتوزيعها عند الطلب.
-كن دائماً دقيقاً، داعماً، وابتعد عن التعقيد المفرط.`;
+1. تحليل وشرح أكواد جافا (Java) ولغات البرمجة بالتفصيل سطر بسطر.
+2. المذاكرة الذكية وحل مسائل الاختبارات والخوارزميات وهياكل البيانات.
+3. الدعم عبر الشات بلغة واضحة وممتعة ومحترفة تركز على البرمجة.`;
 
   const RESPONSE_CHECK_PROMPT = `أجب مباشرة وبأسلوب تعليمي أكاديمي واضح وممتع بلغة المستخدم دون كتابة مسار تفكير داخلي أو ملخصات تحقق مسبقة.`;
 
@@ -1090,31 +1090,28 @@
         return `### 📊 طريقة حساب المعدل الفصلي والتراكمي (السلم السعودي 5.00)\n\nالمعدل = **مجموع (نقاط المادة × عدد ساعاتها) ÷ إجمالي عدد الساعات المسجلة**\n\n#### 🎯 سلم النقاط:\n- **A+ (ممتاز مرتفع 95-100)**: 5.00 نقاط\n- **A (ممتاز 90-94)**: 4.75 نقطة\n- **B+ (جيد جداً مرتفع 85-89)**: 4.50 نقطة\n- **B (جيد جداً 80-84)**: 4.00 نقاط\n- **C+ (جيد مرتفع 75-79)**: 3.50 نقطة\n- **C (جيد 70-74)**: 3.00 نقاط\n- **D+ (مقبول مرتفع 65-69)**: 2.50 نقطة\n- **D (مقبول 60-64)**: 2.00 نقطة\n- **F (راسب <60)**: 1.00 / 0.00`;
       }
 
-      // 16. Universal Multi-Domain Fact & Conceptual Synthesizer (NO FAKE JAVA CLASS)
-      const cleanSubject = message.replace(/[؟?؟!]/g, '').trim();
-      const displaySubject = cleanSubject.length > 60 ? cleanSubject.substring(0, 60) + '...' : cleanSubject;
-
+      // 16. Strict Domain Scope Refusal for Non-Programming Queries
       if (isEng) {
-        return `### 💡 Academic & Conceptual Guide: ${displaySubject}\n\n` +
-               `Here is a clear and structured answer regarding **"${displaySubject}"**:\n\n` +
-               `1. **Core Concept**: **${cleanSubject}** involves understanding fundamental principles, best practices, and systematic approaches to achieve optimal results.\n` +
-               `2. **Key Guidelines**:\n` +
-               `   - **Clarity**: Define clear objectives and verify constraints before starting.\n` +
-               `   - **Structure**: Break complex problems into organized, logical stages.\n` +
-               `   - **Verification**: Test edge cases and validate outcomes thoroughly.\n` +
-               `3. **Practical Tip**: In academic and professional work, always adhere to clean standards and continuous testing.\n\n` +
-               `🎯 *Feel free to ask for a specific code implementation, step-by-step tutorial, or detailed exam questions!* 🚀`;
+        return `### ☕ Senad AI Scope & Specialty\n\n` +
+               `I apologize! 🙏 I am **Senad AI**, an academic mentor dedicated **exclusively to Programming Languages, Java, and Computer Science** 💻.\n\n` +
+               `I specialize strictly in computing topics and cannot provide answers for non-programming subjects (such as English language grammar, history, cooking, or general non-technical topics).\n\n` +
+               `💡 **I am delighted to help you with:**\n` +
+               `- ☕ **Java & OOP Mastery**: Classes, Inheritance, Polymorphism, Interfaces, Collections, and Streams.\n` +
+               `- 💻 **Coding & Debugging**: Writing, tracing, fixing, and optimizing code in Java, Python, C++, SQL, Web.\n` +
+               `- 🔍 **Data Structures & Algorithms**: Linked Lists, Trees, Stacks, Queues, Graphs, Sorting, Dynamic Programming.\n` +
+               `- 📝 **University Exam Prep**: Midterm/Final mock exams, Code Output Tracing, and Slide summaries.\n\n` +
+               `🎯 *Please feel free to ask any programming or Java question, and I will be happy to solve and explain it for you!* 🚀`;
       }
 
-      return `### 💡 إجابة المعلم الأكاديمي سِنَاد عن: ${displaySubject}\n\n` +
-             `إليك الإجابة والشرح المنظم والدقيق حول **"${displaySubject}"**:\n\n` +
-             `1. **المفهوم والأساس**: يرتبط **${cleanSubject}** باتباع منهجية دقيقة ومنظمة لتحقيق الفهم الشامل وتطبيق أفضل المعايير الأكاديمية والعملية.\n` +
-             `2. **أهم النقاط والقواعد**:\n` +
-             `   - **الوضوح والتركيز**: تحديد الأهداف الأساسية وفهم المتطلبات بدقة.\n` +
-             `   - **التطبيق المنطقي**: تقسيم الموضوع إلى خطوات متسلسلة يسهل التعامل معها ومراجعتها.\n` +
-             `   - **المراجعة والتحقق**: فحص التفاصيل والتأكد من صحة النتائج.\n` +
-             `3. **نصيحة عملية**: احرص دائماً على الممارسة والتطبيق العملي لترسيخ المعلومة في دراستك ومشاريعك.\n\n` +
-             `🎯 *إذا كنت ترغب في كود برمجي محدد، أو مسألة اختبارية، أو شرح تفصيلي إضافي، أخبرني فوراً وسأقدمه لك!* 🚀`;
+      return `### ☕ نطاق واختصاص منصة سِنَاد (Senad AI)\n\n` +
+             `أعتذر منك يا بطل! 🙏 أنا **سِنَاد**، معلم أكاديمي وذكي مخصص ومبرمج حصرياً **للغات البرمجة، ولغة جافا، ومناهج علوم الحاسب وتقنية المعلومات** 💻.\n\n` +
+             `لذلك أعتذر عن الإجابة على أي استفسارات خارج مجال البرمجة والحاسب (مثل: شرح وقواعد اللغة الإنجليزية، الموضوعات العامة، التاريخ، الطبخ، وغيرها).\n\n` +
+             `💡 **يسعدني ويشرفني دائماً مساعدتك في كل ما يتعلق بالبرمجة:**\n` +
+             `- ☕ **لغة جافا والبرمجة الكائنية (OOP)**: الكلاسات، الوراثة، تعدد الأشكال (Polymorphism)، والواجهات (Interfaces).\n` +
+             `- 💻 **كتابة وتصحيح الأكواد البرمجية**: بلغة Java، Python، C++، SQL، وتطوير المواقع والأنظمة.\n` +
+             `- 🔍 **الخوارزميات وهياكل البيانات**: الأشجار (Trees)، المكدس (Stack)، الطابور (Queue)، والبحث والترتيب.\n` +
+             `- 📝 **الاستعداد للاختبارات الجامعية**: حل المسائل، تتبع مخرجات الكود (Tracing)، وتلخيص سلايدات المواد.\n\n` +
+             `🎯 *تفضل بسؤالي في أي موضوع أو مسألة برمجية وسأشرحها وأكتب لك الكود فوراً!* 🚀`;
     }
   };
 
