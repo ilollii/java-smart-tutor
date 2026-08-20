@@ -543,11 +543,11 @@ SUMMARY|1|${ch.testCases.length}
         <td style="padding: 10px 14px;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <div style="width: 28px; height: 28px; border-radius: 50%; background: ${item.isUser ? 'linear-gradient(135deg, #10b981, #6366f1)' : '#334155'}; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-weight: 700;">
-              ${item.name.charAt(0)}
+              ${this.escapeHtml(item.name.charAt(0))}
             </div>
             <div>
-              <div style="color: #fff;">${item.name}</div>
-              <span style="font-size: 10px; color: #818cf8; background: rgba(99,102,241,0.12); padding: 1px 5px; border-radius: 4px;">${item.badge}</span>
+              <div style="color: #fff;">${this.escapeHtml(item.name)}</div>
+              <span style="font-size: 10px; color: #818cf8; background: rgba(99,102,241,0.12); padding: 1px 5px; border-radius: 4px;">${this.escapeHtml(item.badge)}</span>
             </div>
           </div>
         </td>

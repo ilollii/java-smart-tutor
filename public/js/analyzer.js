@@ -145,6 +145,13 @@ window.ANALYZER = {
     if (window.APP) window.APP.showToast(`تم تحميل نموذج (${sample.title}) لتجربته!`, 'info');
   },
 
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
+  },
+
   renderVariablesState(vars) {
     const container = document.getElementById('step-variables-container');
     if (!container) return;
@@ -156,8 +163,8 @@ window.ANALYZER = {
 
     container.innerHTML = vars.map(v => `
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); font-size: 12px; font-family: var(--font-code); border-left: 3px solid var(--primary);">
-        <span style="color: #38bdf8;">${v.name} <span style="font-size: 10px; color: var(--text-dim);">(${v.type})</span></span>
-        <span style="color: #a7f3d0; font-weight: 700;">${v.val}</span>
+        <span style="color: #38bdf8;">${this.escapeHtml(v.name)} <span style="font-size: 10px; color: var(--text-dim);">(${this.escapeHtml(v.type)})</span></span>
+        <span style="color: #a7f3d0; font-weight: 700;">${this.escapeHtml(v.val)}</span>
       </div>
     `).join('');
   },

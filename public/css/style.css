@@ -1692,21 +1692,34 @@ html, body {
 .toast.warning { border-left: 4px solid var(--warning); }
 .toast.danger { border-left: 4px solid var(--danger); }
 .toast.info { border-left: 4px solid var(--info); }
+/* Responsive Base Elements */
+.mobile-toggle-btn {
+  display: none;
+  font-size: 18px;
+}
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
-  .content-area {
-    padding: 14px;
-  }
-  .top-header {
-    padding: 0 14px;
-  }
-  .hero-banner {
-    padding: 20px;
-  }
+.brand-container-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 17, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 95;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ==========================================================================
@@ -2259,5 +2272,356 @@ html, body {
   font-size: 11px;
   font-weight: 700;
 }
+
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE DESIGN SYSTEM (Multi-Device Adaptability)
+   Breakpoints: Desktop (>1024px), Tablet (769px-1024px), Mobile (<768px), Small (<480px)
+   ========================================================================== */
+
+/* 1. Large Tablets & Small Laptops (<= 1200px) */
+@media (max-width: 1200px) {
+  .hero-title {
+    font-size: 22px;
+  }
+  .gpa-hero-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+  .command-palette-trigger {
+    min-width: 160px;
+  }
+}
+
+/* 2. Tablets & Medium Screens (<= 1024px) */
+@media (max-width: 1024px) {
+  .mobile-toggle-btn {
+    display: inline-flex !important;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+  }
+
+  /* Off-canvas Navigation Drawer for Arabic RTL */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 290px;
+    max-width: 85vw;
+    height: 100vh;
+    z-index: 100;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-glow);
+    box-shadow: -8px 0 35px rgba(0, 0, 0, 0.7);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    padding-top: 24px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .content-area {
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+
+  /* Grid Stack Reorganization */
+  .analyzer-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+}
+
+/* 3. Mobile Phones & Phablets (<= 768px) */
+@media (max-width: 768px) {
+  .top-header {
+    height: 64px;
+    padding: 0 12px;
+  }
+
+  .brand-subtext {
+    display: none !important;
+  }
+
+  .brand-text h1 {
+    font-size: 15px;
+  }
+
+  .brand-badge {
+    display: none;
+  }
+
+  .brand-logo-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .brand-logo-icon::after {
+    display: none;
+  }
+
+  /* Compact Command Palette Launcher */
+  .cmd-trigger-kbd,
+  .cmd-trigger-text {
+    display: none !important;
+  }
+
+  .command-palette-trigger {
+    padding: 8px 10px;
+    min-width: auto;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Compact XP & Streak Pills */
+  .header-streak-pill,
+  .header-xp-pill {
+    padding: 4px 8px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .header-streak-pill span,
+  .header-xp-pill span {
+    font-size: 11px;
+  }
+
+  /* Profile Pill Compact */
+  .user-info {
+    display: none !important;
+  }
+
+  .user-profile-btn {
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  /* Hero Banner */
+  .hero-banner {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-size: 19px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .hero-desc {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+
+  .stat-card-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+
+  /* Glass Panels & Workspace */
+  .glass-panel {
+    padding: 16px 14px;
+    margin-bottom: 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .glass-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+  }
+
+  .panel-title {
+    font-size: 16px;
+  }
+
+  /* Code Editor Tools & Body */
+  .code-editor-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .code-tabs {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .code-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .code-editor-body {
+    min-height: 280px;
+  }
+
+  .code-textarea {
+    font-size: 12px;
+    padding: 12px 10px;
+  }
+
+  .line-numbers {
+    padding: 12px 6px;
+    font-size: 12px;
+  }
+
+  /* Chatbot Interface */
+  .chat-container {
+    height: calc(100vh - 170px);
+    min-height: 480px;
+  }
+
+  .chat-messages {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .chat-bubble {
+    max-width: 94%;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .chat-suggestion-chips {
+    padding: 8px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chat-chip {
+    padding: 5px 11px;
+    font-size: 11px;
+  }
+
+  .chat-input-row {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  /* Login / SSO Gateway */
+  .login-card-container {
+    padding: 24px 18px;
+    border-radius: var(--radius-md);
+  }
+
+  .login-brand-header h2 {
+    font-size: 18px;
+  }
+
+  .login-univ-crest {
+    width: 54px;
+    height: 54px;
+    font-size: 24px;
+  }
+
+  /* Modals */
+  .modal-box {
+    padding: 18px 16px;
+    max-width: 95vw;
+  }
+
+  /* Floating Toast System */
+  #toast-container {
+    left: 12px;
+    right: 12px;
+    bottom: 16px;
+  }
+
+  .toast {
+    min-width: 0;
+    width: 100%;
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+}
+
+/* 4. Extra Small Screens & Foldables (<= 480px) */
+@media (max-width: 480px) {
+  .top-header {
+    height: 58px;
+    padding: 0 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 14px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header-streak-pill {
+    display: none;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .login-tab-btn {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .course-table th,
+  .course-table td {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+}
+
 
 

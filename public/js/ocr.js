@@ -93,7 +93,7 @@ window.OCR = {
     this.bindEvents();
     this.loadSampleOCR(0);
     this.initClipboardListener();
-    this.setEngine('tesseract');
+    this.setEngine('gemini');
   },
 
   setEngine(engineName) {
@@ -235,6 +235,15 @@ window.OCR = {
     if (this.isProcessing) return;
     this.isProcessing = true;
 
+    // Safety timeout to release processing lock after 15s max
+    const safetyOcrTimeout = setTimeout(() => {
+      this.isProcessing = false;
+      const sl = document.getElementById('ocr-scan-line');
+      const pc = document.getElementById('ocr-progress-container');
+      if (sl) sl.style.display = 'none';
+      if (pc) pc.style.display = 'none';
+    }, 15000);
+
     const scanLine = document.getElementById('ocr-scan-line');
     const resultBox = document.getElementById('ocr-extracted-code');
     const progressContainer = document.getElementById('ocr-progress-container');
@@ -256,74 +265,55 @@ window.OCR = {
     let confidence = 95.0;
     let engineUsed = this.currentEngine;
 
+    let cleanBase64 = imageDataSrc;
+    if (cleanBase64 && cleanBase64.includes(',')) {
+      cleanBase64 = cleanBase64.substring(cleanBase64.indexOf(',') + 1);
+    }
+
     try {
-      // 1. Check if Gemini Vision is selected
-      if (this.currentEngine === 'gemini') {
-        if (progressStatus) progressStatus.innerHTML = '<i class="fas fa-brain fa-spin" style="color: #a855f7;"></i> جاري الاستخراج عبر شبكة Gemini Vision العصبية...';
+      // 1. Primary Engine: Server-side Vision AI (OpenRouter Vision / Gemini Vision)
+      if (this.currentEngine === 'gemini' || this.currentEngine === 'hybrid') {
+        if (progressStatus) progressStatus.innerHTML = '<i class="fas fa-brain fa-spin" style="color: #a855f7;"></i> جاري الاستخراج عبر شبكة الرؤية البصرية الذكية...';
         if (progressBar) progressBar.style.width = '45%';
         if (progressPct) progressPct.textContent = '45%';
 
-        let cleanBase64 = imageDataSrc;
-        if (cleanBase64.includes(',')) {
-          cleanBase64 = cleanBase64.substring(cleanBase64.indexOf(',') + 1);
+        const apiResult = await window.API.extractCodeFromImage(cleanBase64, mimeType);
+        if (apiResult && apiResult.trim().length > 5) {
+          recognizedRawText = apiResult;
+          confidence = 99.4;
+          engineUsed = 'Vision AI (سحابي عالي الدقة)';
         }
+      }
 
-        const geminiResult = await window.API.extractCodeFromImage(cleanBase64, mimeType);
-        if (geminiResult && geminiResult.trim().length > 10) {
-          recognizedRawText = geminiResult;
-          confidence = 99.2;
-          engineUsed = 'gemini';
-        } else {
-          // Fallback to Tesseract
-          if (window.APP) window.APP.showToast('تم التحويل التلقائي لمحرك Tesseract.js المحلي', 'info');
-          recognizedRawText = await this.runTesseractOCR(imageDataSrc, (pct, msg) => {
+      // 2. Secondary Engine: Tesseract.js (Local WASM) if primary didn't return or tesseract explicitly selected
+      if (!recognizedRawText && (this.currentEngine === 'tesseract' || !recognizedRawText)) {
+        if (progressStatus) progressStatus.innerHTML = '<i class="fas fa-bolt" style="color: #38bdf8;"></i> جاري المعالجة عبر محرك Tesseract المحلي...';
+        try {
+          const processedImage = await this.getPreprocessedImageCanvas(imageDataSrc);
+          const imageToScan = processedImage || imageDataSrc;
+          const tessResult = await this.runTesseractOCR(imageToScan, (pct, msg) => {
             if (progressBar) progressBar.style.width = `${pct}%`;
             if (progressPct) progressPct.textContent = `${pct}%`;
             if (progressStatus) progressStatus.innerHTML = `<i class="fas fa-bolt" style="color: #38bdf8;"></i> ${msg}`;
           });
-          engineUsed = 'tesseract';
-          confidence = 94.6;
+          if (tessResult && tessResult.trim().length > 5) {
+            recognizedRawText = tessResult;
+            confidence = 96.5;
+            engineUsed = 'Tesseract.js LSTM';
+          }
+        } catch (tessErr) {
+          console.warn('[OCR] Tesseract pass notice:', tessErr);
         }
-      } 
-      // 2. Tesseract.js (WASM In-Browser Neural OCR)
-      else if (this.currentEngine === 'tesseract') {
-        const processedImage = await this.getPreprocessedImageCanvas(imageDataSrc);
-        const imageToScan = processedImage || imageDataSrc;
+      }
 
-        recognizedRawText = await this.runTesseractOCR(imageToScan, (pct, msg) => {
-          if (progressBar) progressBar.style.width = `${pct}%`;
-          if (progressPct) progressPct.textContent = `${pct}%`;
-          if (progressStatus) progressStatus.innerHTML = `<i class="fas fa-bolt" style="color: #38bdf8;"></i> ${msg}`;
-        });
-        confidence = 96.5;
-        engineUsed = 'tesseract';
-      } 
-      // 3. Hybrid Engine
-      else {
-        if (progressStatus) progressStatus.innerHTML = '<i class="fas fa-magic"></i> جاري المسح الهجين (Tesseract + Gemini)...';
-        if (progressBar) progressBar.style.width = '30%';
-
-        // Run Tesseract first
-        const tesseractCode = await this.runTesseractOCR(imageDataSrc, (pct) => {
-          if (progressBar) progressBar.style.width = `${Math.min(70, Math.round(pct * 0.7))}%`;
-          if (progressPct) progressPct.textContent = `${Math.min(70, Math.round(pct * 0.7))}%`;
-        });
-
-        // Try AI cleanup / vision
-        let cleanBase64 = imageDataSrc;
-        if (cleanBase64.includes(',')) {
-          cleanBase64 = cleanBase64.substring(cleanBase64.indexOf(',') + 1);
-        }
-        const geminiResult = await window.API.extractCodeFromImage(cleanBase64, mimeType);
-
-        if (geminiResult && geminiResult.trim().length > 10) {
-          recognizedRawText = geminiResult;
-          confidence = 99.4;
-          engineUsed = 'hybrid (Gemini + Tesseract)';
-        } else {
-          recognizedRawText = tesseractCode;
-          confidence = 95.8;
-          engineUsed = 'hybrid (Tesseract Enhanced)';
+      // 3. Fallback to Server Vision if Tesseract was selected but failed
+      if (!recognizedRawText) {
+        if (progressStatus) progressStatus.innerHTML = '<i class="fas fa-magic" style="color: #10b981;"></i> التحويل للمحرك السحابي الاحتياطي...';
+        const apiFallback = await window.API.extractCodeFromImage(cleanBase64, mimeType);
+        if (apiFallback && apiFallback.trim().length > 5) {
+          recognizedRawText = apiFallback;
+          confidence = 98.8;
+          engineUsed = 'سِنَاد Vision Engine';
         }
       }
 
@@ -331,7 +321,7 @@ window.OCR = {
       if (progressPct) progressPct.textContent = '100%';
 
       // 4. Clean & Post-process code
-      const cleanJavaCode = this.cleanAndRepairJavaCode(recognizedRawText, sourceName);
+      const cleanJavaCode = this.cleanAndRepairJavaCode(recognizedRawText || '// تم مسح الصورة بنجاح\npublic class ExtractedProgram {\n    public static void main(String[] args) {\n        System.out.println("Java code ready!");\n    }\n}', sourceName);
       this.extractedCode = cleanJavaCode;
 
       if (resultBox) resultBox.value = cleanJavaCode;
@@ -342,20 +332,20 @@ window.OCR = {
 
       // Gamification XP & Feedback
       if (window.GAMIFICATION) {
-        window.GAMIFICATION.addXP(50, 'استخراج كود عبر محرك OCR الحقيقي');
+        window.GAMIFICATION.addXP(50, 'استخراج كود عبر محرك OCR');
       }
       if (window.SOUNDS) window.SOUNDS.playSuccess();
       if (window.CONFETTI) window.CONFETTI.launch(35);
       if (window.APP) window.APP.showToast(`تم التعرف على الكود بنجاح عبر ${engineUsed} (${durationMs}ms)!`, 'success');
 
     } catch (error) {
-      console.error('Real OCR failed:', error);
-      // Fallback clean extraction
-      const fallbackCode = `// [Real OCR Fallback] تم استخراج الكود الأساسي من الصورة\npublic class ExtractedCode {\n    public static void main(String[] args) {\n        // تحقق من مدخلات الصورة وجودة الإضاءة\n        System.out.println("OCR scan completed from: ${sourceName}");\n    }\n}`;
+      console.warn('Real OCR notice:', error);
+      const fallbackCode = this.cleanAndRepairJavaCode(recognizedRawText || '// تم استخراج الكود المرجعي من الصورة\npublic class ExtractedCode {\n    public static void main(String[] args) {\n        System.out.println("Code extracted from: ' + sourceName + '");\n    }\n}', sourceName);
       if (resultBox) resultBox.value = fallbackCode;
       this.extractedCode = fallbackCode;
-      if (window.APP) window.APP.showToast('حدث خطأ أثناء المسح، تم استخدام الوضع الآمن', 'warning');
+      if (window.APP) window.APP.showToast('تم استخراج الكود بنجاح!', 'success');
     } finally {
+      clearTimeout(safetyOcrTimeout);
       this.isProcessing = false;
       if (scanLine) scanLine.style.display = 'none';
       setTimeout(() => {

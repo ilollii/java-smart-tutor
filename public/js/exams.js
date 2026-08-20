@@ -258,8 +258,8 @@ System.out.println(sum);`,
       <div class="exam-question-box" style="background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 14px;">
           <div>
-            <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;">السؤال ${idx + 1} (${q.sectionTitle})</span>
-            <div style="font-weight: 700; font-size: 15px; margin-top: 6px; color: #fff;">${q.prompt}</div>
+            <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;">السؤال ${idx + 1} (${this.escapeHtml(q.sectionTitle)})</span>
+            <div style="font-weight: 700; font-size: 15px; margin-top: 6px; color: #fff;">${this.escapeHtml(q.prompt)}</div>
           </div>
           <div style="font-weight: 700; font-size: 13px; color: #fbbf24;">${q.points} درجات</div>
         </div>
@@ -274,7 +274,7 @@ System.out.println(sum);`,
         ${q.expectedOutput ? `
           <div style="margin-top: 10px;">
             <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">اكتب ناتج المخرجات المتوقعة في الكونسول (Output):</label>
-            <input type="text" id="ans-${q.id}" class="form-input" placeholder="مثال: 2 4 4" style="font-family: var(--font-code); direction: ltr;" onchange="window.EXAMS.recordAnswer('${q.id}', this.value)">
+            <input type="text" id="ans-${this.escapeHtml(q.id)}" class="form-input" placeholder="مثال: 2 4 4" style="font-family: var(--font-code); direction: ltr;" onchange="window.EXAMS.recordAnswer('${this.escapeHtml(q.id)}', this.value)">
           </div>
         ` : ''}
 
@@ -282,8 +282,8 @@ System.out.println(sum);`,
           <div style="display: grid; gap: 8px; margin-top: 10px;">
             ${q.options.map((opt, optIdx) => `
               <label style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.06);">
-                <input type="radio" name="ans-${q.id}" value="${optIdx}" onchange="window.EXAMS.recordAnswer('${q.id}', ${optIdx})">
-                <span style="font-size: 13px; color: #e2e8f0;">${opt}</span>
+                <input type="radio" name="ans-${this.escapeHtml(q.id)}" value="${optIdx}" onchange="window.EXAMS.recordAnswer('${this.escapeHtml(q.id)}', ${optIdx})">
+                <span style="font-size: 13px; color: #e2e8f0;">${this.escapeHtml(opt)}</span>
               </label>
             `).join('')}
           </div>
@@ -292,7 +292,7 @@ System.out.println(sum);`,
         ${q.starterCode ? `
           <div style="margin-top: 10px;">
             <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">محرر كتابة الكود البرمجي (Java Solution):</label>
-            <textarea id="ans-${q.id}" class="form-textarea" style="font-family: var(--font-code); direction: ltr; min-height: 120px; font-size: 13px;" onchange="window.EXAMS.recordAnswer('${q.id}', this.value)">${q.starterCode}</textarea>
+            <textarea id="ans-${this.escapeHtml(q.id)}" class="form-textarea" style="font-family: var(--font-code); direction: ltr; min-height: 120px; font-size: 13px;" onchange="window.EXAMS.recordAnswer('${this.escapeHtml(q.id)}', this.value)">${this.escapeHtml(q.starterCode)}</textarea>
           </div>
         ` : ''}
       </div>

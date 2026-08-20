@@ -25,7 +25,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
 
   <!-- Custom Design System CSS -->
-  <link rel="stylesheet" href="css/style.css?v=2026.2">
+  <link rel="stylesheet" href="css/style.css?v=2026.responsive.final">
 </head>
 <body>
 
@@ -49,31 +49,21 @@
         <p>المنصة الذكية لتعليم البرمجة لطلاب كليات علوم الحاسب وتقنية المعلومات</p>
       </div>
 
-      <!-- Tab Switcher -->
-      <div class="login-tab-switcher">
-        <button id="tab-btn-student" class="login-tab-btn active" onclick="window.AUTH.switchLoginTab('universal')">
-          <i class="fas fa-user-graduate"></i> الدخول / التسجيل بالبريد
-        </button>
-        <button id="tab-btn-demo" class="login-tab-btn" onclick="window.AUTH.switchLoginTab('demo')">
-          <i class="fas fa-bolt"></i> حسابات جامعية جاهزة
-        </button>
-      </div>
-
-      <!-- Form 1: Universal Student Login with University Selection -->
+      <!-- Real Student Universal Login & Registration Form -->
       <div id="form-student-login">
         <div class="form-group" style="margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-user"></i> الاسم الكامل / المستعار:</label>
-          <input type="text" id="init-name" class="chat-input" style="width: 100%;" value="عبدالرحمن الشمري" placeholder="أدخل اسمك الكريم">
+          <label class="form-label"><i class="fas fa-user"></i> الاسم الكامل:</label>
+          <input type="text" id="init-name" class="chat-input" style="width: 100%;" placeholder="أدخل اسمك الحقيقي">
         </div>
 
         <div class="form-group" style="margin-bottom: 12px;">
           <label class="form-label"><i class="fas fa-envelope"></i> البريد الإلكتروني (جامعي أو شخصي):</label>
-          <input type="email" id="init-email" class="chat-input" style="width: 100%; direction: ltr;" value="student@university.edu.sa" placeholder="name@domain.edu.sa أو name@gmail.com">
+          <input type="email" id="init-email" class="chat-input" style="width: 100%; direction: ltr;" placeholder="name@domain.edu.sa أو name@gmail.com">
         </div>
 
         <div class="form-group" style="margin-bottom: 12px;">
           <label class="form-label"><i class="fas fa-lock"></i> كلمة المرور:</label>
-          <input type="password" id="init-password" class="chat-input" style="width: 100%; direction: ltr;" value="••••••••" placeholder="Password">
+          <input type="password" id="init-password" class="chat-input" style="width: 100%; direction: ltr;" placeholder="كلمة المرور الخاصة بك" onkeydown="if(event.key==='Enter') window.AUTH.submitInitialCredentials()">
         </div>
 
         <div class="form-group" style="margin-bottom: 12px;">
@@ -122,62 +112,16 @@
         </button>
       </div>
 
-      <!-- Form 2: Fast One-Click Multi-University Demo Logins -->
-      <div id="form-demo-login" style="display: none;">
-        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">اختر حساباً تجريبياً من أي جامعة للدخول الفوري:</div>
-        
-        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('imsiu_cs')">
-          <div>
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">عبدالرحمن الشمري (جامعة الإمام)</div>
-            <div style="font-size: 11px; color: var(--primary);">علوم الحاسب • معدل: 4.82/5.00</div>
-          </div>
-          <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
-        </div>
-
-
-        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('ksu_swe')">
-          <div>
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">فيصل الدوسري (جامعة الملك سعود - KSU)</div>
-            <div style="font-size: 11px; color: #60a5fa;">هندسة البرمجيات • معدل: 4.91/5.00</div>
-          </div>
-          <i class="fas fa-arrow-left" style="color: #60a5fa;"></i>
-        </div>
-
-        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('kfupm_ai')">
-          <div>
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">عمر الغامدي (جامعة الملك فهد - KFUPM)</div>
-            <div style="font-size: 11px; color: #34d399;">الذكاء الاصطناعي • معدل: 3.94/4.00</div>
-          </div>
-          <i class="fas fa-arrow-left" style="color: #34d399;"></i>
-        </div>
-
-        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('pnu_is')">
-          <div>
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">نورة السبيعي (جامعة الأميرة نورة - PNU)</div>
-            <div style="font-size: 11px; color: var(--accent);">نظم المعلومات • معدل: 4.96/5.00</div>
-          </div>
-          <i class="fas fa-arrow-left" style="color: var(--accent);"></i>
-        </div>
-
-        <div class="fast-demo-card" onclick="window.AUTH.loginAsProfile('kau_cyber')">
-          <div>
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">روان الزهراني (جامعة الملك عبدالعزيز - KAU)</div>
-            <div style="font-size: 11px; color: #f472b6;">الأمن السيبراني • معدل: 4.88/5.00</div>
-          </div>
-          <i class="fas fa-arrow-left" style="color: #f472b6;"></i>
-        </div>
-      </div>
-
       <!-- Step: 2FA OTP Code Verification -->
       <div id="form-2fa-step" style="display: none;">
         <div style="text-align: center; margin-bottom: 16px;">
           <i class="fas fa-mobile-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 8px;"></i>
           <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main);">التحقق بخطوتين (2FA)</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">أدخل رمز التحقق (OTP) المرسل إلى رقم جوالك الجامعي المعتمد</p>
+          <p style="font-size: 12px; color: var(--text-muted);">أدخل رمز التحقق (OTP) المرسل إلى بريدك أو جوالك</p>
         </div>
 
         <div class="form-group" style="margin-bottom: 18px;">
-          <input type="text" id="init-otp-input" class="chat-input" style="width: 100%; text-align: center; font-size: 22px; font-family: var(--font-code); letter-spacing: 6px; font-weight: 700;" maxlength="6" value="482910">
+          <input type="text" id="init-otp-input" class="chat-input" style="width: 100%; text-align: center; font-size: 22px; font-family: var(--font-code); letter-spacing: 6px; font-weight: 700;" maxlength="6" placeholder="------" onkeydown="if(event.key==='Enter') window.AUTH.verifyInitial2FA()">
           <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 8px;">
             <span>صلاحية الرمز: <strong id="init-otp-timer" style="color: var(--accent);">00:60</strong></span>
             <span style="color: var(--primary); cursor: pointer;" onclick="window.AUTH.startOtpTimer(); window.APP.showToast('تمت إعادة إرسال الرمز', 'info');">إعادة الإرسال</span>
@@ -211,16 +155,23 @@
 
     <!-- Top Navigation Header -->
     <header class="top-header">
-      <div class="brand-section" onclick="window.APP.switchView('dashboard')">
-        <div class="brand-logo-icon">
-          <i class="fab fa-java"></i>
-        </div>
-        <div class="brand-text">
-          <h1>
-            سِنَاد | Senad AI
-            <span id="brand-univ-badge" class="brand-badge"><i class="fas fa-university"></i> المنصة الجامعية الموحدة</span>
-          </h1>
-          <p>المنصة الذكية لتعليم البرمجة لطلاب كليات علوم الحاسب وتقنية المعلومات</p>
+      <div class="brand-container-wrapper">
+        <!-- Mobile Sidebar Hamburger Toggle Button -->
+        <button id="mobile-menu-toggle" class="icon-btn mobile-toggle-btn" onclick="window.APP.toggleSidebar()" title="فتح القائمة الرئيسية" aria-label="فتح القائمة الرئيسية">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="brand-section" onclick="window.APP.switchView('dashboard')">
+          <div class="brand-logo-icon">
+            <i class="fab fa-java"></i>
+          </div>
+          <div class="brand-text">
+            <h1>
+              سِنَاد | Senad AI
+              <span id="brand-univ-badge" class="brand-badge"><i class="fas fa-university"></i> المنصة الجامعية الموحدة</span>
+            </h1>
+            <p class="brand-subtext">المنصة الذكية لتعليم البرمجة لطلاب كليات علوم الحاسب وتقنية المعلومات</p>
+          </div>
         </div>
       </div>
 
@@ -228,17 +179,17 @@
         <!-- Quick Command Palette Launcher (Ctrl + K) -->
         <button class="command-palette-trigger" onclick="window.APP.openCommandPalette()" title="فتح شريط الأوامر السريع (Ctrl + K)">
           <i class="fas fa-search" style="color: var(--primary);"></i>
-          <span>البحث والأوامر...</span>
-          <kbd>Ctrl + K</kbd>
+          <span class="cmd-trigger-text">البحث والأوامر...</span>
+          <kbd class="cmd-trigger-kbd">Ctrl + K</kbd>
         </button>
 
         <!-- XP & Streak Badges -->
-        <div class="student-stat-pill">
+        <div class="student-stat-pill header-streak-pill">
           <i class="fas fa-fire stat-icon-gold"></i>
           <span class="user-streak-val">12 يوم 🔥</span>
         </div>
 
-        <div class="student-stat-pill">
+        <div class="student-stat-pill header-xp-pill">
           <i class="fas fa-bolt stat-icon-gold"></i>
           <span class="user-xp-val">2850 XP</span>
         </div>
@@ -261,6 +212,9 @@
     </header>
 
     <div class="main-wrapper">
+
+      <!-- Mobile Sidebar Backdrop Overlay -->
+      <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="window.APP.toggleSidebar(false)"></div>
 
       <!-- Navigation Sidebar -->
       <aside class="sidebar">
@@ -900,7 +854,7 @@
                   <div style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px;">
                     سِنَاد Senad AI
                   </div>
-                  <div style="font-size: 11px; color: var(--primary);"><i class="fas fa-circle" style="font-size: 8px;"></i> متصل ومستعد للمساعدة الأكاديمية (صوتي + نصي)</div>
+                  <div style="font-size: 11px; color: var(--primary);"><i class="fas fa-circle" style="font-size: 8px;"></i> متصل ومستعد للمساعدة الأكاديمية والبرمجية ⚡</div>
                 </div>
               </div>
 
@@ -908,7 +862,7 @@
               <div style="display: flex; gap: 8px; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 20px; color: #34d399; font-size: 12px; font-weight: 700; box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);">
                   <i class="fas fa-bolt" style="color: #fbbf24; font-size: 11px;"></i>
-                  <span>Gemini 3.5 Flash (نشط وذكي 🚀)</span>
+                  <span id="chat-model-badge">سِنَاد AI (نشط وذكي 🚀)</span>
                 </div>
                 <button class="btn btn-secondary btn-sm" onclick="window.CHAT.attachCurrentCode()" title="إرفاق الكود المكتوب في المحرر حالياً">
                   <i class="fas fa-paperclip"></i> إرفاق كود
@@ -933,16 +887,10 @@
               <span class="chat-chip" onclick="window.CHAT.sendQuickPrompt('كيف أحسب معدلي التراكمي الفصلي من 5.00؟')">📊 حساب المعدل 5.00</span>
             </div>
 
-            <!-- Input Row with Bilingual Voice & Send -->
+            <!-- Input Row: Pure Clean Text & Send -->
             <div class="chat-input-row">
-              <button id="chat-lang-btn" class="btn btn-secondary" onclick="window.CHAT.toggleVoiceLang()" title="تبديل لغة الصوت والإدخال (عربي / English)" style="min-width: 58px; font-weight: 700; font-size: 11px; padding: 6px 10px;">
-                🇸🇦 AR
-              </button>
-              <button id="chat-mic-btn" class="btn btn-secondary" onclick="window.CHAT.toggleVoiceInput()" title="تحدث صوتياً (Voice Input - Speech-to-Text)">
-                <i class="fas fa-microphone"></i>
-              </button>
-              <input type="text" id="chat-user-input" class="chat-input" placeholder="اسأل المعلم الذكي عن أي كود، خطأ، أو مفهوم برمجي (العربية / English)..." onkeydown="if(event.key==='Enter'){event.preventDefault(); window.CHAT.sendMessage();}">
-              <button id="chat-send-btn" class="btn btn-primary" onclick="window.CHAT.sendMessage()">
+              <input type="text" id="chat-user-input" class="chat-input" placeholder="اسأل المعلم الذكي عن أي كود، خطأ، خوارزمية، أو مفهوم برمجي (العربية / English)..." onkeydown="if(event.key==='Enter'){event.preventDefault(); window.CHAT.sendMessage();}">
+              <button id="chat-send-btn" class="btn btn-primary" onclick="window.CHAT.sendMessage()" style="min-width: 90px; font-weight: 700;">
                 <i class="fas fa-paper-plane"></i> إرسال
               </button>
             </div>
@@ -1416,21 +1364,21 @@
   <div id="toast-container"></div>
 
   <!-- Application Scripts with Cache-Busting -->
-  <script src="js/sound.js?v=2026.3"></script>
-  <script src="js/confetti.js?v=2026.3"></script>
-  <script src="js/data.js?v=2026.3"></script>
-  <script src="js/api.js?v=2026.3"></script>
-  <script src="js/auth.js?v=2026.3"></script>
-  <script src="js/analyzer.js?v=2026.3"></script>
-  <script src="js/exams.js?v=2026.3"></script>
-  <script src="js/challenges.js?v=2026.3"></script>
-  <script src="js/slides.js?v=2026.3"></script>
-  <script src="js/ocr.js?v=2026.3"></script>
-  <script src="js/chat.js?v=2026.3"></script>
-  <script src="js/tracker.js?v=2026.3"></script>
-  <script src="js/gamification.js?v=2026.3"></script>
-  <script src="js/security.js?v=2026.3"></script>
-  <script src="js/app.js?v=2026.3"></script>
+  <script src="js/sound.js?v=2026.4"></script>
+  <script src="js/confetti.js?v=2026.4"></script>
+  <script src="js/data.js?v=2026.4"></script>
+  <script src="js/api.js?v=2026.4"></script>
+  <script src="js/auth.js?v=2026.4"></script>
+  <script src="js/analyzer.js?v=2026.4"></script>
+  <script src="js/exams.js?v=2026.4"></script>
+  <script src="js/challenges.js?v=2026.4"></script>
+  <script src="js/slides.js?v=2026.4"></script>
+  <script src="js/ocr.js?v=2026.4"></script>
+  <script src="js/chat.js?v=2026.4"></script>
+  <script src="js/tracker.js?v=2026.4"></script>
+  <script src="js/gamification.js?v=2026.4"></script>
+  <script src="js/security.js?v=2026.4"></script>
+  <script src="js/app.js?v=2026.4"></script>
 
 </body>
 </html>

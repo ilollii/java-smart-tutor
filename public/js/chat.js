@@ -1,23 +1,18 @@
 /**
  * Real Conversational AI Academic Mentor (Senad AI)
- * Powered by Google Gemini Multi-Turn Generative Language Models
+ * Powered by OpenRouter / Google Gemini Generative Models
  * Features:
- * - Multi-turn Conversation Memory
- * - Arabic Voice Input (Speech-to-Text Web Speech API)
- * - Arabic Audio Read-aloud (Text-to-Speech Synthesis)
+ * - Multi-turn Conversation Memory & Database Persistence
  * - 1-Click Code Execution in Java 24 Sandbox & Code Analyzer
- * - Customizable Models (Gemini 2.5 Flash, 2.0 Flash, 1.5 Pro, Offline)
+ * - Customizable Academic Reasoning Models
  * - Markdown Rendering & Code Block Actions
  */
 
 window.CHAT = {
-  currentModel: 'gemini-3.5-flash',
+  currentModel: 'gemini-2.5-flash',
   currentPersona: 'friendly',
   customApiKey: '',
-  isRecording: false,
-  recognition: null,
-  isSpeaking: false,
-  activeSpeechUtterance: null,
+  _isSending: false,
 
   messages: [
     {
@@ -31,17 +26,21 @@ window.CHAT = {
     this.loadSettings();
     this.loadChatHistory();
     this.bindEvents();
-    this.initSpeechRecognition();
     this.renderMessages();
   },
 
   loadSettings() {
-    const savedKey = localStorage.getItem('senad_custom_gemini_key');
+    // Security: Use ephemeral sessionStorage for sensitive API keys
+    const savedKey = sessionStorage.getItem('senad_custom_gemini_key') || localStorage.getItem('senad_custom_gemini_key');
     const savedPersona = localStorage.getItem('senad_persona_style');
 
-    if (savedKey) this.customApiKey = savedKey;
-    this.currentModel = 'gemini-3.5-flash';
-    localStorage.setItem('senad_preferred_model', 'gemini-3.5-flash');
+    if (savedKey) {
+      this.customApiKey = savedKey;
+      sessionStorage.setItem('senad_custom_gemini_key', savedKey);
+      localStorage.removeItem('senad_custom_gemini_key'); // Clean legacy persistent key
+    }
+    this.currentModel = 'gemini-2.5-flash';
+    localStorage.setItem('senad_preferred_model', 'gemini-2.5-flash');
 
     if (savedPersona) this.currentPersona = savedPersona;
   },
@@ -70,6 +69,10 @@ window.CHAT = {
   saveChatHistory() {
     try {
       localStorage.setItem('senad_chat_history_v2', JSON.stringify(this.messages));
+      const student = (window.AUTH && window.AUTH.currentUser) || {};
+      if (student.email && window.API && typeof window.API.saveChatToDB === 'function') {
+        window.API.saveChatToDB(student.email, this.messages);
+      }
     } catch (e) { }
   },
 
@@ -78,17 +81,19 @@ window.CHAT = {
     const sendBtn = document.getElementById('chat-send-btn');
 
     if (input) {
-      input.addEventListener('keydown', (e) => {
+      input.onkeydown = (e) => {
         if (e.key === 'Enter') {
+          e.preventDefault();
           this.sendMessage();
         }
-      });
+      };
     }
 
     if (sendBtn) {
-      sendBtn.addEventListener('click', () => {
+      sendBtn.onclick = (e) => {
+        if (e) e.preventDefault();
         this.sendMessage();
-      });
+      };
     }
   },
 
@@ -96,8 +101,8 @@ window.CHAT = {
     const badge = document.getElementById('chat-model-badge');
     if (badge) {
       const names = {
-        'gemini-3.5-flash': 'Gemini 3.5 Flash (نشط وذكي ⚡)',
-        'gemini-3.6-flash': 'Gemini 3.6 Flash (عالي الدقة 🚀)',
+        'gemini-2.5-flash': 'Gemini 2.5 Flash (نشط وذكي ⚡)',
+        'gemini-2.0-flash': 'Gemini 2.0 Flash (عالي الدقة 🚀)',
         'local': 'سِنَاد الأكاديمي المحلي (Offline)'
       };
       badge.textContent = names[model] || model;
@@ -126,7 +131,8 @@ window.CHAT = {
 
     if (keyInput) {
       this.customApiKey = keyInput.value.trim();
-      localStorage.setItem('senad_custom_gemini_key', this.customApiKey);
+      sessionStorage.setItem('senad_custom_gemini_key', this.customApiKey);
+      localStorage.removeItem('senad_custom_gemini_key');
       if (window.API) window.API.apiKey = this.customApiKey || "";
     }
 
@@ -135,8 +141,8 @@ window.CHAT = {
       localStorage.setItem('senad_persona_style', this.currentPersona);
     }
 
-    this.currentModel = 'gemini-3.5-flash';
-    localStorage.setItem('senad_preferred_model', 'gemini-3.5-flash');
+    this.currentModel = 'gemini-2.5-flash';
+    localStorage.setItem('senad_preferred_model', 'gemini-2.5-flash');
 
     this.closeSettingsModal();
     if (window.APP) {
@@ -162,9 +168,6 @@ window.CHAT = {
         ${msg.isTyping ? `<div class="typing-indicator" style="display:flex; align-items:center; gap:8px; color:#a78bfa; font-weight:600;">${msg.text}</div>` : this.formatMarkdown(msg.text, idx)}
         ${msg.sender === 'bot' && !msg.isTyping ? `
           <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; flex-wrap: wrap;">
-            <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 3px 9px;" onclick="window.CHAT.speakText(decodeURIComponent('${encodeURIComponent(msg.text.replace(/```[\s\S]*?```/g, '').replace(/[#*`]/g, ''))}'))" title="قراءة الشرح صوتياً باللغة العربية">
-              <i class="fas fa-volume-up"></i> استماع
-            </button>
             <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 3px 9px;" onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(msg.text)}')); window.APP.showToast('تم نسخ الرد', 'success');" title="نسخ نص الإجابة">
               <i class="fas fa-copy"></i> نسخ
             </button>
@@ -174,154 +177,6 @@ window.CHAT = {
     `).join('');
 
     container.scrollTop = container.scrollHeight;
-  },
-
-  voiceLang: 'ar-SA',
-
-  /**
-   * Toggle Voice Language between Arabic and English
-   */
-  toggleVoiceLang() {
-    this.voiceLang = this.voiceLang === 'ar-SA' ? 'en-US' : 'ar-SA';
-    const langBtn = document.getElementById('chat-lang-btn');
-    const input = document.getElementById('chat-user-input');
-
-    if (langBtn) {
-      langBtn.textContent = this.voiceLang === 'ar-SA' ? '🇸🇦 AR' : '🇺🇸 EN';
-      langBtn.style.borderColor = this.voiceLang === 'ar-SA' ? '#10b981' : '#6366f1';
-    }
-
-    if (input) {
-      input.placeholder = this.voiceLang === 'ar-SA'
-        ? "اسأل المعلم الذكي عن أي كود، خطأ، أو مفهوم برمجي في جافا..."
-        : "Ask Senad AI about any Java code, concept, algorithm, or bug...";
-    }
-
-    if (this.recognition) {
-      this.recognition.lang = this.voiceLang;
-    }
-
-    if (window.APP) {
-      window.APP.showToast(this.voiceLang === 'ar-SA' ? 'تم ضبط لغة الصوت: العربية 🇸🇦' : 'Voice Language Set: English 🇺🇸', 'info');
-    }
-  },
-
-  /**
-   * Bilingual Voice Recognition (Speech-to-Text)
-   */
-  initSpeechRecognition() {
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRec) {
-      this.recognition = new SpeechRec();
-      this.recognition.lang = this.voiceLang || 'ar-SA';
-      this.recognition.continuous = false;
-      this.recognition.interimResults = false;
-
-      this.recognition.onstart = () => {
-        this.isRecording = true;
-        const micBtn = document.getElementById('chat-mic-btn');
-        if (micBtn) {
-          micBtn.style.background = '#ef4444';
-          micBtn.style.color = '#fff';
-          micBtn.classList.add('pulse');
-        }
-        const msg = this.voiceLang === 'ar-SA' ? 'الميكروفون نشط.. تحدث بسؤالك بالعربية 🎙️' : 'Microphone active.. Speak in English 🎙️';
-        if (window.APP) window.APP.showToast(msg, 'info');
-      };
-
-      this.recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        if (this.isVoiceMentorActive) {
-          this.handleVoiceConversation(transcript);
-        } else {
-          const input = document.getElementById('chat-user-input');
-          if (input) {
-            input.value = transcript;
-          }
-          this.sendMessage();
-        }
-      };
-
-      this.recognition.onerror = (event) => {
-        console.warn('Speech recognition error:', event.error);
-        this.stopVoiceInput();
-        if (window.APP) window.APP.showToast(this.voiceLang === 'ar-SA' ? 'لم يتم التقاط الصوت، يرجى المحاولة مجدداً' : 'Could not capture voice, please retry', 'warning');
-      };
-
-      this.recognition.onend = () => {
-        this.stopVoiceInput();
-      };
-    }
-  },
-
-  toggleVoiceInput() {
-    if (!this.recognition) {
-      if (window.APP) window.APP.showToast('ميزة الإدخال الصوتي غير مدعومة في هذا المتصفح', 'warning');
-      return;
-    }
-    if (this.isRecording) {
-      this.recognition.stop();
-    } else {
-      try {
-        this.recognition.lang = this.voiceLang;
-        this.recognition.start();
-      } catch (e) {
-        this.recognition.stop();
-      }
-    }
-  },
-
-  stopVoiceInput() {
-    this.isRecording = false;
-    const micBtn = document.getElementById('chat-mic-btn');
-    if (micBtn) {
-      micBtn.style.background = '';
-      micBtn.style.color = '';
-      micBtn.classList.remove('pulse');
-    }
-  },
-
-  /**
-   * Bilingual Text-to-Speech Output (Arabic & English Auto-detection)
-   */
-  speakText(cleanText) {
-    if (!('speechSynthesis' in window)) {
-      if (window.APP) window.APP.showToast('ميزة القراءة الصوتية غير مدعومة في متصفحك', 'warning');
-      return;
-    }
-
-    if (this.isSpeaking) {
-      window.speechSynthesis.cancel();
-      this.isSpeaking = false;
-      if (window.APP) window.APP.showToast('تم إيقاف القراءة الصوتية', 'info');
-      return;
-    }
-
-    // Auto-detect language of the response text
-    const arabicCharCount = (cleanText.match(/[\u0600-\u06FF]/g) || []).length;
-    const isEnglish = arabicCharCount < 10 && /[a-zA-Z]/.test(cleanText);
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = isEnglish ? 'en-US' : 'ar-SA';
-    utterance.rate = isEnglish ? 1.0 : 1.05;
-    utterance.pitch = 1.0;
-
-    // Pick best voice for detected language
-    const voices = window.speechSynthesis.getVoices();
-    if (isEnglish) {
-      const enVoice = voices.find(v => v.lang.startsWith('en') || v.name.includes('English') || v.name.includes('Natural'));
-      if (enVoice) utterance.voice = enVoice;
-    } else {
-      const arVoice = voices.find(v => v.lang.startsWith('ar') || v.name.includes('Arabic'));
-      if (arVoice) utterance.voice = arVoice;
-    }
-
-    utterance.onend = () => { this.isSpeaking = false; };
-    utterance.onerror = () => { this.isSpeaking = false; };
-
-    this.isSpeaking = true;
-    window.speechSynthesis.speak(utterance);
-    if (window.APP) window.APP.showToast(isEnglish ? 'Reading aloud in English...' : 'جاري قراءة الشرح باللغة العربية...', 'info');
   },
 
   /**
@@ -362,6 +217,20 @@ window.CHAT = {
     }
 
     this._isSending = true;
+    const sendBtn = document.getElementById('chat-send-btn');
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الرد...';
+    }
+
+    // Safety timeout to ensure sending lock is ALWAYS released within 20s
+    const safetyUnlockTimeout = setTimeout(() => {
+      this._isSending = false;
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
+      }
+    }, 20000);
 
     if (input) {
       input.value = '';
@@ -431,6 +300,7 @@ window.CHAT = {
       }
 
       clearInterval(thinkingTimer);
+      clearTimeout(safetyUnlockTimeout);
       this.messages.pop(); // Remove typing indicator
       this.messages.push({ sender: 'bot', text: reply, timestamp: Date.now() });
       this.saveChatHistory();
@@ -441,6 +311,7 @@ window.CHAT = {
 
     } catch (e) {
       clearInterval(thinkingTimer);
+      clearTimeout(safetyUnlockTimeout);
       console.error('[CHAT] Chat error:', e);
       this.messages.pop();
       const isEng = !text.match(/[\u0600-\u06FF]/) && /[a-zA-Z]/.test(text);
@@ -454,6 +325,11 @@ window.CHAT = {
       this.renderMessages();
     } finally {
       this._isSending = false;
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
+      }
+      if (input) input.focus();
     }
   },
 
@@ -687,7 +563,5 @@ window.CHAT = {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
-  },
-
   }
 };

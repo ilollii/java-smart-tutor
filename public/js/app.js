@@ -51,6 +51,25 @@ window.APP = {
     this.showToast(`تم التبديل إلى ${this.currentTheme === 'dark' ? 'الوضع الليلي' : 'الوضع النهاري'}`, 'info');
   },
 
+  toggleSidebar(forceState) {
+    const sidebar = document.querySelector('.sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+
+    const isOpen = sidebar ? sidebar.classList.contains('open') : false;
+    const targetState = typeof forceState === 'boolean' ? forceState : !isOpen;
+
+    if (sidebar) {
+      sidebar.classList.toggle('open', targetState);
+    }
+    if (backdrop) {
+      backdrop.classList.toggle('open', targetState);
+    }
+    if (toggleBtn) {
+      toggleBtn.innerHTML = targetState ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    }
+  },
+
   bindNavigation() {
     const navItems = document.querySelectorAll('[data-view-target]');
     navItems.forEach(item => {
@@ -60,10 +79,29 @@ window.APP = {
         this.switchView(targetView);
       });
     });
+
+    // Close sidebar on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.toggleSidebar(false);
+      }
+    });
+
+    // Close sidebar on window resize if expanded to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        this.toggleSidebar(false);
+      }
+    });
   },
 
   switchView(viewName) {
     this.currentView = viewName;
+
+    // Auto-close sidebar on mobile/tablet upon navigation
+    if (window.innerWidth <= 1024) {
+      this.toggleSidebar(false);
+    }
 
     // Update Nav Sidebar links
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -84,6 +122,11 @@ window.APP = {
 
     if (viewName === 'analyzer' && window.ANALYZER) {
       window.ANALYZER.updateLineNumbers();
+    }
+    if (viewName === 'chat' && window.CHAT) {
+      window.CHAT.renderMessages();
+      const chatInput = document.getElementById('chat-user-input');
+      if (chatInput) setTimeout(() => chatInput.focus(), 150);
     }
   },
 
@@ -122,9 +165,11 @@ window.APP = {
     if (type === 'warning') icon = 'exclamation-triangle';
     if (type === 'danger') icon = 'times-circle';
 
+    const safeMessage = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(message) : this.escapeHtml(message);
+
     toast.innerHTML = `
       <i class="fas fa-${icon}" style="font-size: 16px;"></i>
-      <span>${message}</span>
+      <span>${safeMessage}</span>
     `;
 
     container.appendChild(toast);
@@ -155,8 +200,9 @@ window.APP = {
       });
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-          const firstItem = document.querySelector('.command-item');
-          if (firstItem) firstItem.click();
+          if (this.currentCommandItems && this.currentCommandItems.length > 0) {
+            this.executeCommand(this.currentCommandItems[0].id);
+          }
         }
       });
     }
@@ -165,10 +211,17 @@ window.APP = {
   toggleCommandPalette() {
     const modal = document.getElementById('command-palette-modal');
     if (!modal) return;
-    if (modal.classList.contains('active')) {
-      this.closeCommandPalette();
+    const isHidden = modal.classList.contains('hidden');
+    if (isHidden) {
+      modal.classList.remove('hidden');
+      const input = document.getElementById('command-search-input');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      this.renderCommandResults('');
     } else {
-      this.openCommandPalette();
+      modal.classList.add('hidden');
     }
   },
 
@@ -176,7 +229,7 @@ window.APP = {
     const modal = document.getElementById('command-palette-modal');
     const input = document.getElementById('command-search-input');
     if (!modal) return;
-    modal.classList.add('active');
+    modal.classList.remove('hidden');
     if (input) {
       input.value = '';
       input.focus();
@@ -186,24 +239,24 @@ window.APP = {
 
   closeCommandPalette() {
     const modal = document.getElementById('command-palette-modal');
-    if (modal) modal.classList.remove('active');
+    if (modal) modal.classList.add('hidden');
   },
 
   renderCommandResults(query) {
-    const container = document.getElementById('command-results-container');
+    const container = document.getElementById('command-palette-results');
     if (!container) return;
 
     const commands = [
-      { id: 'view_analyzer', title: 'محلل أكواد جافا (Java 24 Sandbox)', group: 'التنقل السريع', icon: 'fas fa-code', action: () => this.switchView('analyzer') },
-      { id: 'view_slides', title: 'مساعد السلايدات والاختبار الفصلي (Mock Exam)', group: 'التنقل السريع', icon: 'fas fa-file-powerpoint', action: () => this.switchView('slides') },
-      { id: 'view_chat', title: 'المعلم البرمجي الذكي (سِنَاد AI Copilot)', group: 'التنقل السريع', icon: 'fas fa-robot', action: () => this.switchView('chat') },
-      { id: 'view_ocr', title: 'القارئ البصري الذكي OCR للأكواد', group: 'التنقل السريع', icon: 'fas fa-camera', action: () => this.switchView('ocr') },
-      { id: 'view_challenges', title: 'تحديات جافا اليومية ولوحة الشرف', group: 'التنقل السريع', icon: 'fas fa-trophy', action: () => this.switchView('challenges') },
-      { id: 'view_tracker', title: 'حاسبة ومخطط المعدل التراكمي GPA', group: 'التنقل السريع', icon: 'fas fa-calculator', action: () => this.switchView('tracker') },
-      { id: 'view_security', title: 'مركز الأمان والامتثال لنظام PDPL', group: 'التنقل السريع', icon: 'fas fa-shield-alt', action: () => this.switchView('security') },
-      { id: 'action_run', title: 'تشغيل الكود الحالي في الساندبوكس (Run Code)', group: 'إجراءات فورية', icon: 'fas fa-play', action: () => { this.switchView('analyzer'); if (window.ANALYZER) window.ANALYZER.runCode(); } },
-      { id: 'action_analyze', title: 'تحليل الكود سطر بسطر (AI Line Breakdown)', group: 'إجراءات فورية', icon: 'fas fa-microchip', action: () => { this.switchView('analyzer'); if (window.ANALYZER) window.ANALYZER.analyzeCode(); } },
-      { id: 'action_uml', title: 'توليد مخطط الكلاسات الذكي UML Diagram', group: 'إجراءات فورية', icon: 'fas fa-sitemap', action: () => { this.switchView('analyzer'); if (window.ANALYZER) window.ANALYZER.openUMLModal(); } },
+      { id: 'view_analyzer', title: 'الانتقال إلى محرر ومحلل الأكواد (Java Workspace)', group: 'التنقل الرئيسي', icon: 'fas fa-code', action: () => this.switchView('analyzer') },
+      { id: 'view_slides', title: 'الانتقال إلى ملخص السلايدات وبنك الأسئلة', group: 'التنقل الرئيسي', icon: 'fas fa-file-pdf', action: () => this.switchView('slides') },
+      { id: 'view_chat', title: 'فتح مساعد سِنَاد الذكي للشات والاستفسارات', group: 'التنقل الرئيسي', icon: 'fas fa-comments', action: () => this.switchView('chat') },
+      { id: 'view_ocr', title: 'التعرف على كود من صورة (OCR Scanner)', group: 'التنقل الرئيسي', icon: 'fas fa-camera', action: () => this.switchView('ocr') },
+      { id: 'view_challenges', title: 'تحديات البرمجة اليومية ولوحة الشرف', group: 'التنقل الرئيسي', icon: 'fas fa-trophy', action: () => this.switchView('challenges') },
+      { id: 'view_tracker', title: 'تتبع الخطة الدراسية وإنجاز المقررات', group: 'التنقل الرئيسي', icon: 'fas fa-graduation-cap', action: () => this.switchView('tracker') },
+      { id: 'view_security', title: 'مركز الأمان وحماية البيانات وتشفير PDPL', group: 'التنقل الرئيسي', icon: 'fas fa-shield-alt', action: () => this.switchView('security') },
+      { id: 'action_run', title: 'تشغيل الكود في بيئة Java 24 Sandbox', group: 'إجراءات سريعة', icon: 'fas fa-play', action: () => { this.switchView('analyzer'); if (window.ANALYZER) window.ANALYZER.runCode(); } },
+      { id: 'action_analyze', title: 'تحليل المفاهيم واكتشاف الأخطاء بالكود', group: 'إجراءات سريعة', icon: 'fas fa-brain', action: () => { this.switchView('analyzer'); if (window.ANALYZER) window.ANALYZER.analyzeCode(); } },
+      { id: 'action_uml', title: 'توليد مخطط الوراثة والكلاسات (UML Diagram)', group: 'إجراءات سريعة', icon: 'fas fa-project-diagram', action: () => { this.switchView('analyzer'); if (window.ANALYZER) window.ANALYZER.openUMLModal(); } },
       { id: 'action_theme', title: 'تبديل المظهر (الوضع الليلي / النهاري)', group: 'الإعدادات', icon: 'fas fa-circle-half-stroke', action: () => this.toggleTheme() }
     ];
 
@@ -214,7 +267,7 @@ window.APP = {
       container.innerHTML = `
         <div style="text-align: center; padding: 30px; color: #64748b;">
           <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px;"></i>
-          <p style="font-size: 13px;">لم يتم العثور على نتائج مطابقة لـ "${query}"</p>
+          <p style="font-size: 13px;">لم يتم العثور على نتائج مطابقة لـ "${this.escapeHtml(query)}"</p>
         </div>
       `;
       return;

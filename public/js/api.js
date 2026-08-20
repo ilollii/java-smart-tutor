@@ -6,9 +6,9 @@
 
 (function(global) {
   const DEFAULT_GEMINI_KEY = "";
-  const PRIMARY_MODEL = "gemini-3.5-flash-lite";
-  const FALLBACK_MODEL = "gemini-3.1-flash-lite";
-  const VISION_MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-flash-lite-latest"];
+  const PRIMARY_MODEL = "gemini-2.5-flash";
+  const FALLBACK_MODEL = "gemini-2.0-flash";
+  const VISION_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
 
   const SYSTEM_PERSONA_PROMPT = `أنت "سِنَاد Senad - المعلم البرمجي الجامعي الذكي"، مساعد أكاديمي افتراضي تفاعلي مخصص لطلاب علوم الحاسب ونظم المعلومات في جامعة الإمام محمد بن سعود الإسلامية (الفئة العمرية 19-26 سنة).
 مهامك الأساسية:
@@ -108,6 +108,101 @@
       }
 
       return response;
+    },
+
+    // ==========================================================================
+    // Server-Side Database (Senad Data Store) Methods
+    // ==========================================================================
+    async saveStudentToDB(student) {
+      try {
+        const res = await this.authenticatedFetch('/api/db/student', {
+          method: 'POST',
+          body: JSON.stringify(student)
+        });
+        return res.ok;
+      } catch (e) {
+        console.warn("DB saveStudent notice:", e);
+        return false;
+      }
+    },
+
+    async getStudentFromDB(email) {
+      try {
+        const res = await this.authenticatedFetch(`/api/db/student?email=${encodeURIComponent(email)}`);
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("DB getStudent notice:", e);
+      }
+      return null;
+    },
+
+    async saveCoursesToDB(email, courses) {
+      try {
+        const res = await this.authenticatedFetch('/api/db/courses', {
+          method: 'POST',
+          body: JSON.stringify({ email, courses })
+        });
+        return res.ok;
+      } catch (e) {
+        console.warn("DB saveCourses notice:", e);
+        return false;
+      }
+    },
+
+    async getCoursesFromDB(email) {
+      try {
+        const res = await this.authenticatedFetch(`/api/db/courses?email=${encodeURIComponent(email)}`);
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("DB getCourses notice:", e);
+      }
+      return null;
+    },
+
+    async saveChatToDB(email, messages) {
+      try {
+        const res = await this.authenticatedFetch('/api/db/chat', {
+          method: 'POST',
+          body: JSON.stringify({ email, messages })
+        });
+        return res.ok;
+      } catch (e) {
+        console.warn("DB saveChat notice:", e);
+        return false;
+      }
+    },
+
+    async getChatFromDB(email) {
+      try {
+        const res = await this.authenticatedFetch(`/api/db/chat?email=${encodeURIComponent(email)}`);
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("DB getChat notice:", e);
+      }
+      return null;
+    },
+
+    async saveGamificationToDB(email, gamification) {
+      try {
+        const res = await this.authenticatedFetch('/api/db/gamification', {
+          method: 'POST',
+          body: JSON.stringify({ email, gamification })
+        });
+        return res.ok;
+      } catch (e) {
+        console.warn("DB saveGamification notice:", e);
+        return false;
+      }
+    },
+
+    async getGamificationFromDB(email) {
+      try {
+        const res = await this.authenticatedFetch(`/api/db/gamification?email=${encodeURIComponent(email)}`);
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("DB getGamification notice:", e);
+      }
+      return null;
     },
 
     /**

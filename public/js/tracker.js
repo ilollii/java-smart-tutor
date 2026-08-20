@@ -133,14 +133,23 @@ window.TRACKER = {
     if (gpaTotalCreditsEl) gpaTotalCreditsEl.textContent = `${totalCumulativeCredits} ساعة إجمالية (${currentSemesterCredits} الفصل الحالي)`;
     if (headerGpaEl) headerGpaEl.textContent = `${cumulativeGpa.toFixed(2)} / ${this.gpaScale.toFixed(2)}`;
 
-    // Update SVG stroke offset
-    if (gpaPercentEl) {
-      const maxGpa = this.gpaScale;
-      const progress = (cumulativeGpa / maxGpa);
-      const circumference = 2 * Math.PI * 54;
-      gpaPercentEl.style.strokeDashoffset = circumference * (1 - progress);
-    }
-  },
+      // Update SVG stroke offset
+      if (gpaPercentEl) {
+        const maxGpa = this.gpaScale;
+        const progress = (cumulativeGpa / maxGpa);
+        const circumference = 2 * Math.PI * 54;
+        gpaPercentEl.style.strokeDashoffset = circumference * (1 - progress);
+      }
+
+      // Persist courses locally and to server-side database
+      try {
+        localStorage.setItem('senad_student_courses', JSON.stringify(this.courses));
+        const student = (window.AUTH && window.AUTH.currentUser) || {};
+        if (student.email && window.API && typeof window.API.saveCoursesToDB === 'function') {
+          window.API.saveCoursesToDB(student.email, this.courses);
+        }
+      } catch (e) {}
+    },
 
   deleteCourse(index) {
     if (confirm('هل أنت متأكد من رغبتك في حذف هذه المادة من السجل الأكاديمي؟')) {

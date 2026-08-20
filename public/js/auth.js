@@ -12,7 +12,7 @@ window.AUTH = {
   otpTimeRemaining: 60,
 
   init() {
-    // Check if session exists in localStorage or load default demo profile
+    // Check if real student session exists in localStorage
     const saved = localStorage.getItem('senad_universal_user_session');
     if (saved) {
       try {
@@ -20,13 +20,13 @@ window.AUTH = {
         this.isLoggedIn = true;
         this.is2FAVerified = true;
         this.showDashboard();
+        return;
       } catch (e) {
-        this.loginAsProfile('imsiu_cs');
+        localStorage.removeItem('senad_universal_user_session');
       }
-    } else {
-      // Auto-enter default student profile to immediately showcase Next-Gen Bento UI
-      this.loginAsProfile('imsiu_cs');
     }
+    // Show real registration / login gateway for student
+    this.showInitialLogin();
   },
 
   showInitialLogin() {
@@ -57,25 +57,11 @@ window.AUTH = {
   },
 
   switchLoginTab(tab) {
-    const universalTab = document.getElementById('tab-btn-student');
-    const demoTab = document.getElementById('tab-btn-demo');
-    const universalForm = document.getElementById('form-student-login');
-    const demoForm = document.getElementById('form-demo-login');
+    const studentForm = document.getElementById('form-student-login');
     const step2Fa = document.getElementById('form-2fa-step');
 
     if (step2Fa) step2Fa.style.display = 'none';
-
-    if (tab === 'universal' || tab === 'student') {
-      if (universalTab) universalTab.classList.add('active');
-      if (demoTab) demoTab.classList.remove('active');
-      if (universalForm) universalForm.style.display = 'block';
-      if (demoForm) demoForm.style.display = 'none';
-    } else {
-      if (universalTab) universalTab.classList.remove('active');
-      if (demoTab) demoTab.classList.add('active');
-      if (universalForm) universalForm.style.display = 'none';
-      if (demoForm) demoForm.style.display = 'block';
-    }
+    if (studentForm) studentForm.style.display = 'block';
   },
 
   onUniversityChange() {
@@ -172,9 +158,9 @@ window.AUTH = {
     }
 
     // Advance to 2FA screen
-    document.getElementById('form-student-login').style.display = 'none';
-    document.getElementById('form-demo-login').style.display = 'none';
+    const studentForm = document.getElementById('form-student-login');
     const step2Fa = document.getElementById('form-2fa-step');
+    if (studentForm) studentForm.style.display = 'none';
     if (step2Fa) step2Fa.style.display = 'block';
 
     if (window.APP) window.APP.showToast(`تم إرسال رمز التحقق الثنائي (OTP: ${this.currentExpectedOtp}) لبريدك المسجل 📱`, 'info');
@@ -267,6 +253,11 @@ window.AUTH = {
     this.is2FAVerified = true;
     localStorage.setItem('senad_universal_user_session', JSON.stringify(this.currentUser));
 
+    // Persist real student profile to Server-Side SenadDatabase
+    if (window.API && typeof window.API.saveStudentToDB === 'function') {
+      window.API.saveStudentToDB(this.currentUser);
+    }
+
     this.showDashboard();
     if (window.APP) window.APP.showToast(`مرحباً بك يا ${this.currentUser.name} من (${this.currentUser.university})! 🚀`, 'success');
   },
@@ -327,6 +318,13 @@ window.AUTH = {
     if (roleEl) roleEl.textContent = `${this.currentUser.university} • ${this.currentUser.major}`;
     if (avatarEl) avatarEl.textContent = this.currentUser.name.charAt(0);
     if (gpaBadge) gpaBadge.textContent = `${(this.currentUser.gpa || 4.85).toFixed(2)} / ${(this.currentUser.gpaScale || 5.00).toFixed(2)}`;
-    if (univBadge) univBadge.innerHTML = `<i class="fas fa-university"></i> ${this.currentUser.university}`;
+    if (univBadge) univBadge.innerHTML = `<i class="fas fa-university"></i> ${this.escapeHtml(this.currentUser.university || 'جامعة الإمام')}`;
+  },
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
   }
 };

@@ -22,6 +22,13 @@ window.SECURITY = {
     this.updateSecurityStats();
   },
 
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
+  },
+
   renderAuditLogs() {
     const container = document.getElementById('security-audit-logs');
     if (!container) return;
@@ -29,11 +36,11 @@ window.SECURITY = {
     container.innerHTML = this.auditLogs.map(log => `
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); margin-bottom: 8px; font-size: 12px;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-family: var(--font-code); color: var(--text-dim);">${log.time}</span>
-          <span style="color: var(--text-main);">${log.event}</span>
+          <span style="font-family: var(--font-code); color: var(--text-dim);">${this.escapeHtml(log.time)}</span>
+          <span style="color: var(--text-main);">${this.escapeHtml(log.event)}</span>
         </div>
         <span style="padding: 2px 8px; background: rgba(16, 185, 129, 0.15); color: var(--primary); border-radius: 4px; font-weight: 700;">
-          ${log.status}
+          ${this.escapeHtml(log.status)}
         </span>
       </div>
     `).join('');
