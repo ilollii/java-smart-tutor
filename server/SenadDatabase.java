@@ -88,18 +88,7 @@ public class SenadDatabase {
 
     public static synchronized void saveOrUpdateStudent(String studentJson) {
         String existing = getStudentsRaw().trim();
-        if (existing.startsWith("[") && existing.endsWith("]")) {
-            existing = existing.substring(1, existing.length() - 1).trim();
-        }
-        
-        List<String> list = new ArrayList<>();
-        if (!existing.isEmpty()) {
-            // naive JSON object splitting by top level object
-            String[] objects = existing.split("(?<=\\}),\\s*(?=\\{)");
-            for (String obj : objects) {
-                list.add(obj.trim());
-            }
-        }
+        List<String> list = parseTopLevelJsonObjects(existing);
 
         // Check if student with same email exists
         String email = extractField(studentJson, "email");
@@ -126,14 +115,58 @@ public class SenadDatabase {
     public static String getStudentByEmail(String email) {
         if (email == null) return null;
         String raw = getStudentsRaw();
-        String[] objects = raw.split("(?<=\\}),\\s*(?=\\{)");
+        List<String> objects = parseTopLevelJsonObjects(raw);
         for (String obj : objects) {
             String currEmail = extractField(obj, "email");
             if (currEmail != null && currEmail.equalsIgnoreCase(email.trim())) {
-                return cleanJsonObj(obj);
+                return obj.trim();
             }
         }
         return null;
+    }
+
+    private static List<String> parseTopLevelJsonObjects(String jsonArrayContent) {
+        List<String> result = new ArrayList<>();
+        if (jsonArrayContent == null || jsonArrayContent.trim().isEmpty()) return result;
+        
+        String s = jsonArrayContent.trim();
+        if (s.startsWith("[")) s = s.substring(1);
+        if (s.endsWith("]")) s = s.substring(0, s.length() - 1);
+        s = s.trim();
+        
+        int depth = 0;
+        boolean inString = false;
+        boolean escape = false;
+        int start = -1;
+        
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (escape) {
+                escape = false;
+                continue;
+            }
+            if (c == '\\') {
+                escape = true;
+                continue;
+            }
+            if (c == '"') {
+                inString = !inString;
+                continue;
+            }
+            if (!inString) {
+                if (c == '{') {
+                    if (depth == 0) start = i;
+                    depth++;
+                } else if (c == '}') {
+                    depth--;
+                    if (depth == 0 && start != -1) {
+                        result.add(s.substring(start, i + 1).trim());
+                        start = -1;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     // --- 2. Courses Store ---
