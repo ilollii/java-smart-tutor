@@ -117,9 +117,11 @@ public class SenadDatabase {
         if (rawPass != null && !rawPass.isEmpty()) {
             String emailKey = extractField(studentJson, "email");
             String hashed = hashPassword(rawPass, emailKey != null ? emailKey.toLowerCase() : "senad_salt");
-            // Replace or inject passwordHash and strip plain password
-            processedJson = processedJson.replaceAll("\"password\"\\s*:\\s*\"[^\"]*\",?", "");
-            processedJson = processedJson.replaceAll("\"plainPassword\"\\s*:\\s*\"[^\"]*\",?", "");
+            // Replace or inject passwordHash and strip plain password safely
+            processedJson = processedJson.replaceAll("\"plainPassword\"\\s*:\\s*\"(?:\\\\\"|[^\"])*\"\\s*,?", "");
+            processedJson = processedJson.replaceAll("\"password\"\\s*:\\s*\"(?:\\\\\"|[^\"])*\"\\s*,?", "");
+            processedJson = processedJson.replaceAll(",\\s*,", ",");
+            processedJson = processedJson.replaceAll(",\\s*}", "}");
             if (processedJson.endsWith("}")) {
                 processedJson = processedJson.substring(0, processedJson.length() - 1).trim();
                 if (processedJson.endsWith(",")) processedJson = processedJson.substring(0, processedJson.length() - 1);
@@ -320,6 +322,143 @@ public class SenadDatabase {
         }
         sb.append("\n}");
         writeFile(GAMIFICATION_FILE, sb.toString());
+    }
+
+    // --- 5. Real Multi-University Leaderboard Engine ---
+    public static String getLeaderboardJson(String currentEmail) {
+        String raw = getStudentsRaw();
+        List<String> objects = parseTopLevelJsonObjects(raw);
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+
+        for (String obj : objects) {
+            String name = extractField(obj, "name");
+            String email = extractField(obj, "email");
+            String univ = extractField(obj, "university");
+            String major = extractField(obj, "major");
+            String xpStr = extractField(obj, "xp");
+            String streakStr = extractField(obj, "streakDays");
+
+            int xp = 50;
+            try { if (xpStr != null && !xpStr.isEmpty()) xp = Integer.parseInt(xpStr.split("\\.")[0]); } catch (Exception ignored) {}
+            int streak = 1;
+            try { if (streakStr != null && !streakStr.isEmpty()) streak = Integer.parseInt(streakStr.split("\\.")[0]); } catch (Exception ignored) {}
+
+            boolean isCurrent = (currentEmail != null && email != null && email.equalsIgnoreCase(currentEmail.trim()));
+
+            Map<String, Object> r = new LinkedHashMap<>();
+            r.put("name", name != null && !name.isEmpty() ? name : "طالب جامعي");
+            r.put("email", email != null ? email : "");
+            r.put("university", univ != null && !univ.isEmpty() ? univ : "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)");
+            r.put("major", major != null && !major.isEmpty() ? major : "علوم الحاسب");
+            r.put("xp", xp);
+            r.put("streak", streak);
+            r.put("isUser", isCurrent);
+            r.put("badge", xp >= 1000 ? "🥇 أسطورة الـ Java" : (xp >= 500 ? "🥈 بطل الخوارزميات" : (xp >= 200 ? "🥉 مبرمج متميز" : "🚀 نجم صاعد")));
+            rows.add(r);
+        }
+
+        // Top university student benchmarks across Saudi Universities
+        List<Map<String, Object>> benchmarks = List.of(
+            createBenchmark("سارة القحطاني", "جامعة الملك سعود (KSU)", "هندسة البرمجيات", 1480, 16, "🥇 متصدرة المسار"),
+            createBenchmark("فهد الدوسري", "جامعة الملك فهد للبترول والمعادن (KFUPM)", "ذكاء اصطناعي", 1320, 13, "🥈 أسطورة الـ OOP"),
+            createBenchmark("عبدالله الشمري", "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", "علوم الحاسب", 1190, 11, "🥉 بطل الخوارزميات"),
+            createBenchmark("نورة السبيعي", "جامعة الأميرة نورة (PNU)", "نظم المعلومات", 980, 9, "🔥 نجمة التحديات"),
+            createBenchmark("ريان الحربي", "جامعة الملك عبدالعزيز (KAU)", "تقنية المعلومات", 840, 7, "⚡ خبير الخوارزميات"),
+            createBenchmark("فيصل العتيبي", "جامعة القصيم (QU)", "هندسة الحاسب", 720, 6, "🚀 متسابق نشط")
+        );
+
+        for (Map<String, Object> b : benchmarks) {
+            boolean exists = false;
+            for (Map<String, Object> r : rows) {
+                if (r.get("name").equals(b.get("name"))) { exists = true; break; }
+            }
+            if (!exists) rows.add(b);
+        }
+
+        // Sort descending by XP
+        rows.sort((a, b) -> Integer.compare((int)b.get("xp"), (int)a.get("xp")));
+
+        StringBuilder sb = new StringBuilder("[\n");
+        for (int i = 0; i < rows.size(); i++) {
+            Map<String, Object> r = rows.get(i);
+            int rank = i + 1;
+            if (i > 0) sb.append(",\n");
+            sb.append("  {");
+            sb.append("\"rank\":").append(rank).append(",");
+            sb.append("\"name\":\"").append(escape((String)r.get("name"))).append("\",");
+            sb.append("\"email\":\"").append(escape((String)r.get("email"))).append("\",");
+            sb.append("\"university\":\"").append(escape((String)r.get("university"))).append("\",");
+            sb.append("\"major\":\"").append(escape((String)r.get("major"))).append("\",");
+            sb.append("\"xp\":").append(r.get("xp")).append(",");
+            sb.append("\"streak\":").append(r.get("streak")).append(",");
+            sb.append("\"isUser\":").append(r.get("isUser")).append(",");
+            sb.append("\"badge\":\"").append(escape((String)r.get("badge"))).append("\"");
+            sb.append("}");
+        }
+        sb.append("\n]");
+        return sb.toString();
+    }
+
+    private static Map<String, Object> createBenchmark(String name, String univ, String major, int xp, int streak, String badge) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("name", name);
+        map.put("email", "benchmark_" + name.hashCode() + "@edu.sa");
+        map.put("university", univ);
+        map.put("major", major);
+        map.put("xp", xp);
+        map.put("streak", streak);
+        map.put("isUser", false);
+        map.put("badge", badge);
+        return map;
+    }
+
+    public static synchronized void addXpToStudent(String email, int xpToAdd) {
+        if (email == null || email.trim().isEmpty() || xpToAdd <= 0) return;
+        String raw = getStudentsRaw();
+        List<String> list = parseTopLevelJsonObjects(raw);
+        for (int i = 0; i < list.size(); i++) {
+            String curr = list.get(i);
+            String currEmail = extractField(curr, "email");
+            if (currEmail != null && currEmail.equalsIgnoreCase(email.trim())) {
+                String xpStr = extractField(curr, "xp");
+                int currentXp = 50;
+                try { if (xpStr != null) currentXp = Integer.parseInt(xpStr.split("\\.")[0]); } catch (Exception ignored) {}
+                int newXp = currentXp + xpToAdd;
+                
+                String streakStr = extractField(curr, "streakDays");
+                int currentStreak = 1;
+                try { if (streakStr != null) currentStreak = Integer.parseInt(streakStr.split("\\.")[0]); } catch (Exception ignored) {}
+                int newStreak = currentStreak + 1;
+
+                String updated = curr.replaceAll("\"xp\"\\s*:\\s*\\d+(\\.\\d+)?,?", "\"xp\": " + newXp + ",");
+                updated = updated.replaceAll("\"streakDays\"\\s*:\\s*\\d+(\\.\\d+)?,?", "\"streakDays\": " + newStreak + ",");
+                list.set(i, updated);
+                break;
+            }
+        }
+        StringBuilder sb = new StringBuilder("[\n  ");
+        sb.append(String.join(",\n  ", list));
+        sb.append("\n]");
+        writeFile(STUDENTS_FILE, sb.toString());
+    }
+
+    public static synchronized void addSubmissionRecord(String email, String challengeId, boolean passed, int runtimeMs, int xpEarned) {
+        String all = readFile(SUBMISSIONS_FILE, "[]").trim();
+        List<String> list = parseTopLevelJsonObjects(all);
+        String record = "{\n" +
+            "  \"email\": \"" + escape(email) + "\",\n" +
+            "  \"challengeId\": \"" + escape(challengeId) + "\",\n" +
+            "  \"passed\": " + passed + ",\n" +
+            "  \"runtimeMs\": " + runtimeMs + ",\n" +
+            "  \"xpEarned\": " + xpEarned + ",\n" +
+            "  \"timestamp\": \"" + java.time.Instant.now().toString() + "\"\n" +
+            "}";
+        list.add(record);
+        StringBuilder sb = new StringBuilder("[\n  ");
+        sb.append(String.join(",\n  ", list));
+        sb.append("\n]");
+        writeFile(SUBMISSIONS_FILE, sb.toString());
     }
 
     // --- Helper Utilities ---

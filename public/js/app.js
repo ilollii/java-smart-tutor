@@ -128,6 +128,9 @@ window.APP = {
       const chatInput = document.getElementById('chat-user-input');
       if (chatInput) setTimeout(() => chatInput.focus(), 150);
     }
+    if (viewName === 'challenges' && window.CHALLENGES) {
+      window.CHALLENGES.init();
+    }
   },
 
   renderDashboard() {

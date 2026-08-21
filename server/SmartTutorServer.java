@@ -119,11 +119,13 @@ public class SmartTutorServer {
             server.createContext("/api/security/scan", new SecurityScanHandler());
             server.createContext("/api/security/encrypt", new SecurityEncryptHandler());
 
-            // Server-Side Database Persistence Endpoints
+            // Server-Side Database Persistence & Leaderboard Endpoints
             server.createContext("/api/db/student", new DbStudentHandler());
             server.createContext("/api/db/courses", new DbCoursesHandler());
             server.createContext("/api/db/chat", new DbChatHandler());
             server.createContext("/api/db/gamification", new DbGamificationHandler());
+            server.createContext("/api/db/leaderboard", new DbLeaderboardHandler());
+            server.createContext("/api/challenges/submit", new ChallengeSubmitHandler());
 
             server.start();
             System.out.println("===============================================================");
@@ -2781,6 +2783,57 @@ public class SmartTutorServer {
             } else {
                 sendJsonResponse(exchange, 405, "{\"error\":\"Method not allowed\"}");
             }
+        }
+    }
+
+    static class DbLeaderboardHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 204, "");
+                return;
+            }
+            if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 405, "{\"error\":\"Method not allowed\"}");
+                return;
+            }
+            String query = exchange.getRequestURI().getQuery();
+            String email = extractQueryParam(query, "email");
+            String leaderboardJson = SenadDatabase.getLeaderboardJson(email);
+            sendJsonResponse(exchange, 200, leaderboardJson);
+        }
+    }
+
+    static class ChallengeSubmitHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 204, "");
+                return;
+            }
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 405, "{\"error\":\"Method not allowed\"}");
+                return;
+            }
+            String body = readRequestBody(exchange);
+            String email = extractJsonField(body, "email");
+            String challengeId = extractJsonField(body, "challengeId");
+            String xpRewardStr = extractJsonField(body, "xpReward");
+            String passedStr = extractJsonField(body, "passed");
+            String runtimeMsStr = extractJsonField(body, "runtimeMs");
+
+            int xpReward = 50;
+            try { if (xpRewardStr != null) xpReward = Integer.parseInt(xpRewardStr); } catch (Exception ignored) {}
+            boolean passed = "true".equalsIgnoreCase(passedStr);
+            int runtimeMs = 35;
+            try { if (runtimeMsStr != null) runtimeMs = Integer.parseInt(runtimeMsStr); } catch (Exception ignored) {}
+
+            if (passed && email != null && !email.isEmpty()) {
+                SenadDatabase.addXpToStudent(email, xpReward);
+                SenadDatabase.addSubmissionRecord(email, challengeId, true, runtimeMs, xpReward);
+            }
+
+            sendJsonResponse(exchange, 200, "{\"success\":true,\"xpAwarded\":" + (passed ? xpReward : 0) + ",\"message\":\"Challenge submission recorded successfully\"}");
         }
     }
 

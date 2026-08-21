@@ -206,6 +206,38 @@
       return null;
     },
 
+    async getLeaderboardFromDB(email) {
+      try {
+        const res = await this.authenticatedFetch(`/api/db/leaderboard?email=${encodeURIComponent(email || '')}`);
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("DB getLeaderboard notice:", e);
+      }
+      return null;
+    },
+
+    async submitChallengeResult(challengeId, passed, xpReward, runtimeMs) {
+      try {
+        const saved = localStorage.getItem('senad_universal_user_session');
+        const user = saved ? JSON.parse(saved) : null;
+        const email = user ? user.email : '';
+        const res = await this.authenticatedFetch('/api/challenges/submit', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: email,
+            challengeId: challengeId,
+            passed: passed,
+            xpReward: xpReward,
+            runtimeMs: runtimeMs
+          })
+        });
+        if (res.ok) return await res.json();
+      } catch (e) {
+        console.warn("Challenge submit notice:", e);
+      }
+      return null;
+    },
+
     /**
      * Executes Java code either via Java 24 Server Sandbox or simulated client runner
      */

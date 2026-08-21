@@ -33,21 +33,21 @@
     ]
   },
   {
-    "name": "لمياء القرني",
+    "name": "لمياء",
     "studentId": "o3v7g4",
     "email": "o3v7g4@gmail.com",
     "university": "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)",
     "college": "كلية الحاسب وتقنية المعلومات",
-    "major": "علوم الحاسب (Computer Science)",
+    "major": "نظم المعلومات (Information Systems)",
     "level": "المستوى الأول (مستجد)",
     "gpa": 0.0,
     "previousGpa": 0.0,
     "previousCredits": 0,
     "currentCredits": 0,
-    "gpaScale": 5,
-    "xp": 50,
+    "gpaScale": 5.0,
+    "xp": 100,
     "levelNumber": 1,
-    "streakDays": 1,
+    "streakDays": 2,
     "isFreshUser": true,
     "badges": [
       {
@@ -63,35 +63,12 @@
         "icon": "🛡️",
         "desc": "فعلت التحقق الثنائي والمصادقة الموحدة",
         "unlocked": true
-      },
-      {
-        "id": "oop_master",
-        "name": "مهندس الكائنات OOP",
-        "icon": "🏛️",
-        "desc": "أتقنت مفاهيم الوراثة والبوليمورفيزم",
-        "unlocked": false
-      },
-      {
-        "id": "quiz_champ",
-        "name": "بطل الكويزات",
-        "icon": "🎯",
-        "desc": "حققت 100% في كويزات الكود",
-        "unlocked": false
-      },
-      {
-        "id": "slide_guru",
-        "name": "قاهر السلايدات",
-        "icon": "📚",
-        "desc": "لخصت محاضرات جامعية كاملة",
-        "unlocked": false
-      },
-      {
-        "id": "tracker_scholar",
-        "name": "العالم الأكاديمي",
-        "icon": "🎓",
-        "desc": "أضفت موادك وحسبت خطة المعدل الفصلي والتراكمي",
-        "unlocked": false
       }
-    ]
+    ],
+    "passwordHash": "56456f278234412a834ece9714ade6272c32c939f031230a1a895d1bfeadc2c4",
+    "securityCompliance": "PDPL-AES256GCM-Compliant",
+    "is2FAVerified": true,
+    "registeredAt": "2026-08-21T01:46:34.287813500Z",
+    "lastLoginAt": "2026-08-21T01:46:34.287813500Z"
   }
 ]
