@@ -1158,11 +1158,11 @@
               </div>
             </div>
 
-            <!-- Right Pane: Real Multi-University Leaderboard -->
-            <div class="glass-panel" style="padding: 18px; display: flex; flex-direction: column;">
+            <!-- Right Pane: Real Multi-University Leaderboard Card -->
+            <div class="glass-panel leaderboard-card" style="padding: 20px; display: flex; flex-direction: column; background: linear-gradient(180deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);">
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
                 <div>
-                  <h4 style="margin: 0; font-size: 16px; color: #fff; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                  <h4 style="margin: 0; font-size: 15px; color: #fff; font-weight: 800; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-ranking-star" style="color: #fbbf24;"></i> لوحة الشرف والمتصدرين
                   </h4>
                   <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">تصنيف الطلاب المحدث في قاعدة بيانات سِنَاد</div>
@@ -1187,13 +1187,13 @@
               </div>
 
               <!-- Top 3 Champions Honor Podium -->
-              <div id="leaderboard-podium-container" style="display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; margin-bottom: 16px; align-items: end;"></div>
+              <div id="leaderboard-podium-container" style="display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; margin-bottom: 14px; align-items: end;"></div>
 
               <!-- Leaderboard Table -->
-              <div style="overflow-x: auto; flex: 1;">
+              <div style="overflow-x: auto; flex: 1; max-height: 380px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
                 <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                   <thead>
-                    <tr style="color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right;">
+                    <tr style="color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right; background: rgba(15,23,42,0.6); position: sticky; top: 0; z-index: 1;">
                       <th style="padding: 8px 10px; text-align: center;">#</th>
                       <th style="padding: 8px 10px;">الطالب والكلية</th>
                       <th style="padding: 8px 10px;">النقاط (XP)</th>
@@ -1585,22 +1585,7 @@
     </div>
   </div>
 
-  <!-- Modal 9: Official Student Achievement Profile Card -->
-  <div id="student-profile-modal" class="modal-backdrop" onclick="if(event.target === this) window.CHALLENGES.closeStudentProfileModal()">
-    <div class="modal-box" style="max-width: 580px;">
-      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
-        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-id-card" style="color: #fbbf24;"></i>
-          <span>بطاقة السجل الأكاديمي والبرمجي للطالب</span>
-        </div>
-        <button class="modal-close-btn" onclick="window.CHALLENGES.closeStudentProfileModal()">&times;</button>
-      </div>
-      <div id="student-profile-modal-body"></div>
-      <div style="margin-top: 20px; text-align: left; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
-        <button class="btn btn-secondary" onclick="window.CHALLENGES.closeStudentProfileModal()">إغلاق</button>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Toast Notification Container -->
   <div id="toast-container"></div>

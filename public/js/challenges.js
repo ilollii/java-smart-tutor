@@ -929,7 +929,7 @@ SUMMARY|1|${ch.testCases.length}
 
     // Render Table Rows
     container.innerHTML = list.map((item, idx) => `
-      <tr style="${item.isUser ? 'background: linear-gradient(90deg, rgba(16, 185, 129, 0.22), rgba(99, 102, 241, 0.18)); font-weight: 700; border-right: 4px solid #10b981;' : 'border-bottom: 1px solid rgba(255,255,255,0.05);'}" onclick="window.CHALLENGES.showStudentDetails(${idx})" title="انقر لعرض بطاقة إنجازات الطالب">
+      <tr style="${item.isUser ? 'background: linear-gradient(90deg, rgba(16, 185, 129, 0.22), rgba(99, 102, 241, 0.18)); font-weight: 700; border-right: 4px solid #10b981;' : 'border-bottom: 1px solid rgba(255,255,255,0.05);'}">
         <td style="padding: 10px 10px; text-align: center; font-size: 13px; font-weight: 800;">
           ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : (idx + 1)}
         </td>
@@ -957,78 +957,6 @@ SUMMARY|1|${ch.testCases.length}
         </td>
       </tr>
     `).join('');
-  },
-
-  showStudentDetails(index) {
-    const list = [...this.leaderboardData];
-    list.sort((a, b) => b.xp - a.xp);
-    const s = list[index];
-    if (!s) return;
-
-    const modal = document.getElementById('student-profile-modal');
-    const body = document.getElementById('student-profile-modal-body');
-    if (!modal || !body) return;
-
-    body.innerHTML = `
-      <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
-        <!-- Student Header -->
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px;">
-          <div style="width: 54px; height: 54px; border-radius: 50%; background: ${s.isUser ? 'linear-gradient(135deg, #10b981, #6366f1)' : 'linear-gradient(135deg, #f59e0b, #d97706)'}; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; font-weight: 900; box-shadow: 0 4px 14px rgba(0,0,0,0.4); flex-shrink: 0;">
-            ${this.escapeHtml(s.name.charAt(0))}
-          </div>
-          <div>
-            <div style="font-size: 17px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px;">
-              <span>${this.escapeHtml(s.name)}</span>
-              ${s.isUser ? '<span style="font-size: 11px; background: #10b981; color: #022c22; padding: 2px 8px; border-radius: 12px; font-weight: 800;">أنت 🌟</span>' : ''}
-              <i class="fas fa-check-circle" style="color: #38bdf8; font-size: 13px;" title="حساب طالب معتمد وموثق"></i>
-            </div>
-            <div style="font-size: 12px; color: #38bdf8; font-weight: 700; margin-top: 2px;">
-              <i class="fas fa-university"></i> ${this.escapeHtml(s.university)}
-            </div>
-            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">
-              ${this.escapeHtml(s.college || 'كلية الحاسب')} • ${this.escapeHtml(s.major || 'علوم الحاسب')}
-            </div>
-          </div>
-        </div>
-
-        <!-- Academic & Coding Metrics Grid -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
-          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 8px;">
-            <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">الرقم الجامعي المعتمد:</div>
-            <div style="font-size: 13px; font-weight: 800; color: #e2e8f0; font-family: var(--font-code);">${this.escapeHtml(s.studentId || '4446020337')}</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 8px;">
-            <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">المعدل التراكمي (GPA):</div>
-            <div style="font-size: 13px; font-weight: 800; color: #10b981;">${s.gpa ? s.gpa.toFixed(2) : '4.85'} / 5.00 🌟</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 8px;">
-            <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">النقاط والخبرة (XP):</div>
-            <div style="font-size: 13px; font-weight: 800; color: #fbbf24; font-family: var(--font-code);"><i class="fas fa-bolt"></i> ${s.xp} XP</div>
-          </div>
-          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 8px;">
-            <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">المسائل المنجزة:</div>
-            <div style="font-size: 13px; font-weight: 800; color: #a7f3d0;"><i class="fas fa-check-double"></i> ${s.solvedCount || 8} مسائل مكتملة</div>
-          </div>
-        </div>
-
-        <!-- Academic Badges -->
-        <div>
-          <div style="font-size: 11.5px; font-weight: 700; color: #cbd5e1; margin-bottom: 8px;"><i class="fas fa-medal" style="color: #fbbf24;"></i> الأوسمة المكتسبة:</div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fbbf24; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700;">☕ رائد لغة جافا</span>
-            <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #a7f3d0; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700;">🛡️ حارس الخصوصية PDPL</span>
-            <span style="background: rgba(99, 102, 241, 0.15); border: 1px solid #6366f1; color: #c7d2fe; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700;">⚡ فارس الخوارزميات</span>
-          </div>
-        </div>
-      </div>
-    `;
-
-    modal.classList.add('active');
-  },
-
-  closeStudentProfileModal() {
-    const modal = document.getElementById('student-profile-modal');
-    if (modal) modal.classList.remove('active');
   },
 
   escapeHtml(str) {
