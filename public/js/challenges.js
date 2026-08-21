@@ -729,15 +729,25 @@ SUMMARY|1|${ch.testCases.length}
     }
 
     if (data && Array.isArray(data) && data.length > 0) {
-      this.leaderboardData = data;
+      // Deduplicate data by email/name to prevent duplicate entries
+      const seen = new Set();
+      const uniqueList = [];
+      data.forEach(item => {
+        const key = (item.name || '').trim().toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueList.push(item);
+        }
+      });
+      this.leaderboardData = uniqueList;
     } else if (!this.leaderboardData || this.leaderboardData.length === 0) {
-      // Fallback initial benchmark
       this.leaderboardData = [
-        { rank: 1, name: user ? user.name : "لمياء القرني", university: user ? user.university : "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", major: "نظم المعلومات", xp: (user ? user.xp : 50) + 120, streak: 5, isUser: true, badge: "🥇 متصدرة المسار" },
-        { rank: 2, name: "سارة القحطاني", university: "جامعة الملك سعود (KSU)", major: "هندسة البرمجيات", xp: 1380, streak: 15, isUser: false, badge: "🥈 بطلة الـ OOP" },
-        { rank: 3, name: "فهد الدوسري", university: "جامعة الملك فهد للبترول والمعادن (KFUPM)", major: "ذكاء اصطناعي", xp: 1250, streak: 12, isUser: false, badge: "🥉 بطل الخوارزميات" },
-        { rank: 4, name: "عبدالله الشمري", university: "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", major: "علوم الحاسب", xp: 1120, streak: 10, isUser: false, badge: "🔥 نجم التحديات" },
-        { rank: 5, name: "نورة السبيعي", university: "جامعة الأميرة نورة (PNU)", major: "نظم المعلومات", xp: 940, streak: 8, isUser: false, badge: "⚡ مبرمجة متميزة" }
+        { rank: 1, name: "سارة القحطاني", university: "جامعة الملك سعود (KSU)", college: "كلية علوم الحاسب والمعلومات", major: "هندسة البرمجيات", xp: 1480, streak: 16, solvedCount: 11, isUser: false, badge: "🥇 متصدرة المسار" },
+        { rank: 2, name: "فهد الدوسري", university: "جامعة الملك فهد للبترول والمعادن (KFUPM)", college: "كلية علوم وهندسة الحاسب", major: "ذكاء اصطناعي", xp: 1320, streak: 13, solvedCount: 9, isUser: false, badge: "🥈 أسطورة الـ OOP" },
+        { rank: 3, name: user ? (user.name || "لمياء القرني") : "لمياء القرني", university: user ? (user.university || "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)") : "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", college: "كلية الحاسب وتقنية المعلومات", major: "نظم المعلومات (Information Systems)", xp: 1250, streak: 5, solvedCount: 8, isUser: true, badge: "🥉 بطل الخوارزميات" },
+        { rank: 4, name: "عبدالله الشمري", university: "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", college: "كلية علوم الحاسب", major: "علوم الحاسب", xp: 1190, streak: 11, solvedCount: 8, isUser: false, badge: "🔥 نجم التحديات" },
+        { rank: 5, name: "نورة السبيعي", university: "جامعة الأميرة نورة (PNU)", college: "كلية علوم الحاسب والمعلومات", major: "نظم المعلومات", xp: 980, streak: 9, solvedCount: 7, isUser: false, badge: "⚡ مبرمجة متميزة" },
+        { rank: 6, name: "ريان الحربي", university: "جامعة الملك عبدالعزيز (KAU)", college: "كلية الحاسبات", major: "تقنية المعلومات", xp: 840, streak: 7, solvedCount: 5, isUser: false, badge: "🚀 متسابق نشط" }
       ];
     }
 
@@ -761,6 +771,73 @@ SUMMARY|1|${ch.testCases.length}
     this.renderLeaderboard();
   },
 
+  renderPodium(top3) {
+    const container = document.getElementById('leaderboard-podium-container');
+    if (!container) return;
+
+    if (!top3 || top3.length < 3) {
+      container.innerHTML = '';
+      return;
+    }
+
+    const first = top3[0];
+    const second = top3[1];
+    const third = top3[2];
+
+    container.innerHTML = `
+      <!-- 2nd Place (Left) -->
+      <div style="background: linear-gradient(180deg, rgba(148, 163, 184, 0.15), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(148, 163, 184, 0.4); border-radius: 12px; padding: 12px 8px; text-align: center; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.3); height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="position: absolute; top: -10px; font-size: 16px;">🥈</div>
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #94a3b8, #475569); border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; margin-bottom: 4px;">
+          ${this.escapeHtml(second.name.charAt(0))}
+        </div>
+        <div style="font-size: 11.5px; font-weight: 800; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${this.escapeHtml(second.name)}
+        </div>
+        <div style="font-size: 9.5px; color: #94a3b8; margin-bottom: 4px; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${this.escapeHtml(second.university || 'جامعة سعود')}
+        </div>
+        <div style="background: rgba(148, 163, 184, 0.2); color: #e2e8f0; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; font-family: var(--font-code);">
+          ${second.xp} XP
+        </div>
+      </div>
+
+      <!-- 1st Place (Center / Highest) -->
+      <div style="background: linear-gradient(180deg, rgba(251, 191, 36, 0.25), rgba(15, 23, 42, 0.9)); border: 2px solid #fbbf24; border-radius: 12px; padding: 14px 8px; text-align: center; position: relative; box-shadow: 0 0 22px rgba(251, 191, 36, 0.3); height: 165px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="position: absolute; top: -14px; font-size: 20px; animation: bounce 2s infinite;"><i class="fas fa-crown" style="color: #fbbf24;"></i></div>
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); border: 2px solid #fbbf24; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 16px; margin-bottom: 5px; box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);">
+          ${this.escapeHtml(first.name.charAt(0))}
+        </div>
+        <div style="font-size: 12.5px; font-weight: 900; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${this.escapeHtml(first.name)} ${first.isUser ? '🌟' : ''}
+        </div>
+        <div style="font-size: 10px; color: #fde68a; margin-bottom: 5px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${this.escapeHtml(first.university || 'جامعة الإمام')}
+        </div>
+        <div style="background: #fbbf24; color: #451a03; font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 10px; font-family: var(--font-code);">
+          🥇 ${first.xp} XP
+        </div>
+      </div>
+
+      <!-- 3rd Place (Right) -->
+      <div style="background: linear-gradient(180deg, rgba(217, 119, 6, 0.15), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(217, 119, 6, 0.4); border-radius: 12px; padding: 12px 8px; text-align: center; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.3); height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="position: absolute; top: -10px; font-size: 16px;">🥉</div>
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #b45309, #78350f); border: 2px solid #d97706; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 13px; margin-bottom: 4px;">
+          ${this.escapeHtml(third.name.charAt(0))}
+        </div>
+        <div style="font-size: 11px; font-weight: 800; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${this.escapeHtml(third.name)} ${third.isUser ? '🌟' : ''}
+        </div>
+        <div style="font-size: 9.5px; color: #fed7aa; margin-bottom: 4px; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${this.escapeHtml(third.university || 'جامعة البترول')}
+        </div>
+        <div style="background: rgba(217, 119, 6, 0.25); color: #fed7aa; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; font-family: var(--font-code);">
+          ${third.xp} XP
+        </div>
+      </div>
+    `;
+  },
+
   renderLeaderboard() {
     const container = document.getElementById('leaderboard-tbody');
     if (!container) return;
@@ -778,37 +855,53 @@ SUMMARY|1|${ch.testCases.length}
       });
     }
 
-    // Sort by XP
+    // Sort descending by XP
     list.sort((a, b) => b.xp - a.xp);
 
+    // Update Podium
+    this.renderPodium(list.slice(0, 3));
+
+    // Render Table Rows
     container.innerHTML = list.map((item, idx) => `
-      <tr style="${item.isUser ? 'background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), rgba(99, 102, 241, 0.15)); font-weight: 700; border-right: 3px solid var(--primary);' : ''}">
-        <td style="padding: 10px 12px; text-align: center; font-size: 14px; font-weight: 800;">
+      <tr style="${item.isUser ? 'background: linear-gradient(90deg, rgba(16, 185, 129, 0.22), rgba(99, 102, 241, 0.18)); font-weight: 700; border-right: 4px solid #10b981;' : 'border-bottom: 1px solid rgba(255,255,255,0.05);'}" onclick="window.CHALLENGES.showStudentDetails(${idx})" title="انقر لعرض بطاقة إنجازات الطالب">
+        <td style="padding: 10px 10px; text-align: center; font-size: 13px; font-weight: 800;">
           ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : (idx + 1)}
         </td>
-        <td style="padding: 10px 12px;">
+        <td style="padding: 10px 10px;">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${item.isUser ? 'linear-gradient(135deg, #10b981, #6366f1)' : '#334155'}; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; font-weight: 800; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${item.isUser ? 'linear-gradient(135deg, #10b981, #6366f1)' : '#334155'}; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; font-weight: 800; box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-shrink: 0;">
               ${this.escapeHtml(item.name.charAt(0))}
             </div>
-            <div>
-              <div style="color: #fff; font-size: 13px; font-weight: 700;">
-                ${this.escapeHtml(item.name)} ${item.isUser ? '<span style="font-size: 10px; background: #10b981; color: #022c22; padding: 1px 6px; border-radius: 10px; font-weight: 800; margin-right: 4px;">أنت 🌟</span>' : ''}
+            <div style="min-width: 0;">
+              <div style="color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span>${this.escapeHtml(item.name)}</span>
+                ${item.isUser ? '<span style="font-size: 10px; background: #10b981; color: #022c22; padding: 1px 6px; border-radius: 8px; font-weight: 800;">أنت 🌟</span>' : ''}
               </div>
-              <div style="font-size: 10.5px; color: #94a3b8; margin-top: 1px;">
-                ${this.escapeHtml(item.university || 'جامعة الإمام')}
+              <div style="font-size: 10.5px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
+                ${this.escapeHtml(item.university || 'جامعة الإمام')} • <span style="color: #cbd5e1;">${this.escapeHtml(item.major || 'علوم الحاسب')}</span>
               </div>
             </div>
           </div>
         </td>
-        <td style="padding: 10px 12px; color: #fbbf24; font-family: var(--font-code); font-weight: 800; font-size: 13px;">
+        <td style="padding: 10px 10px; color: #fbbf24; font-family: var(--font-code); font-weight: 800; font-size: 13px; white-space: nowrap;">
           <i class="fas fa-bolt" style="font-size: 11px;"></i> ${item.xp} XP
         </td>
-        <td style="padding: 10px 12px; color: #f97316; font-weight: 700; font-size: 12px;">
+        <td style="padding: 10px 10px; color: #f97316; font-weight: 700; font-size: 12px; white-space: nowrap;">
           🔥 ${item.streak || 1} يوم
         </td>
       </tr>
     `).join('');
+  },
+
+  showStudentDetails(index) {
+    const list = [...this.leaderboardData];
+    list.sort((a, b) => b.xp - a.xp);
+    const s = list[index];
+    if (!s) return;
+
+    if (window.APP) {
+      window.APP.showToast(`📊 بطاقة الطالب: ${s.name} (${s.university}) • ${s.xp} XP • ${s.solvedCount || 5} مسائل محلولة 🎯`, 'info');
+    }
   },
 
   escapeHtml(str) {
@@ -820,3 +913,4 @@ SUMMARY|1|${ch.testCases.length}
       .replace(/'/g, '&#039;');
   }
 };
+

@@ -1232,13 +1232,16 @@
                 <button class="leaderboard-filter-btn" data-univ="pnu" onclick="window.CHALLENGES.filterLeaderboardByUniv('pnu')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">🏛️ نورة</button>
               </div>
 
+              <!-- Top 3 Champions Honor Podium -->
+              <div id="leaderboard-podium-container" style="display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; margin-bottom: 16px; align-items: end;"></div>
+
               <!-- Leaderboard Table -->
               <div style="overflow-x: auto; flex: 1;">
                 <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                   <thead>
                     <tr style="color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right;">
                       <th style="padding: 8px 10px; text-align: center;">#</th>
-                      <th style="padding: 8px 10px;">الطالب والجامعة</th>
+                      <th style="padding: 8px 10px;">الطالب والكلية</th>
                       <th style="padding: 8px 10px;">النقاط (XP)</th>
                       <th style="padding: 8px 10px;">الـ Streak</th>
                     </tr>

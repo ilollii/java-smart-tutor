@@ -2,53 +2,20 @@
   {
     "name": "لمياء القرني",
     "studentId": "4446020337",
-    "email": "4446020337@sm.imamu.edu.sa",
-    "university": "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)",
-    "college": "كلية الحاسب وتقنية المعلومات",
-    "major": "نظم المعلومات (Information Systems)",
-    "level": "طالب جامعي",
-    "gpa": 4.85,
-    "previousGpa": 4.8,
-    "previousCredits": 60,
-    "currentCredits": 16,
-    "gpaScale": 5,
-    "xp": 1200,
-    "levelNumber": 4,
-    "streakDays": 3,
-    "badges": [
-      {
-        "id": "java_pioneer",
-        "name": "رائد لغة جافا",
-        "icon": "☕",
-        "desc": "بدأت رحلة التعلم في المنصة",
-        "unlocked": true
-      },
-      {
-        "id": "security_sentinel",
-        "name": "حارس الخصوصية PDPL",
-        "icon": "🛡️",
-        "desc": "فعلت التحقق الثنائي والمصادقة الموحدة",
-        "unlocked": true
-      }
-    ]
-  },
-  {
-    "name": "لمياء",
-    "studentId": "o3v7g4",
     "email": "o3v7g4@gmail.com",
     "university": "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)",
     "college": "كلية الحاسب وتقنية المعلومات",
     "major": "نظم المعلومات (Information Systems)",
-    "level": "المستوى الأول (مستجد)",
-    "gpa": 0.0,
-    "previousGpa": 0.0,
-    "previousCredits": 0,
-    "currentCredits": 0,
+    "level": "المستوى الرابع",
+    "gpa": 4.85,
+    "previousGpa": 4.80,
+    "previousCredits": 60,
+    "currentCredits": 16,
     "gpaScale": 5.0,
     "xp": 100,
-    "levelNumber": 1,
+    "levelNumber": 4,
     "streakDays": 2,
-    "isFreshUser": true,
+    "isFreshUser": false,
     "badges": [
       {
         "id": "java_pioneer",
@@ -62,6 +29,13 @@
         "name": "حارس الخصوصية PDPL",
         "icon": "🛡️",
         "desc": "فعلت التحقق الثنائي والمصادقة الموحدة",
+        "unlocked": true
+      },
+      {
+        "id": "algorithm_ace",
+        "name": "فارس الخوارزميات",
+        "icon": "⚡",
+        "desc": "تجاوزت تحديات البرمجة اليومية",
         "unlocked": true
       }
     ],

@@ -330,42 +330,62 @@ public class SenadDatabase {
         List<String> objects = parseTopLevelJsonObjects(raw);
 
         List<Map<String, Object>> rows = new ArrayList<>();
+        Set<String> seenEmails = new HashSet<>();
+        Set<String> seenNames = new HashSet<>();
 
         for (String obj : objects) {
             String name = extractField(obj, "name");
             String email = extractField(obj, "email");
             String univ = extractField(obj, "university");
             String major = extractField(obj, "major");
+            String college = extractField(obj, "college");
             String xpStr = extractField(obj, "xp");
             String streakStr = extractField(obj, "streakDays");
 
-            int xp = 50;
+            if (email == null || email.trim().isEmpty()) continue;
+            String normalizedEmail = email.trim().toLowerCase();
+            String normalizedName = (name != null ? name.trim() : "");
+
+            // Unify Lamia
+            if (normalizedEmail.contains("o3v7g4") || normalizedEmail.contains("4446020337") || normalizedName.contains("لمياء")) {
+                normalizedName = "لمياء القرني";
+                if (seenNames.contains(normalizedName)) continue;
+                seenNames.add(normalizedName);
+            } else {
+                if (seenEmails.contains(normalizedEmail)) continue;
+                seenEmails.add(normalizedEmail);
+                if (!normalizedName.isEmpty()) seenNames.add(normalizedName);
+            }
+
+            int xp = 1250;
             try { if (xpStr != null && !xpStr.isEmpty()) xp = Integer.parseInt(xpStr.split("\\.")[0]); } catch (Exception ignored) {}
-            int streak = 1;
+            int streak = 5;
             try { if (streakStr != null && !streakStr.isEmpty()) streak = Integer.parseInt(streakStr.split("\\.")[0]); } catch (Exception ignored) {}
 
-            boolean isCurrent = (currentEmail != null && email != null && email.equalsIgnoreCase(currentEmail.trim()));
+            boolean isCurrent = (currentEmail != null && (normalizedEmail.equalsIgnoreCase(currentEmail.trim().toLowerCase()) || (normalizedEmail.contains("o3v7g4") && currentEmail.toLowerCase().contains("o3v7g4")) || normalizedName.contains("لمياء")));
 
             Map<String, Object> r = new LinkedHashMap<>();
-            r.put("name", name != null && !name.isEmpty() ? name : "طالب جامعي");
-            r.put("email", email != null ? email : "");
+            r.put("name", normalizedName.isEmpty() ? "طالب جامعي" : normalizedName);
+            r.put("email", normalizedEmail);
             r.put("university", univ != null && !univ.isEmpty() ? univ : "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)");
-            r.put("major", major != null && !major.isEmpty() ? major : "علوم الحاسب");
+            r.put("college", college != null && !college.isEmpty() ? college : "كلية الحاسب وتقنية المعلومات");
+            r.put("major", major != null && !major.isEmpty() ? major : "نظم المعلومات (Information Systems)");
             r.put("xp", xp);
             r.put("streak", streak);
+            r.put("solvedCount", Math.max(1, xp / 150));
             r.put("isUser", isCurrent);
-            r.put("badge", xp >= 1000 ? "🥇 أسطورة الـ Java" : (xp >= 500 ? "🥈 بطل الخوارزميات" : (xp >= 200 ? "🥉 مبرمج متميز" : "🚀 نجم صاعد")));
+            r.put("badge", xp >= 1400 ? "🥇 أسطورة الـ Java" : (xp >= 1100 ? "🥈 بطل الخوارزميات" : (xp >= 800 ? "🥉 مبرمج متميز" : "🚀 نجم صاعد")));
             rows.add(r);
         }
 
         // Top university student benchmarks across Saudi Universities
         List<Map<String, Object>> benchmarks = List.of(
-            createBenchmark("سارة القحطاني", "جامعة الملك سعود (KSU)", "هندسة البرمجيات", 1480, 16, "🥇 متصدرة المسار"),
-            createBenchmark("فهد الدوسري", "جامعة الملك فهد للبترول والمعادن (KFUPM)", "ذكاء اصطناعي", 1320, 13, "🥈 أسطورة الـ OOP"),
-            createBenchmark("عبدالله الشمري", "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", "علوم الحاسب", 1190, 11, "🥉 بطل الخوارزميات"),
-            createBenchmark("نورة السبيعي", "جامعة الأميرة نورة (PNU)", "نظم المعلومات", 980, 9, "🔥 نجمة التحديات"),
-            createBenchmark("ريان الحربي", "جامعة الملك عبدالعزيز (KAU)", "تقنية المعلومات", 840, 7, "⚡ خبير الخوارزميات"),
-            createBenchmark("فيصل العتيبي", "جامعة القصيم (QU)", "هندسة الحاسب", 720, 6, "🚀 متسابق نشط")
+            createBenchmark("سارة القحطاني", "جامعة الملك سعود (KSU)", "كلية علوم الحاسب والمعلومات", "هندسة البرمجيات", 1480, 16, 11, "🥇 متصدرة المسار"),
+            createBenchmark("فهد الدوسري", "جامعة الملك فهد للبترول والمعادن (KFUPM)", "كلية علوم وهندسة الحاسب", "ذكاء اصطناعي", 1320, 13, 9, "🥈 أسطورة الـ OOP"),
+            createBenchmark("عبدالله الشمري", "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", "كلية علوم الحاسب والمعلومات", "علوم الحاسب", 1190, 11, 8, "🥉 بطل الخوارزميات"),
+            createBenchmark("نورة السبيعي", "جامعة الأميرة نورة (PNU)", "كلية علوم الحاسب والمعلومات", "نظم المعلومات", 980, 9, 7, "🔥 نجمة التحديات"),
+            createBenchmark("ريان الحربي", "جامعة الملك عبدالعزيز (KAU)", "كلية الحاسبات وتقنية المعلومات", "تقنية المعلومات", 840, 7, 5, "⚡ خبير الخوارزميات"),
+            createBenchmark("فيصل العتيبي", "جامعة القصيم (QU)", "كلية الحاسب", "هندسة الحاسب", 720, 6, 4, "🚀 متسابق نشط")
         );
 
         for (Map<String, Object> b : benchmarks) {
@@ -389,9 +409,11 @@ public class SenadDatabase {
             sb.append("\"name\":\"").append(escape((String)r.get("name"))).append("\",");
             sb.append("\"email\":\"").append(escape((String)r.get("email"))).append("\",");
             sb.append("\"university\":\"").append(escape((String)r.get("university"))).append("\",");
+            sb.append("\"college\":\"").append(escape((String)r.get("college"))).append("\",");
             sb.append("\"major\":\"").append(escape((String)r.get("major"))).append("\",");
             sb.append("\"xp\":").append(r.get("xp")).append(",");
             sb.append("\"streak\":").append(r.get("streak")).append(",");
+            sb.append("\"solvedCount\":").append(r.get("solvedCount")).append(",");
             sb.append("\"isUser\":").append(r.get("isUser")).append(",");
             sb.append("\"badge\":\"").append(escape((String)r.get("badge"))).append("\"");
             sb.append("}");
@@ -400,14 +422,16 @@ public class SenadDatabase {
         return sb.toString();
     }
 
-    private static Map<String, Object> createBenchmark(String name, String univ, String major, int xp, int streak, String badge) {
+    private static Map<String, Object> createBenchmark(String name, String univ, String college, String major, int xp, int streak, int solvedCount, String badge) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
-        map.put("email", "benchmark_" + name.hashCode() + "@edu.sa");
+        map.put("email", "benchmark_" + Math.abs(name.hashCode()) + "@edu.sa");
         map.put("university", univ);
+        map.put("college", college);
         map.put("major", major);
         map.put("xp", xp);
         map.put("streak", streak);
+        map.put("solvedCount", solvedCount);
         map.put("isUser", false);
         map.put("badge", badge);
         return map;
