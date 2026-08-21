@@ -467,46 +467,6 @@ window.AUTH = {
     if (window.APP) window.APP.showToast(`مرحباً بك يا ${this.currentUser.name} من (${this.currentUser.university})! تم تسجيل وحفظ حسابك الأكاديمي بنجاح 🚀`, 'success');
   },
 
-  async loginAsProfile(profileKey) {
-    const profile = Object.assign({}, window.APP_DATA.profiles[profileKey] || window.APP_DATA.profiles.imsiu_cs);
-    this.currentUser = profile;
-
-    // For demo profile: ensure demo courses are loaded if not previously saved
-    const studentCourseKey = 'senad_student_courses_' + profile.email;
-    if (!localStorage.getItem(studentCourseKey)) {
-      localStorage.setItem(studentCourseKey, JSON.stringify(window.APP_DATA.courses));
-    }
-
-    // Acquire signed academic session token from backend
-    try {
-      const res = await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-        body: JSON.stringify({
-          studentId: profile.studentId || profile.email || profileKey,
-          email: profile.email || `${profileKey}@imsiu.edu.sa`,
-          name: profile.name
-        })
-      });
-      if (res.ok) {
-        const authData = await res.json();
-        if (authData && authData.token) {
-          this.currentUser.sessionToken = authData.token;
-          if (window.API) window.API.sessionToken = authData.token;
-        }
-      }
-    } catch (e) {
-      console.warn("Backend session token acquisition notice:", e);
-    }
-
-    this.isLoggedIn = true;
-    this.is2FAVerified = true;
-    localStorage.setItem('senad_universal_user_session', JSON.stringify(this.currentUser));
-
-    this.showDashboard();
-    if (window.APP) window.APP.showToast(`تم تسجيل الدخول كطالب (${profile.university} - ${profile.major}) بنجاح! 🎉`, 'success');
-  },
-
   logout() {
     localStorage.removeItem('senad_universal_user_session');
     if (window.API) window.API.sessionToken = null;
