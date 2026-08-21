@@ -37,17 +37,9 @@ window.CHALLENGES = {
 
 public class Solution {
     public static boolean isValid(String s) {
-        if (s == null || s.length() % 2 != 0) return false;
-        Stack<Character> stack = new Stack<>();
+        // اكتب خوارزميتك البرمجية هنا للتحقق من توازن الأقواس
         
-        for (char c : s.toCharArray()) {
-            if (c == '(') stack.push(')');
-            else if (c == '{') stack.push('}');
-            else if (c == '[') stack.push(']');
-            else if (stack.isEmpty() || stack.pop() != c) return false;
-        }
-        
-        return stack.isEmpty();
+        return false;
     }
 }`,
       testHarness: `
@@ -97,14 +89,8 @@ public class Main {
 
 public class Solution {
     public static int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            int complement = target - nums[i];
-            if (map.containsKey(complement)) {
-                return new int[] { map.get(complement), i };
-            }
-            map.put(nums[i], i);
-        }
+        // اكتب خوارزميتك هنا لإرجاع فهارس الرقمين
+        
         return new int[]{};
     }
 }`,
@@ -155,13 +141,9 @@ public class Main {
       aiHint: "💡 تلميح: استخدم باقي القسمة `x % 10` لاستخراج آخر رقم وإضافته للعدد المعكوس `reversed = reversed * 10 + digit` ثم قسم `x /= 10`.",
       starterCode: `public class Solution {
     public static boolean isPalindrome(int x) {
-        if (x < 0 || (x % 10 == 0 && x != 0)) return false;
-        int original = x, reversed = 0;
-        while (x != 0) {
-            reversed = reversed * 10 + x % 10;
-            x /= 10;
-        }
-        return original == reversed;
+        // اكتب خوارزميتك هنا للتحقق من تماثل العدد بدون تحويل لنص
+        
+        return false;
     }
 }`,
       testHarness: `
@@ -209,17 +191,9 @@ public class Main {
       aiHint: "💡 تلميح: حول النص لمصفوفة أحرف `char[] arr = str.toCharArray()` ثم استخدم مؤشرين `left = 0` و `right = arr.length - 1` وقم بالتبديل أثناء تقاربهما!",
       starterCode: `public class Solution {
     public static String reverseString(String str) {
-        if (str == null) return "";
-        char[] arr = str.toCharArray();
-        int left = 0, right = arr.length - 1;
-        while (left < right) {
-            char temp = arr[left];
-            arr[left] = arr[right];
-            arr[right] = temp;
-            left++;
-            right--;
-        }
-        return new String(arr);
+        // اكتب خوارزميتك هنا لعكس النص يدوياً بدون دوال جاهزة
+        
+        return "";
     }
 }`,
       testHarness: `
@@ -266,14 +240,8 @@ public class Main {
       aiHint: "💡 تلميح: احسب نقطة المنتصف عبر `int mid = left + (right - left) / 2` لتجنب خطأ الـ Overflow، وإذا كان `nums[mid] < target` حرّك `left = mid + 1`!",
       starterCode: `public class Solution {
     public static int binarySearch(int[] nums, int target) {
-        if (nums == null || nums.length == 0) return -1;
-        int left = 0, right = nums.length - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            if (nums[mid] == target) return mid;
-            if (nums[mid] < target) left = mid + 1;
-            else right = mid - 1;
-        }
+        // اكتب خوارزمية البحث الثنائي هنا بتعقيد O(log N)
+        
         return -1;
     }
 }`,
@@ -322,16 +290,9 @@ public class Main {
       aiHint: "💡 تلميح: أنشئ مصفوفة ترددات بطول 26 خانة `int[] counts = new int[26]` وزد التردد مع أحرف `s` وأنقصه مع `t`، ثم تأكد أن كل القيم أصفار!",
       starterCode: `public class Solution {
     public static boolean isAnagram(String s, String t) {
-        if (s.length() != t.length()) return false;
-        int[] freq = new int[26];
-        for (int i = 0; i < s.length(); i++) {
-            freq[s.charAt(i) - 'a']++;
-            freq[t.charAt(i) - 'a']--;
-        }
-        for (int count : freq) {
-            if (count != 0) return false;
-        }
-        return true;
+        // اكتب خوارزميتك هنا للتحقق من التناغم النصي
+        
+        return false;
     }
 }`,
       testHarness: `
@@ -379,12 +340,9 @@ public class Main {
       aiHint: "💡 تلميح: ابدأ بحالة الأساس (Base Case): إذا كان `n <= 1` أرجع `1L`، وإلا أرجع `n * factorial(n - 1)` أو استخدم حلقة تكرارية بسيطة!",
       starterCode: `public class Solution {
     public static long factorial(int n) {
-        if (n <= 1) return 1L;
-        long result = 1L;
-        for (int i = 2; i <= n; i++) {
-            result *= i;
-        }
-        return result;
+        // اكتب خوارزميتك هنا لحساب مضروب العدد n!
+        
+        return 0L;
     }
 }`,
       testHarness: `
