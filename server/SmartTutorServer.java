@@ -959,7 +959,7 @@ public class SmartTutorServer {
             String studentId = extractJsonField(body, "studentId");
 
             if (email == null || email.trim().isEmpty() || email.length() > 100 || !EMAIL_REGEX.matcher(email.trim()).matches()) {
-                sendJsonResponse(exchange, 400, "{\"success\":false,\"error\":\"البريد الإلكتروني الأكاديمي غير صالح. يرجى إدخال صيغة صحيحة (name@imsiu.edu.sa).\"}");
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"error\":\"البريد الإلكتروني الشخصي غير صالح. يرجى إدخال بريد إلكتروني صحيح (مثل: name@gmail.com أو name@outlook.com).\"}");
                 return;
             }
 

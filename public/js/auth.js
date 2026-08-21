@@ -213,7 +213,7 @@ window.AUTH = {
     const password = passInput ? passInput.value : '';
 
     if (!email || !email.includes('@') || !email.includes('.')) {
-      if (window.APP) window.APP.showToast('يرجى إدخال بريد إلكتروني صحيح ومعتمد', 'warning');
+      if (window.APP) window.APP.showToast('يرجى إدخال بريد إلكتروني شخصي صحيح (مثل: name@gmail.com أو name@outlook.com)', 'warning');
       if (window.SOUNDS) window.SOUNDS.playError();
       return;
     }

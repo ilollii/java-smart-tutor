@@ -51,96 +51,100 @@
 
       <!-- Real Student Universal Login & Registration Form -->
       <div id="form-student-login">
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-user"></i> الاسم الكامل:</label>
-          <input type="text" id="init-name" class="chat-input" style="width: 100%;" placeholder="أدخل اسمك الحقيقي">
+        <!-- 1. Full Name Field (الاسم) -->
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" style="font-weight: 700; font-size: 13px;"><i class="fas fa-user" style="color: var(--primary);"></i> الاسم الكامل:</label>
+          <input type="text" id="init-name" class="chat-input" style="width: 100%; min-height: 46px; font-size: 15px;" placeholder="أدخل اسمك الحقيقي (مثال: عبدالله القحطاني)" autocomplete="name" required>
         </div>
 
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-envelope"></i> البريد الإلكتروني (جامعي أو شخصي):</label>
-          <input type="email" id="init-email" class="chat-input" style="width: 100%; direction: ltr;" placeholder="name@domain.edu.sa أو name@gmail.com">
+        <!-- 2. Personal Email Field -->
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" style="font-weight: 700; font-size: 13px;"><i class="fas fa-envelope" style="color: var(--primary);"></i> البريد الإلكتروني الشخصي (لاستلام رمز التحقق OTP):</label>
+          <input type="email" id="init-email" class="chat-input" style="width: 100%; min-height: 46px; font-size: 15px; direction: ltr;" placeholder="name@gmail.com أو name@outlook.com" autocomplete="email" required>
         </div>
 
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-lock"></i> كلمة المرور:</label>
-          <input type="password" id="init-password" class="chat-input" style="width: 100%; direction: ltr;" placeholder="كلمة المرور الخاصة بك" onkeydown="if(event.key==='Enter') window.AUTH.submitInitialCredentials()">
-        </div>
+        <!-- 3. Password Field with Strict Constraints & Live Indicator -->
+        <div class="form-group" style="margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label class="form-label" style="margin-bottom: 0; font-weight: 700; font-size: 13px;"><i class="fas fa-lock" style="color: var(--primary);"></i> كلمة المرور السرية:</label>
+            <span id="pass-strength-label" style="font-size: 11px; font-weight: 700; color: var(--text-muted);">غير مكتملة</span>
+          </div>
+          <div style="position: relative;">
+            <input type="password" id="init-password" class="chat-input" style="width: 100%; min-height: 46px; font-size: 15px; direction: ltr; padding-left: 42px;" placeholder="أدخل كلمة مرور قوية" autocomplete="new-password" oninput="window.AUTH.onPasswordInput(this.value)" onkeydown="if(event.key==='Enter') window.AUTH.submitInitialCredentials()">
+            <button type="button" id="btn-toggle-pass-visibility" onclick="window.AUTH.togglePasswordVisibility()" title="إظهار / إخفاء كلمة المرور" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 6px 10px; font-size: 15px;">
+              <i class="fas fa-eye" id="pass-visibility-icon"></i>
+            </button>
+          </div>
 
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-university"></i> اختر الجامعة التي تدرس بها:</label>
-          <select id="init-univ-select" class="chat-input" style="width: 100%;" onchange="window.AUTH.onUniversityChange()">
-            <option value="imsiu" selected>جامعة الإمام محمد بن سعود الإسلامية (IMSIU)</option>
-            <option value="ksu">جامعة الملك سعود (KSU)</option>
-            <option value="kfupm">جامعة الملك فهد للبترول والمعادن (KFUPM)</option>
-            <option value="kau">جامعة الملك عبدالعزيز (KAU)</option>
-            <option value="pnu">جامعة الأميرة نورة بنت عبدالرحمن (PNU)</option>
-            <option value="kfu">جامعة الملك فيصل (KFU)</option>
-            <option value="uqu">جامعة أم القرى (UQU)</option>
-            <option value="qu">جامعة القصيم (QU)</option>
-            <option value="taibah">جامعة طيبة (Taibah)</option>
-            <option value="kku">جامعة الملك خالد (KKU)</option>
-            <option value="iau">جامعة الإمام عبدالرحمن بن فيصل (IAU)</option>
-            <option value="uj">جامعة جدة (UJ)</option>
-            <option value="seu">الجامعة السعودية الإلكترونية (SEU)</option>
-            <option value="psu">جامعة الأمير سلطان (PSU)</option>
-            <option value="alfaisal">جامعة الفيصل (Alfaisal)</option>
-            <option value="other">🏛️ جامعة أخرى / كلية خاصة أو دولية...</option>
-          </select>
-        </div>
+          <!-- Password Strength Progress Bar -->
+          <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 6px; overflow: hidden;">
+            <div id="pass-strength-bar" style="width: 0%; height: 100%; background: var(--danger); transition: all 0.3s ease;"></div>
+          </div>
 
-        <!-- Custom University Name Input (Shown if other selected) -->
-        <div id="custom-univ-group" class="form-group" style="display: none; margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-pen"></i> اكتب اسم جامعتك أو كليتك:</label>
-          <input type="text" id="init-custom-univ" class="chat-input" style="width: 100%;" placeholder="مثال: جامعة تبوك / كليات الشرق العربي">
-        </div>
-
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-laptop-code"></i> التخصص الأكاديمي:</label>
-          <select id="init-major-select" class="chat-input" style="width: 100%;">
-            <option value="cs" selected>علوم الحاسب (Computer Science)</option>
-            <option value="is">نظم المعلومات (Information Systems)</option>
-            <option value="swe">هندسة البرمجيات (Software Engineering)</option>
-            <option value="ai">الذكاء الاصطناعي وعلوم البيانات (AI & Data Science)</option>
-            <option value="cyber">الأمن السيبراني (Cybersecurity)</option>
-            <option value="it">تقنية المعلومات (Information Technology)</option>
-            <option value="ce">هندسة الحاسب (Computer Engineering)</option>
-          </select>
-        </div>
-
-        <!-- Academic Status & GPA Record Setup -->
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label class="form-label"><i class="fas fa-chart-line"></i> الحالة الأكاديمية والمعدل:</label>
-          <select id="init-academic-status" class="chat-input" style="width: 100%;" onchange="window.AUTH.onAcademicStatusChange()">
-            <option value="freshman" selected>🌱 طالب مستجد / بداية سجل جديد (معدل 0.00)</option>
-            <option value="advanced">📊 طالب بمستوى متقدم (لدي معدل وساعات سابقة)</option>
-          </select>
-        </div>
-
-        <!-- Advanced Academic Inputs (Shown only if advanced selected) -->
-        <div id="advanced-academic-group" style="display: none; background: rgba(16, 185, 129, 0.06); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 12px; margin-bottom: 14px;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">المعدل التراكمي السابق:</label>
-              <input type="number" id="init-prev-gpa" class="chat-input" style="width: 100%;" step="0.01" min="0" max="5.00" placeholder="مثال 4.50">
+          <!-- Real-time Password Security Constraints Checklist -->
+          <div id="password-requirements-box" style="margin-top: 8px; padding: 8px 10px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); font-size: 11px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px;">
+            <div id="req-length" style="color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+              <i class="fas fa-circle-xmark req-icon" style="color: var(--danger);"></i> 8 خانات على الأقل
             </div>
-            <div>
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">الساعات السابقة المنجزة:</label>
-              <input type="number" id="init-prev-credits" class="chat-input" style="width: 100%;" min="0" max="200" placeholder="مثال 48">
+            <div id="req-case" style="color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+              <i class="fas fa-circle-xmark req-icon" style="color: var(--danger);"></i> حرف كبير وصغير (A-z)
+            </div>
+            <div id="req-digit" style="color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+              <i class="fas fa-circle-xmark req-icon" style="color: var(--danger);"></i> رقم واحد على الأقل (0-9)
+            </div>
+            <div id="req-symbol" style="color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+              <i class="fas fa-circle-xmark req-icon" style="color: var(--danger);"></i> رمز خاص (@, #, $, ...)
             </div>
           </div>
-          <div style="font-size: 11px; color: var(--primary); margin-top: 6px;">
-            <i class="fas fa-info-circle"></i> سيتم دمج معدلك السابق مع درجات الفصل لحساب التراكمي الفعلي.
-          </div>
         </div>
 
-        <button class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 700; margin-bottom: 12px;" onclick="window.AUTH.submitInitialCredentials()">
-          <i class="fas fa-sign-in-alt"></i> الدخول ومتابعة التحقق (2FA) 🚀
+        <!-- Optional Collapsible Academic Details -->
+        <details style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-md); padding: 8px 12px; margin-bottom: 16px;">
+          <summary style="font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; user-select: none;">
+            <i class="fas fa-graduation-cap"></i> خيارات الجامعة والتخصص الأكاديمي (اختياري)
+          </summary>
+          <div style="margin-top: 10px;">
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label" style="font-size: 11px;"><i class="fas fa-university"></i> الجامعة:</label>
+              <select id="init-univ-select" class="chat-input" style="width: 100%; font-size: 13px;" onchange="window.AUTH.onUniversityChange()">
+                <option value="imsiu" selected>جامعة الإمام محمد بن سعود الإسلامية (IMSIU)</option>
+                <option value="ksu">جامعة الملك سعود (KSU)</option>
+                <option value="kfupm">جامعة الملك فهد للبترول والمعادن (KFUPM)</option>
+                <option value="kau">جامعة الملك عبدالعزيز (KAU)</option>
+                <option value="pnu">جامعة الأميرة نورة بنت عبدالرحمن (PNU)</option>
+                <option value="kfu">جامعة الملك فيصل (KFU)</option>
+                <option value="uqu">جامعة أم القرى (UQU)</option>
+                <option value="qu">جامعة القصيم (QU)</option>
+                <option value="other">🏛️ جامعة أخرى...</option>
+              </select>
+            </div>
+
+            <div id="custom-univ-group" class="form-group" style="display: none; margin-bottom: 10px;">
+              <input type="text" id="init-custom-univ" class="chat-input" style="width: 100%; font-size: 13px;" placeholder="اكتب اسم جامعتك">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 10px;">
+              <label class="form-label" style="font-size: 11px;"><i class="fas fa-laptop-code"></i> التخصص:</label>
+              <select id="init-major-select" class="chat-input" style="width: 100%; font-size: 13px;">
+                <option value="cs" selected>علوم الحاسب (Computer Science)</option>
+                <option value="is">نظم المعلومات (Information Systems)</option>
+                <option value="swe">هندسة البرمجيات (Software Engineering)</option>
+                <option value="ai">الذكاء الاصطناعي وعلوم البيانات (AI & Data Science)</option>
+                <option value="cyber">الأمن السيبراني (Cybersecurity)</option>
+                <option value="it">تقنية المعلومات (Information Technology)</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <button class="btn btn-primary" style="width: 100%; min-height: 48px; font-weight: 800; font-size: 16px; margin-bottom: 14px;" onclick="window.AUTH.submitInitialCredentials()">
+          <i class="fas fa-paper-plane"></i> متابعة وإرسال رمز التحقق للإيميل ✉️
         </button>
 
         <!-- Quick Demo Profiles Switcher for fast testing -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 12px; text-align: center;">
           <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">
-            <i class="fas fa-flask" style="color: var(--accent);"></i> أو جرّب المنصة مباشرة بحساب تجريبي جاهز (Demo):
+            <i class="fas fa-flask" style="color: var(--accent);"></i> تجربة المنصة بحساب تجريبي جاهز (Demo):
           </div>
           <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
             <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 4px 8px;" onclick="window.AUTH.loginAsProfile('imsiu_cs')">🏛️ الإمام (CS)</button>
@@ -151,27 +155,34 @@
         </div>
       </div>
 
-      <!-- Step: 2FA OTP Code Verification -->
+      <!-- Step: 2FA OTP Code Verification (No autofill - waiting for email input) -->
       <div id="form-2fa-step" style="display: none;">
-        <div style="text-align: center; margin-bottom: 16px;">
-          <i class="fas fa-mobile-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 8px;"></i>
-          <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main);">التحقق بخطوتين (2FA)</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">أدخل رمز التحقق (OTP) المرسل إلى بريدك أو جوالك</p>
+        <div style="text-align: center; margin-bottom: 18px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16,185,129,0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 12px; border: 1px solid rgba(16,185,129,0.3);">
+            <i class="fas fa-envelope-open-text"></i>
+          </div>
+          <h4 style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">أدخل رمز التحقق (OTP)</h4>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+            تم إرسال رمز التحقق الأكاديمي إلى بريدك الإلكتروني ✉️.<br>
+            <span style="color: var(--primary); font-weight: 600;" id="label-sent-email-target">يرجى فتح صندوق الوارد وإدخال الرمز هنا:</span>
+          </p>
         </div>
 
-        <div class="form-group" style="margin-bottom: 18px;">
-          <input type="text" id="init-otp-input" class="chat-input" style="width: 100%; text-align: center; font-size: 22px; font-family: var(--font-code); letter-spacing: 6px; font-weight: 700;" maxlength="6" placeholder="------" onkeydown="if(event.key==='Enter') window.AUTH.verifyInitial2FA()">
-          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 8px;">
-            <span>صلاحية الرمز: <strong id="init-otp-timer" style="color: var(--accent);">00:60</strong></span>
-            <span style="color: var(--primary); cursor: pointer;" onclick="window.AUTH.startOtpTimer(); window.APP.showToast('تمت إعادة إرسال الرمز', 'info');">إعادة الإرسال</span>
+        <div class="form-group" style="margin-bottom: 20px;">
+          <input type="text" id="init-otp-input" class="chat-input" style="width: 100%; min-height: 52px; text-align: center; font-size: 26px; font-family: var(--font-code); letter-spacing: 8px; font-weight: 800; direction: ltr;" maxlength="6" placeholder="------" autocomplete="one-time-code" onkeydown="if(event.key==='Enter') window.AUTH.verifyInitial2FA()">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+            <span>صلاحية الرمز: <strong id="init-otp-timer" style="color: var(--accent);">05:00</strong></span>
+            <span style="color: var(--primary); cursor: pointer; font-weight: 700;" onclick="window.AUTH.resendOtp();">
+              <i class="fas fa-rotate-right"></i> إعادة إرسال الرمز
+            </span>
           </div>
         </div>
 
         <div style="display: flex; gap: 10px;">
-          <button class="btn btn-primary" style="flex: 1;" onclick="window.AUTH.verifyInitial2FA()">
-            <i class="fas fa-check-circle"></i> تأكيد الدخول والدخول للمنصة
+          <button class="btn btn-primary" style="flex: 1; min-height: 48px; font-weight: 800; font-size: 15px;" onclick="window.AUTH.verifyInitial2FA()">
+            <i class="fas fa-shield-check"></i> تأكيد الرمز والدخول للمنصة
           </button>
-          <button class="btn btn-secondary" onclick="window.AUTH.switchLoginTab('student')">
+          <button class="btn btn-secondary" style="min-height: 48px; padding: 0 18px;" onclick="window.AUTH.switchLoginTab('student')">
             رجوع
           </button>
         </div>
