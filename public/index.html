@@ -1631,6 +1631,23 @@
     </div>
   </div>
 
+  <!-- Modal 9: Official Student Achievement Profile Card -->
+  <div id="student-profile-modal" class="modal-backdrop" onclick="if(event.target === this) window.CHALLENGES.closeStudentProfileModal()">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-id-card" style="color: #fbbf24;"></i>
+          <span>بطاقة السجل الأكاديمي والبرمجي للطالب</span>
+        </div>
+        <button class="modal-close-btn" onclick="window.CHALLENGES.closeStudentProfileModal()">&times;</button>
+      </div>
+      <div id="student-profile-modal-body"></div>
+      <div style="margin-top: 20px; text-align: left; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+        <button class="btn btn-secondary" onclick="window.CHALLENGES.closeStudentProfileModal()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toast-container"></div>
 

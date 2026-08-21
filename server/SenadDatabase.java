@@ -330,73 +330,56 @@ public class SenadDatabase {
         List<String> objects = parseTopLevelJsonObjects(raw);
 
         List<Map<String, Object>> rows = new ArrayList<>();
-        Set<String> seenEmails = new HashSet<>();
-        Set<String> seenNames = new HashSet<>();
+        Set<String> seen = new HashSet<>();
 
         for (String obj : objects) {
             String name = extractField(obj, "name");
+            String studentId = extractField(obj, "studentId");
             String email = extractField(obj, "email");
             String univ = extractField(obj, "university");
-            String major = extractField(obj, "major");
             String college = extractField(obj, "college");
+            String major = extractField(obj, "major");
+            String level = extractField(obj, "level");
+            String gpaStr = extractField(obj, "gpa");
             String xpStr = extractField(obj, "xp");
             String streakStr = extractField(obj, "streakDays");
+            String solvedStr = extractField(obj, "solvedCount");
 
             if (email == null || email.trim().isEmpty()) continue;
             String normalizedEmail = email.trim().toLowerCase();
-            String normalizedName = (name != null ? name.trim() : "");
+            String key = (name != null ? name.trim().toLowerCase() : normalizedEmail);
+            if (seen.contains(key)) continue;
+            seen.add(key);
 
-            // Unify Lamia
-            if (normalizedEmail.contains("o3v7g4") || normalizedEmail.contains("4446020337") || normalizedName.contains("لمياء")) {
-                normalizedName = "لمياء القرني";
-                if (seenNames.contains(normalizedName)) continue;
-                seenNames.add(normalizedName);
-            } else {
-                if (seenEmails.contains(normalizedEmail)) continue;
-                seenEmails.add(normalizedEmail);
-                if (!normalizedName.isEmpty()) seenNames.add(normalizedName);
-            }
-
-            int xp = 1250;
+            int xp = 50;
             try { if (xpStr != null && !xpStr.isEmpty()) xp = Integer.parseInt(xpStr.split("\\.")[0]); } catch (Exception ignored) {}
-            int streak = 5;
+            int streak = 1;
             try { if (streakStr != null && !streakStr.isEmpty()) streak = Integer.parseInt(streakStr.split("\\.")[0]); } catch (Exception ignored) {}
+            int solved = Math.max(1, xp / 150);
+            try { if (solvedStr != null && !solvedStr.isEmpty()) solved = Integer.parseInt(solvedStr.split("\\.")[0]); } catch (Exception ignored) {}
+            double gpa = 4.85;
+            try { if (gpaStr != null && !gpaStr.isEmpty()) gpa = Double.parseDouble(gpaStr); } catch (Exception ignored) {}
 
-            boolean isCurrent = (currentEmail != null && (normalizedEmail.equalsIgnoreCase(currentEmail.trim().toLowerCase()) || (normalizedEmail.contains("o3v7g4") && currentEmail.toLowerCase().contains("o3v7g4")) || normalizedName.contains("لمياء")));
+            boolean isCurrent = (currentEmail != null && (normalizedEmail.equalsIgnoreCase(currentEmail.trim().toLowerCase()) || (normalizedEmail.contains("o3v7g4") && currentEmail.toLowerCase().contains("o3v7g4"))));
 
             Map<String, Object> r = new LinkedHashMap<>();
-            r.put("name", normalizedName.isEmpty() ? "طالب جامعي" : normalizedName);
+            r.put("name", name != null && !name.isEmpty() ? name : "طالب جامعي");
+            r.put("studentId", studentId != null ? studentId : "");
             r.put("email", normalizedEmail);
             r.put("university", univ != null && !univ.isEmpty() ? univ : "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)");
             r.put("college", college != null && !college.isEmpty() ? college : "كلية الحاسب وتقنية المعلومات");
-            r.put("major", major != null && !major.isEmpty() ? major : "نظم المعلومات (Information Systems)");
+            r.put("major", major != null && !major.isEmpty() ? major : "نظم المعلومات");
+            r.put("level", level != null && !level.isEmpty() ? level : "المستوى الرابع");
+            r.put("gpa", gpa);
             r.put("xp", xp);
             r.put("streak", streak);
-            r.put("solvedCount", Math.max(1, xp / 150));
+            r.put("solvedCount", solved);
             r.put("isUser", isCurrent);
-            r.put("badge", xp >= 1400 ? "🥇 أسطورة الـ Java" : (xp >= 1100 ? "🥈 بطل الخوارزميات" : (xp >= 800 ? "🥉 مبرمج متميز" : "🚀 نجم صاعد")));
+            r.put("badge", xp >= 1400 ? "🥇 أسطورة الـ Java" : (xp >= 1200 ? "🥈 بطل الخوارزميات" : (xp >= 900 ? "🥉 مبرمج متميز" : "🚀 نجم صاعد")));
             rows.add(r);
         }
 
-        // Top university student benchmarks across Saudi Universities
-        List<Map<String, Object>> benchmarks = List.of(
-            createBenchmark("سارة القحطاني", "جامعة الملك سعود (KSU)", "كلية علوم الحاسب والمعلومات", "هندسة البرمجيات", 1480, 16, 11, "🥇 متصدرة المسار"),
-            createBenchmark("فهد الدوسري", "جامعة الملك فهد للبترول والمعادن (KFUPM)", "كلية علوم وهندسة الحاسب", "ذكاء اصطناعي", 1320, 13, 9, "🥈 أسطورة الـ OOP"),
-            createBenchmark("عبدالله الشمري", "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)", "كلية علوم الحاسب والمعلومات", "علوم الحاسب", 1190, 11, 8, "🥉 بطل الخوارزميات"),
-            createBenchmark("نورة السبيعي", "جامعة الأميرة نورة (PNU)", "كلية علوم الحاسب والمعلومات", "نظم المعلومات", 980, 9, 7, "🔥 نجمة التحديات"),
-            createBenchmark("ريان الحربي", "جامعة الملك عبدالعزيز (KAU)", "كلية الحاسبات وتقنية المعلومات", "تقنية المعلومات", 840, 7, 5, "⚡ خبير الخوارزميات"),
-            createBenchmark("فيصل العتيبي", "جامعة القصيم (QU)", "كلية الحاسب", "هندسة الحاسب", 720, 6, 4, "🚀 متسابق نشط")
-        );
-
-        for (Map<String, Object> b : benchmarks) {
-            boolean exists = false;
-            for (Map<String, Object> r : rows) {
-                if (r.get("name").equals(b.get("name"))) { exists = true; break; }
-            }
-            if (!exists) rows.add(b);
-        }
-
-        // Sort descending by XP
+        // Sort descending strictly by verified XP
         rows.sort((a, b) -> Integer.compare((int)b.get("xp"), (int)a.get("xp")));
 
         StringBuilder sb = new StringBuilder("[\n");
@@ -407,10 +390,13 @@ public class SenadDatabase {
             sb.append("  {");
             sb.append("\"rank\":").append(rank).append(",");
             sb.append("\"name\":\"").append(escape((String)r.get("name"))).append("\",");
+            sb.append("\"studentId\":\"").append(escape((String)r.get("studentId"))).append("\",");
             sb.append("\"email\":\"").append(escape((String)r.get("email"))).append("\",");
             sb.append("\"university\":\"").append(escape((String)r.get("university"))).append("\",");
             sb.append("\"college\":\"").append(escape((String)r.get("college"))).append("\",");
             sb.append("\"major\":\"").append(escape((String)r.get("major"))).append("\",");
+            sb.append("\"level\":\"").append(escape((String)r.get("level"))).append("\",");
+            sb.append("\"gpa\":").append(r.get("gpa")).append(",");
             sb.append("\"xp\":").append(r.get("xp")).append(",");
             sb.append("\"streak\":").append(r.get("streak")).append(",");
             sb.append("\"solvedCount\":").append(r.get("solvedCount")).append(",");
@@ -420,21 +406,6 @@ public class SenadDatabase {
         }
         sb.append("\n]");
         return sb.toString();
-    }
-
-    private static Map<String, Object> createBenchmark(String name, String univ, String college, String major, int xp, int streak, int solvedCount, String badge) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("name", name);
-        map.put("email", "benchmark_" + Math.abs(name.hashCode()) + "@edu.sa");
-        map.put("university", univ);
-        map.put("college", college);
-        map.put("major", major);
-        map.put("xp", xp);
-        map.put("streak", streak);
-        map.put("solvedCount", solvedCount);
-        map.put("isUser", false);
-        map.put("badge", badge);
-        return map;
     }
 
     public static synchronized void addXpToStudent(String email, int xpToAdd) {
@@ -488,10 +459,14 @@ public class SenadDatabase {
     // --- Helper Utilities ---
     private static String extractField(String json, String field) {
         if (json == null) return null;
-        String pattern = "\"" + field + "\"\\s*:\\s*\"([^\"]+)\"";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
-        java.util.regex.Matcher m = p.matcher(json);
-        if (m.find()) return m.group(1);
+        String patternQuoted = "\"" + field + "\"\\s*:\\s*\"([^\"]+)\"";
+        java.util.regex.Matcher m1 = java.util.regex.Pattern.compile(patternQuoted).matcher(json);
+        if (m1.find()) return m1.group(1);
+
+        String patternRaw = "\"" + field + "\"\\s*:\\s*([^,\\}\\s]+)";
+        java.util.regex.Matcher m2 = java.util.regex.Pattern.compile(patternRaw).matcher(json);
+        if (m2.find()) return m2.group(1).trim();
+
         return null;
     }
 
