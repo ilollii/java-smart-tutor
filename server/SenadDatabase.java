@@ -146,6 +146,23 @@ public class SenadDatabase {
             String curr = list.get(i);
             String currEmail = extractField(curr, "email");
             if (currEmail != null && currEmail.equalsIgnoreCase(email)) {
+                // Preserve higher XP, streak, and solved count from existing record
+                String oldXpStr = extractField(curr, "xp");
+                String newXpStr = extractField(processedJson, "xp");
+                int oldXp = 0; int newXp = 0;
+                try { if (oldXpStr != null) oldXp = Integer.parseInt(oldXpStr.split("\\.")[0]); } catch (Exception ignored) {}
+                try { if (newXpStr != null) newXp = Integer.parseInt(newXpStr.split("\\.")[0]); } catch (Exception ignored) {}
+                if (oldXp > newXp) {
+                    processedJson = processedJson.replaceAll("\"xp\"\\s*:\\s*\\d+(\\.\\d+)?,?", "\"xp\": " + oldXp + ",");
+                }
+                String oldStreakStr = extractField(curr, "streakDays");
+                String newStreakStr = extractField(processedJson, "streakDays");
+                int oldStreak = 0; int newStreak = 0;
+                try { if (oldStreakStr != null) oldStreak = Integer.parseInt(oldStreakStr.split("\\.")[0]); } catch (Exception ignored) {}
+                try { if (newStreakStr != null) newStreak = Integer.parseInt(newStreakStr.split("\\.")[0]); } catch (Exception ignored) {}
+                if (oldStreak > newStreak) {
+                    processedJson = processedJson.replaceAll("\"streakDays\"\\s*:\\s*\\d+(\\.\\d+)?,?", "\"streakDays\": " + oldStreak + ",");
+                }
                 list.set(i, processedJson.trim());
                 updated = true;
                 break;
