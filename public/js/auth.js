@@ -139,6 +139,13 @@ window.AUTH = {
     const res = this.validatePassword(val);
     const label = document.getElementById('pass-strength-label');
     const bar = document.getElementById('pass-strength-bar');
+    const arabicWarning = document.getElementById('pass-arabic-warning');
+
+    // Live Arabic keyboard detection warning
+    const hasArabic = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(val || '');
+    if (arabicWarning) {
+      arabicWarning.style.display = hasArabic ? 'flex' : 'none';
+    }
 
     const updateReq = (id, valid) => {
       const el = document.getElementById(id);
@@ -146,15 +153,17 @@ window.AUTH = {
       const icon = el.querySelector('.req-icon') || el.querySelector('i');
       if (valid) {
         el.style.color = '#10b981';
+        el.style.fontWeight = '700';
         if (icon) {
-          icon.className = 'fas fa-circle-check req-icon';
+          icon.className = 'fas fa-check-circle req-icon';
           icon.style.color = '#10b981';
         }
       } else {
         el.style.color = 'var(--text-muted)';
+        el.style.fontWeight = '400';
         if (icon) {
-          icon.className = 'fas fa-circle-xmark req-icon';
-          icon.style.color = 'var(--danger)';
+          icon.className = 'fas fa-times-circle req-icon';
+          icon.style.color = '#ef4444';
         }
       }
     };
