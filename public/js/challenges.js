@@ -732,23 +732,23 @@ SUMMARY|1|${ch.testCases.length}
       this.leaderboardData = data;
     } else {
       // If only current registered student is in DB
-      this.leaderboardData = [
+      this.leaderboardData = user ? [
         {
           rank: 1,
-          name: user ? (user.name || "لمياء القرني") : "لمياء القرني",
-          studentId: user ? (user.studentId || "4446020337") : "4446020337",
-          email: user ? (user.email || "o3v7g4@gmail.com") : "o3v7g4@gmail.com",
-          university: user ? (user.university || "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)") : "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)",
-          college: user ? (user.college || "كلية الحاسب وتقنية المعلومات") : "كلية الحاسب وتقنية المعلومات",
-          major: user ? (user.major || "نظم المعلومات (Information Systems)") : "نظم المعلومات (Information Systems)",
-          gpa: user ? (user.gpa || 4.85) : 4.85,
-          xp: user ? (user.xp || 1250) : 1250,
-          streak: user ? (user.streakDays || 5) : 5,
-          solvedCount: user ? (user.solvedCount || 8) : 8,
+          name: user.name || "طالب سِنَاد",
+          studentId: user.studentId || "",
+          email: user.email || "",
+          university: user.university || "جامعة الإمام محمد بن سعود الإسلامية (IMSIU)",
+          college: user.college || "كلية الحاسب وتقنية المعلومات",
+          major: user.major || "نظم المعلومات (Information Systems)",
+          gpa: user.gpa || 4.85,
+          xp: user.xp || 1250,
+          streak: user.streakDays || 5,
+          solvedCount: user.solvedCount || 8,
           isUser: true,
-          badge: "🥇 متصدرة المسار"
+          badge: "🥇 متصدر المسار"
         }
-      ];
+      ] : [];
     }
 
     this.renderLeaderboard();
