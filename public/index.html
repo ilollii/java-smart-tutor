@@ -1062,47 +1062,47 @@
             </div>
           </div>
 
-          <div class="analyzer-grid">
-            <!-- Left Pane: Daily Problem & Test Runner -->
+          <div class="challenges-grid-layout" style="display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start;">
+            <!-- Left Pane: Daily Problem & Test Runner & Compiler Sandbox -->
             <div class="code-editor-box" style="display: flex; flex-direction: column;">
               <!-- Problem Navigation Header -->
-              <div style="padding: 16px; border-bottom: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.5);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                    <span id="challenge-counter" style="font-size: 12px; font-weight: 700; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 6px;">المسألة 1 من 7</span>
+              <div style="padding: 14px 18px; border-bottom: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.5);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span id="challenge-counter" style="font-size: 11.5px; font-weight: 700; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 6px;">المسألة 1 من 7</span>
                     <span id="challenge-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; border: 1px solid #fbbf24; color: #fbbf24; background: rgba(251, 191, 36, 0.1);">متوسط</span>
                     <span id="challenge-category-pill" style="font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3);">هياكل البيانات</span>
                     <span id="challenge-xp-badge" class="glow-pill-accent" style="font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); color: white;">+50 XP</span>
                   </div>
                   <div style="display: flex; gap: 6px;">
-                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.prevChallenge()" title="المسألة السابقة">
+                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.prevChallenge()" title="المسألة السابقة" style="font-size: 11px; padding: 4px 10px;">
                       <i class="fas fa-chevron-right"></i> السابقة
                     </button>
-                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.nextChallenge()" title="المسألة التالية">
+                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.nextChallenge()" title="المسألة التالية" style="font-size: 11px; padding: 4px 10px;">
                       التالية <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.resetCurrentChallengeCode()" title="استعادة القالب الأولي للكود">
-                      <i class="fas fa-undo"></i> إعادة تعيين
+                    <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.resetCurrentChallengeCode()" title="استعادة القالب الأولي للكود" style="font-size: 11px; padding: 4px 8px;">
+                      <i class="fas fa-undo"></i>
                     </button>
                   </div>
                 </div>
 
-                <h3 id="challenge-title" style="margin: 0 0 8px; font-size: 18px; color: #fff; font-weight: 800;">توازن الأقواس (Valid Parentheses)</h3>
-                <div id="challenge-desc" style="font-size: 13.5px; color: var(--text-main); line-height: 1.6; margin-bottom: 12px;"></div>
+                <h3 id="challenge-title" style="margin: 0 0 6px; font-size: 18px; color: #fff; font-weight: 800;">توازن الأقواس (Valid Parentheses)</h3>
+                <div id="challenge-desc" style="font-size: 13.5px; color: var(--text-main); line-height: 1.6; margin-bottom: 10px;"></div>
 
                 <!-- Collapsible Constraints & Examples -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-                  <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px;">
-                    <div style="font-size: 11px; font-weight: 700; color: #fbbf24; margin-bottom: 4px;"><i class="fas fa-shield-alt"></i> القيود (Constraints):</div>
-                    <pre id="challenge-constraints" style="font-family: inherit; font-size: 11px; color: var(--text-muted); margin: 0; white-space: pre-wrap; line-height: 1.5;"></pre>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
+                  <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #fbbf24; margin-bottom: 3px;"><i class="fas fa-shield-alt"></i> القيود (Constraints):</div>
+                    <pre id="challenge-constraints" style="font-family: inherit; font-size: 11px; color: var(--text-muted); margin: 0; white-space: pre-wrap; line-height: 1.45;"></pre>
                   </div>
                   <div id="challenge-examples-box"></div>
                 </div>
               </div>
 
               <!-- Test Cases Quick Preview -->
-              <div style="padding: 10px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-color);">
-                <div style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <div style="padding: 8px 18px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-color);">
+                <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
                   <i class="fas fa-list-check" style="color: var(--primary);"></i> عينة من حالات الاختبار (Test Cases):
                 </div>
                 <div id="challenge-test-cases-list"></div>
@@ -1114,42 +1114,42 @@
               </div>
 
               <!-- Action Bar -->
-              <div style="padding: 12px 16px; background: #090e1a; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <button class="btn btn-primary" onclick="window.CHALLENGES.runTestCases()" style="font-weight: 800; padding: 9px 24px; box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); font-size: 13.5px;">
-                  <i class="fas fa-play"></i> فحص الحل وتشغيل حالات الاختبار (Run Tests)
+              <div style="padding: 10px 18px; background: #090e1a; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <button class="btn btn-primary" onclick="window.CHALLENGES.runTestCases()" style="font-weight: 800; padding: 9px 24px; box-shadow: 0 0 14px rgba(16, 185, 129, 0.35); font-size: 13.5px;">
+                  <i class="fas fa-play"></i> فحص الحل وتشغيل الكومبايلر (Run Tests)
                 </button>
                 <div style="display: flex; gap: 8px;">
-                  <button class="btn btn-accent btn-sm" onclick="window.CHALLENGES.switchOutputTab('hint')">
-                    <i class="fas fa-lightbulb"></i> تلميح سِنَاد الذكي
+                  <button class="btn btn-accent btn-sm" onclick="window.CHALLENGES.switchOutputTab('hint')" style="font-size: 12px; padding: 5px 12px;">
+                    <i class="fas fa-lightbulb"></i> تلميح سِنَاد
                   </button>
-                  <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.nextChallenge()">
-                    المسألة التالية <i class="fas fa-arrow-left"></i>
+                  <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.nextChallenge()" style="font-size: 12px; padding: 5px 12px;">
+                    التالية <i class="fas fa-arrow-left"></i>
                   </button>
                 </div>
               </div>
 
               <!-- Interactive Tabbed Results Console -->
-              <div style="background: #020617; border-top: 1px solid var(--border-color); padding: 12px 16px;">
-                <div style="display: flex; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 10px;">
-                  <button class="challenge-out-tab-btn" data-tab="tests" onclick="window.CHALLENGES.switchOutputTab('tests')" style="background: none; border: none; font-size: 12px; cursor: pointer; padding: 4px 6px; color: var(--primary); font-weight: 700; border-bottom: 2px solid var(--primary);">
-                    <i class="fas fa-list-check"></i> نتائج حالات الاختبار
+              <div style="background: #020617; border-top: 1px solid var(--border-color); padding: 12px 18px;">
+                <div style="display: flex; gap: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px; margin-bottom: 8px;">
+                  <button class="challenge-out-tab-btn" data-tab="tests" onclick="window.CHALLENGES.switchOutputTab('tests')" style="background: none; border: none; font-size: 12px; cursor: pointer; padding: 3px 6px; color: var(--primary); font-weight: 700; border-bottom: 2px solid var(--primary);">
+                    <i class="fas fa-list-check"></i> نتائج الاختبار
                   </button>
-                  <button class="challenge-out-tab-btn" data-tab="bench" onclick="window.CHALLENGES.switchOutputTab('bench')" style="background: none; border: none; font-size: 12px; cursor: pointer; padding: 4px 6px; color: var(--text-muted);">
-                    <i class="fas fa-chart-line"></i> تقرير السرعة والأداء (Benchmark)
+                  <button class="challenge-out-tab-btn" data-tab="bench" onclick="window.CHALLENGES.switchOutputTab('bench')" style="background: none; border: none; font-size: 12px; cursor: pointer; padding: 3px 6px; color: var(--text-muted);">
+                    <i class="fas fa-chart-line"></i> تقرير الأداء
                   </button>
-                  <button class="challenge-out-tab-btn" data-tab="hint" onclick="window.CHALLENGES.switchOutputTab('hint')" style="background: none; border: none; font-size: 12px; cursor: pointer; padding: 4px 6px; color: var(--text-muted);">
-                    <i class="fas fa-lightbulb"></i> استشارة سِنَاد (AI Hint)
+                  <button class="challenge-out-tab-btn" data-tab="hint" onclick="window.CHALLENGES.switchOutputTab('hint')" style="background: none; border: none; font-size: 12px; cursor: pointer; padding: 3px 6px; color: var(--text-muted);">
+                    <i class="fas fa-lightbulb"></i> استشارة سِنَاد
                   </button>
                 </div>
 
                 <div id="challenge-tests-tab-content">
-                  <div id="challenge-run-output" style="font-size: 12px; min-height: 80px;">
-                    <span style="color: var(--text-muted);">// اكتب خوارزميتك في المحرر واضغط "فحص الحل وتشغيل حالات الاختبار" للتحقق في بيئة الـ Sandbox...</span>
+                  <div id="challenge-run-output" style="font-size: 12px; min-height: 70px;">
+                    <span style="color: var(--text-muted);">// اكتب خوارزميتك في المحرر واضغط "فحص الحل وتشغيل الكومبايلر" للتحقق في بيئة الـ Sandbox...</span>
                   </div>
                 </div>
 
                 <div id="challenge-bench-tab-content" style="display: none;">
-                  <div style="color: var(--text-muted); font-size: 12px; padding: 10px 0;">
+                  <div style="color: var(--text-muted); font-size: 12px; padding: 6px 0;">
                     // سيظهر تقرير قياس السرعة واستهلاك الذاكرة فور تشغيل الكود بنجاح.
                   </div>
                 </div>
@@ -1158,46 +1158,47 @@
               </div>
             </div>
 
-            <!-- Right Pane: Real Multi-University Leaderboard Card -->
-            <div class="glass-panel leaderboard-card" style="padding: 20px; display: flex; flex-direction: column; background: linear-gradient(180deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);">
-              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
+            <!-- Right Pane: Compact Real Multi-University Leaderboard Card -->
+            <div class="glass-panel leaderboard-card" style="padding: 14px 16px; display: flex; flex-direction: column; background: linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35); align-self: start;">
+              <!-- Header -->
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 8px;">
                 <div>
-                  <h4 style="margin: 0; font-size: 15px; color: #fff; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                  <h4 style="margin: 0; font-size: 13.5px; color: #fff; font-weight: 800; display: flex; align-items: center; gap: 6px;">
                     <i class="fas fa-ranking-star" style="color: #fbbf24;"></i> لوحة الشرف والمتصدرين
                   </h4>
-                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">تصنيف الطلاب المحدث في قاعدة بيانات سِنَاد</div>
+                  <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">تصنيف الطلاب المحدث في قاعدة بيانات سِنَاد</div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; color: #34d399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 8px; border-radius: 12px; font-weight: 700;">
-                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; display: inline-block;"></span> مباشر
+                <div style="display: flex; align-items: center; gap: 5px;">
+                  <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 9.5px; color: #34d399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); padding: 2px 6px; border-radius: 10px; font-weight: 700;">
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background: #10b981; display: inline-block;"></span> مباشر
                   </span>
-                  <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.fetchAndRenderLeaderboard()" title="تحديث لوحة الشرف" style="padding: 3px 8px; font-size: 11px;">
+                  <button class="btn btn-secondary btn-sm" onclick="window.CHALLENGES.fetchAndRenderLeaderboard()" title="تحديث لوحة الشرف" style="padding: 2px 6px; font-size: 10px;">
                     <i class="fas fa-sync-alt"></i>
                   </button>
                 </div>
               </div>
 
               <!-- University Filter Tabs -->
-              <div style="display: flex; gap: 5px; margin-bottom: 14px; flex-wrap: wrap;">
-                <button class="leaderboard-filter-btn active" data-univ="all" onclick="window.CHALLENGES.filterLeaderboardByUniv('all')" style="background: var(--primary); color: #fff; border: 1px solid transparent; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">الكل</button>
-                <button class="leaderboard-filter-btn" data-univ="imsiu" onclick="window.CHALLENGES.filterLeaderboardByUniv('imsiu')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">🏛️ الإمام</button>
-                <button class="leaderboard-filter-btn" data-univ="ksu" onclick="window.CHALLENGES.filterLeaderboardByUniv('ksu')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">🏛️ سعود</button>
-                <button class="leaderboard-filter-btn" data-univ="kfupm" onclick="window.CHALLENGES.filterLeaderboardByUniv('kfupm')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">🏛️ البترول</button>
-                <button class="leaderboard-filter-btn" data-univ="pnu" onclick="window.CHALLENGES.filterLeaderboardByUniv('pnu')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">🏛️ نورة</button>
+              <div style="display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap;">
+                <button class="leaderboard-filter-btn active" data-univ="all" onclick="window.CHALLENGES.filterLeaderboardByUniv('all')" style="background: var(--primary); color: #fff; border: 1px solid transparent; padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer;">الكل</button>
+                <button class="leaderboard-filter-btn" data-univ="imsiu" onclick="window.CHALLENGES.filterLeaderboardByUniv('imsiu')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 2px 6px; border-radius: 5px; font-size: 10px; cursor: pointer;">🏛️ الإمام</button>
+                <button class="leaderboard-filter-btn" data-univ="ksu" onclick="window.CHALLENGES.filterLeaderboardByUniv('ksu')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 2px 6px; border-radius: 5px; font-size: 10px; cursor: pointer;">🏛️ سعود</button>
+                <button class="leaderboard-filter-btn" data-univ="kfupm" onclick="window.CHALLENGES.filterLeaderboardByUniv('kfupm')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 2px 6px; border-radius: 5px; font-size: 10px; cursor: pointer;">🏛️ البترول</button>
+                <button class="leaderboard-filter-btn" data-univ="pnu" onclick="window.CHALLENGES.filterLeaderboardByUniv('pnu')" style="background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid transparent; padding: 2px 6px; border-radius: 5px; font-size: 10px; cursor: pointer;">🏛️ نورة</button>
               </div>
 
-              <!-- Top 3 Champions Honor Podium -->
-              <div id="leaderboard-podium-container" style="display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; margin-bottom: 14px; align-items: end;"></div>
+              <!-- Top 3 Champions Honor Podium (Compact Height) -->
+              <div id="leaderboard-podium-container" style="display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 6px; margin-bottom: 8px; align-items: end;"></div>
 
-              <!-- Leaderboard Table -->
-              <div style="overflow-x: auto; flex: 1; max-height: 380px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
-                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <!-- Leaderboard Table (Scrollable & Compact) -->
+              <div style="overflow-x: auto; max-height: 200px; overflow-y: auto; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.25);">
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                   <thead>
-                    <tr style="color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right; background: rgba(15,23,42,0.6); position: sticky; top: 0; z-index: 1;">
-                      <th style="padding: 8px 10px; text-align: center;">#</th>
-                      <th style="padding: 8px 10px;">الطالب والكلية</th>
-                      <th style="padding: 8px 10px;">النقاط (XP)</th>
-                      <th style="padding: 8px 10px;">الـ Streak</th>
+                    <tr style="color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right; background: rgba(15,23,42,0.7); position: sticky; top: 0; z-index: 1;">
+                      <th style="padding: 5px 6px; text-align: center;">#</th>
+                      <th style="padding: 5px 6px;">الطالب والكلية</th>
+                      <th style="padding: 5px 6px;">النقاط (XP)</th>
+                      <th style="padding: 5px 6px;">الـ Streak</th>
                     </tr>
                   </thead>
                   <tbody id="leaderboard-tbody"></tbody>

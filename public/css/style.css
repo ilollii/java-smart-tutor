@@ -844,8 +844,23 @@ html, body {
   gap: 20px;
 }
 
+.challenges-grid-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.leaderboard-card {
+  max-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 @media (max-width: 1024px) {
-  .analyzer-grid {
+  .analyzer-grid,
+  .challenges-grid-layout {
     grid-template-columns: 1fr;
   }
 }

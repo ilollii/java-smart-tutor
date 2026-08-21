@@ -784,20 +784,24 @@ SUMMARY|1|${ch.testCases.length}
       const first = topList[0];
       container.style.gridTemplateColumns = '1fr';
       container.innerHTML = `
-        <div style="background: linear-gradient(180deg, rgba(251, 191, 36, 0.25), rgba(15, 23, 42, 0.9)); border: 2px solid #fbbf24; border-radius: 12px; padding: 16px; text-align: center; position: relative; box-shadow: 0 0 22px rgba(251, 191, 36, 0.3); display: flex; flex-direction: column; justify-content: center; align-items: center; max-width: 280px; margin: 0 auto;">
-          <div style="font-size: 22px; margin-bottom: 4px;"><i class="fas fa-crown" style="color: #fbbf24;"></i></div>
-          <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); border: 2px solid #fbbf24; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 18px; margin-bottom: 6px; box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);">
-            ${this.escapeHtml(first.name.charAt(0))}
+        <div style="background: linear-gradient(180deg, rgba(251, 191, 36, 0.18), rgba(15, 23, 42, 0.9)); border: 1px solid #fbbf24; border-radius: 8px; padding: 6px 8px; text-align: center; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 13px;">🥇</span>
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 11px;">
+              ${this.escapeHtml(first.name.charAt(0))}
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 11px; font-weight: 800; color: #fff; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${this.escapeHtml(first.name)} ${first.isUser ? '🌟' : ''}
+              </div>
+              <div style="font-size: 9px; color: #fde68a;">
+                ${this.escapeHtml(first.university || 'جامعة الإمام')}
+              </div>
+            </div>
           </div>
-          <div style="font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 2px;">
-            ${this.escapeHtml(first.name)} ${first.isUser ? '🌟' : ''}
-          </div>
-          <div style="font-size: 11px; color: #fde68a; margin-bottom: 6px;">
-            ${this.escapeHtml(first.university || 'جامعة الإمام')}
-          </div>
-          <div style="background: #fbbf24; color: #451a03; font-size: 12px; font-weight: 900; padding: 3px 12px; border-radius: 12px; font-family: var(--font-code);">
-            🥇 ${first.xp} XP
-          </div>
+          <span style="background: #fbbf24; color: #451a03; font-size: 9.5px; font-weight: 900; padding: 2px 6px; border-radius: 6px; font-family: var(--font-code);">
+            ${first.xp} XP
+          </span>
         </div>
       `;
       return;
@@ -806,39 +810,25 @@ SUMMARY|1|${ch.testCases.length}
     if (topList.length === 2) {
       const first = topList[0];
       const second = topList[1];
-      container.style.gridTemplateColumns = '1fr 1.15fr';
+      container.style.gridTemplateColumns = '1fr 1.05fr';
       container.innerHTML = `
         <!-- 2nd Place -->
-        <div style="background: linear-gradient(180deg, rgba(148, 163, 184, 0.15), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(148, 163, 184, 0.4); border-radius: 12px; padding: 12px 8px; text-align: center; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.3); height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-          <div style="position: absolute; top: -10px; font-size: 16px;">🥈</div>
-          <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #94a3b8, #475569); border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; margin-bottom: 4px;">
-            ${this.escapeHtml(second.name.charAt(0))}
+        <div style="background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 5px 6px; text-align: center;">
+          <div style="font-size: 10px; color: #cbd5e1; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            🥈 ${this.escapeHtml(second.name)} ${second.isUser ? '🌟' : ''}
           </div>
-          <div style="font-size: 11.5px; font-weight: 800; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${this.escapeHtml(second.name)} ${second.isUser ? '🌟' : ''}
-          </div>
-          <div style="font-size: 9.5px; color: #94a3b8; margin-bottom: 4px; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${this.escapeHtml(second.university || 'الجامعة')}
-          </div>
-          <div style="background: rgba(148, 163, 184, 0.2); color: #e2e8f0; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; font-family: var(--font-code);">
+          <div style="font-size: 9px; color: #94a3b8; font-family: var(--font-code); font-weight: 700; margin-top: 1px;">
             ${second.xp} XP
           </div>
         </div>
 
         <!-- 1st Place -->
-        <div style="background: linear-gradient(180deg, rgba(251, 191, 36, 0.25), rgba(15, 23, 42, 0.9)); border: 2px solid #fbbf24; border-radius: 12px; padding: 14px 8px; text-align: center; position: relative; box-shadow: 0 0 22px rgba(251, 191, 36, 0.3); height: 165px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-          <div style="position: absolute; top: -14px; font-size: 20px;"><i class="fas fa-crown" style="color: #fbbf24;"></i></div>
-          <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); border: 2px solid #fbbf24; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 16px; margin-bottom: 5px; box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);">
-            ${this.escapeHtml(first.name.charAt(0))}
+        <div style="background: rgba(251, 191, 36, 0.15); border: 1px solid #fbbf24; border-radius: 6px; padding: 5px 6px; text-align: center;">
+          <div style="font-size: 10.5px; color: #fbbf24; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            🥇 ${this.escapeHtml(first.name)} ${first.isUser ? '🌟' : ''}
           </div>
-          <div style="font-size: 12.5px; font-weight: 900; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${this.escapeHtml(first.name)} ${first.isUser ? '🌟' : ''}
-          </div>
-          <div style="font-size: 10px; color: #fde68a; margin-bottom: 5px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${this.escapeHtml(first.university || 'الجامعة')}
-          </div>
-          <div style="background: #fbbf24; color: #451a03; font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 10px; font-family: var(--font-code);">
-            🥇 ${first.xp} XP
+          <div style="font-size: 9.5px; color: #fff; font-family: var(--font-code); font-weight: 800; margin-top: 1px;">
+            ${first.xp} XP
           </div>
         </div>
       `;
@@ -852,52 +842,31 @@ SUMMARY|1|${ch.testCases.length}
 
     container.innerHTML = `
       <!-- 2nd Place (Left) -->
-      <div style="background: linear-gradient(180deg, rgba(148, 163, 184, 0.15), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(148, 163, 184, 0.4); border-radius: 12px; padding: 12px 8px; text-align: center; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.3); height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div style="position: absolute; top: -10px; font-size: 16px;">🥈</div>
-        <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #94a3b8, #475569); border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; margin-bottom: 4px;">
-          ${this.escapeHtml(second.name.charAt(0))}
+      <div style="background: rgba(148, 163, 184, 0.08); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 6px; padding: 4px 4px; text-align: center;">
+        <div style="font-size: 9.5px; color: #cbd5e1; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          🥈 ${this.escapeHtml(second.name)} ${second.isUser ? '🌟' : ''}
         </div>
-        <div style="font-size: 11.5px; font-weight: 800; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${this.escapeHtml(second.name)} ${second.isUser ? '🌟' : ''}
-        </div>
-        <div style="font-size: 9.5px; color: #94a3b8; margin-bottom: 4px; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${this.escapeHtml(second.university || 'جامعة سعود')}
-        </div>
-        <div style="background: rgba(148, 163, 184, 0.2); color: #e2e8f0; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; font-family: var(--font-code);">
+        <div style="font-size: 8.5px; color: #94a3b8; font-family: var(--font-code); font-weight: 700;">
           ${second.xp} XP
         </div>
       </div>
 
-      <!-- 1st Place (Center / Highest) -->
-      <div style="background: linear-gradient(180deg, rgba(251, 191, 36, 0.25), rgba(15, 23, 42, 0.9)); border: 2px solid #fbbf24; border-radius: 12px; padding: 14px 8px; text-align: center; position: relative; box-shadow: 0 0 22px rgba(251, 191, 36, 0.3); height: 165px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div style="position: absolute; top: -14px; font-size: 20px;"><i class="fas fa-crown" style="color: #fbbf24;"></i></div>
-        <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); border: 2px solid #fbbf24; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 16px; margin-bottom: 5px; box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);">
-          ${this.escapeHtml(first.name.charAt(0))}
+      <!-- 1st Place (Center) -->
+      <div style="background: rgba(251, 191, 36, 0.15); border: 1px solid #fbbf24; border-radius: 6px; padding: 5px 4px; text-align: center; box-shadow: 0 0 10px rgba(251, 191, 36, 0.15);">
+        <div style="font-size: 10px; color: #fbbf24; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          🥇 ${this.escapeHtml(first.name)} ${first.isUser ? '🌟' : ''}
         </div>
-        <div style="font-size: 12.5px; font-weight: 900; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${this.escapeHtml(first.name)} ${first.isUser ? '🌟' : ''}
-        </div>
-        <div style="font-size: 10px; color: #fde68a; margin-bottom: 5px; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${this.escapeHtml(first.university || 'جامعة الإمام')}
-        </div>
-        <div style="background: #fbbf24; color: #451a03; font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 10px; font-family: var(--font-code);">
-          🥇 ${first.xp} XP
+        <div style="font-size: 9px; color: #fff; font-family: var(--font-code); font-weight: 800;">
+          ${first.xp} XP
         </div>
       </div>
 
       <!-- 3rd Place (Right) -->
-      <div style="background: linear-gradient(180deg, rgba(217, 119, 6, 0.15), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(217, 119, 6, 0.4); border-radius: 12px; padding: 12px 8px; text-align: center; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.3); height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div style="position: absolute; top: -10px; font-size: 16px;">🥉</div>
-        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #b45309, #78350f); border: 2px solid #d97706; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 13px; margin-bottom: 4px;">
-          ${this.escapeHtml(third.name.charAt(0))}
+      <div style="background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.25); border-radius: 6px; padding: 4px 4px; text-align: center;">
+        <div style="font-size: 9.5px; color: #fed7aa; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          🥉 ${this.escapeHtml(third.name)} ${third.isUser ? '🌟' : ''}
         </div>
-        <div style="font-size: 11px; font-weight: 800; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${this.escapeHtml(third.name)} ${third.isUser ? '🌟' : ''}
-        </div>
-        <div style="font-size: 9.5px; color: #fed7aa; margin-bottom: 4px; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${this.escapeHtml(third.university || 'جامعة البترول')}
-        </div>
-        <div style="background: rgba(217, 119, 6, 0.25); color: #fed7aa; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; font-family: var(--font-code);">
+        <div style="font-size: 8.5px; color: #fed7aa; font-family: var(--font-code); font-weight: 700;">
           ${third.xp} XP
         </div>
       </div>
@@ -927,33 +896,33 @@ SUMMARY|1|${ch.testCases.length}
     // Update Podium
     this.renderPodium(list.slice(0, 3));
 
-    // Render Table Rows
+    // Render Table Rows (Compact Sizing)
     container.innerHTML = list.map((item, idx) => `
-      <tr style="${item.isUser ? 'background: linear-gradient(90deg, rgba(16, 185, 129, 0.22), rgba(99, 102, 241, 0.18)); font-weight: 700; border-right: 4px solid #10b981;' : 'border-bottom: 1px solid rgba(255,255,255,0.05);'}">
-        <td style="padding: 10px 10px; text-align: center; font-size: 13px; font-weight: 800;">
+      <tr style="${item.isUser ? 'background: linear-gradient(90deg, rgba(16, 185, 129, 0.22), rgba(99, 102, 241, 0.18)); font-weight: 700; border-right: 3px solid #10b981;' : 'border-bottom: 1px solid rgba(255,255,255,0.05);'}">
+        <td style="padding: 6px 8px; text-align: center; font-size: 11.5px; font-weight: 800;">
           ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : (idx + 1)}
         </td>
-        <td style="padding: 10px 10px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${item.isUser ? 'linear-gradient(135deg, #10b981, #6366f1)' : '#334155'}; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; font-weight: 800; box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-shrink: 0;">
+        <td style="padding: 6px 8px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: ${item.isUser ? 'linear-gradient(135deg, #10b981, #6366f1)' : '#334155'}; display: flex; align-items: center; justify-content: center; font-size: 11.5px; color: white; font-weight: 800; flex-shrink: 0;">
               ${this.escapeHtml(item.name.charAt(0))}
             </div>
             <div style="min-width: 0;">
-              <div style="color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span>${this.escapeHtml(item.name)}</span>
-                ${item.isUser ? '<span style="font-size: 10px; background: #10b981; color: #022c22; padding: 1px 6px; border-radius: 8px; font-weight: 800;">أنت 🌟</span>' : ''}
+              <div style="color: #fff; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; gap: 4px; flex-wrap: nowrap;">
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">${this.escapeHtml(item.name)}</span>
+                ${item.isUser ? '<span style="font-size: 9px; background: #10b981; color: #022c22; padding: 0 4px; border-radius: 6px; font-weight: 800;">أنت 🌟</span>' : ''}
               </div>
-              <div style="font-size: 10.5px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
-                ${this.escapeHtml(item.university || 'جامعة الإمام')} • <span style="color: #cbd5e1;">${this.escapeHtml(item.major || 'علوم الحاسب')}</span>
+              <div style="font-size: 9.5px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
+                ${this.escapeHtml(item.university || 'جامعة الإمام')}
               </div>
             </div>
           </div>
         </td>
-        <td style="padding: 10px 10px; color: #fbbf24; font-family: var(--font-code); font-weight: 800; font-size: 13px; white-space: nowrap;">
-          <i class="fas fa-bolt" style="font-size: 11px;"></i> ${item.xp} XP
+        <td style="padding: 6px 8px; color: #fbbf24; font-family: var(--font-code); font-weight: 800; font-size: 11.5px; white-space: nowrap;">
+          <i class="fas fa-bolt" style="font-size: 9px;"></i> ${item.xp} XP
         </td>
-        <td style="padding: 10px 10px; color: #f97316; font-weight: 700; font-size: 12px; white-space: nowrap;">
-          🔥 ${item.streak || 1} يوم
+        <td style="padding: 6px 8px; color: #f97316; font-weight: 700; font-size: 11px; white-space: nowrap;">
+          🔥 ${item.streak || 1}ي
         </td>
       </tr>
     `).join('');
