@@ -298,42 +298,46 @@ window.AUTH = {
       ]
     };
 
-    // Request secure Server-Side OTP generation & real email dispatch
+    // Acquire signed academic session token from backend
     try {
-      const res = await fetch('/api/auth/otp/send', {
+      const res = await fetch('/api/auth/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         body: JSON.stringify({
-          email: email,
-          name: name,
-          studentId: email.split('@')[0]
+          studentId: this.pendingUser.studentId,
+          email: this.pendingUser.email,
+          name: this.pendingUser.name
         })
       });
-      if (!res.ok) {
-        const errData = await res.json();
-        if (window.APP) window.APP.showToast(errData.error || 'تعذر إرسال رمز التحقق، يرجى المحاولة لاحقاً', 'danger');
-        return;
+      if (res.ok) {
+        const authData = await res.json();
+        if (authData && authData.token) {
+          this.pendingUser.sessionToken = authData.token;
+          if (window.API) window.API.sessionToken = authData.token;
+        }
       }
     } catch (e) {
-      console.warn("Backend OTP send notice:", e);
+      console.warn("Backend session token acquisition notice:", e);
     }
 
-    // Advance to 2FA screen
-    const studentForm = document.getElementById('form-student-login');
-    const step2Fa = document.getElementById('form-2fa-step');
-    if (studentForm) studentForm.style.display = 'none';
-    if (step2Fa) step2Fa.style.display = 'block';
+    this.currentUser = this.pendingUser;
+    this.isLoggedIn = true;
+    this.is2FAVerified = true;
+    localStorage.setItem('senad_universal_user_session', JSON.stringify(this.currentUser));
 
-    if (window.APP) window.APP.showToast(`تم إرسال رمز التحقق الأكاديمي المكون من 6 أرقام إلى بريدك الإلكتروني (${email}) 📩 يرجى إدخاله لتأكيد الدخول.`, 'info');
-    if (window.SOUNDS) window.SOUNDS.playClick();
-    this.startOtpTimer();
-
-    // STRICT: DO NOT auto-fill OTP in input field! Keep empty and wait for user to enter code from email
-    const otpField = document.getElementById('init-otp-input');
-    if (otpField) {
-      otpField.value = '';
-      otpField.focus();
+    // For fresh registered student: if no existing courses saved for this email, ensure fresh empty list
+    const studentCourseKey = 'senad_student_courses_' + this.currentUser.email;
+    if (!localStorage.getItem(studentCourseKey)) {
+      localStorage.setItem(studentCourseKey, JSON.stringify([]));
     }
+
+    // Persist real student profile to Server-Side SenadDatabase
+    if (window.API && typeof window.API.saveStudentToDB === 'function') {
+      window.API.saveStudentToDB(this.currentUser);
+    }
+
+    this.showDashboard();
+    if (window.APP) window.APP.showToast(`مرحباً بك يا ${this.currentUser.name} من (${this.currentUser.university})! تم تسجيل الدخول بنجاح 🚀`, 'success');
   },
 
   startOtpTimer() {

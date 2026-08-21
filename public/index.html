@@ -147,41 +147,8 @@
         </details>
 
         <button class="btn btn-primary" style="width: 100%; min-height: 48px; font-weight: 800; font-size: 16px;" onclick="window.AUTH.submitInitialCredentials()">
-          <i class="fas fa-paper-plane"></i> متابعة وإرسال رمز التحقق للإيميل ✉️
+          <i class="fas fa-sign-in-alt"></i> تسجيل الدخول والبدء مباشرة 🚀
         </button>
-      </div>
-
-      <!-- Step: 2FA OTP Code Verification (No autofill - waiting for email input) -->
-      <div id="form-2fa-step" style="display: none;">
-        <div style="text-align: center; margin-bottom: 18px;">
-          <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16,185,129,0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 12px; border: 1px solid rgba(16,185,129,0.3);">
-            <i class="fas fa-envelope-open-text"></i>
-          </div>
-          <h4 style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">أدخل رمز التحقق (OTP)</h4>
-          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
-            تم إرسال رمز التحقق الأكاديمي إلى بريدك الإلكتروني ✉️.<br>
-            <span style="color: var(--primary); font-weight: 600;" id="label-sent-email-target">يرجى فتح صندوق الوارد وإدخال الرمز هنا:</span>
-          </p>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 20px;">
-          <input type="text" id="init-otp-input" class="chat-input" style="width: 100%; min-height: 52px; text-align: center; font-size: 26px; font-family: var(--font-code); letter-spacing: 8px; font-weight: 800; direction: ltr;" maxlength="6" placeholder="------" autocomplete="one-time-code" onkeydown="if(event.key==='Enter') window.AUTH.verifyInitial2FA()">
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); margin-top: 10px;">
-            <span>صلاحية الرمز: <strong id="init-otp-timer" style="color: var(--accent);">05:00</strong></span>
-            <span style="color: var(--primary); cursor: pointer; font-weight: 700;" onclick="window.AUTH.resendOtp();">
-              <i class="fas fa-rotate-right"></i> إعادة إرسال الرمز
-            </span>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 10px;">
-          <button class="btn btn-primary" style="flex: 1; min-height: 48px; font-weight: 800; font-size: 15px;" onclick="window.AUTH.verifyInitial2FA()">
-            <i class="fas fa-shield-check"></i> تأكيد الرمز والدخول للمنصة
-          </button>
-          <button class="btn btn-secondary" style="min-height: 48px; padding: 0 18px;" onclick="window.AUTH.switchLoginTab('student')">
-            رجوع
-          </button>
-        </div>
       </div>
 
       <!-- Security Trust Footer -->
@@ -1639,21 +1606,21 @@
   <div id="toast-container"></div>
 
   <!-- Application Scripts with Cache-Busting -->
-  <script src="js/sound.js?v=2026.auth.production"></script>
-  <script src="js/confetti.js?v=2026.auth.production"></script>
-  <script src="js/data.js?v=2026.auth.production"></script>
-  <script src="js/api.js?v=2026.auth.production"></script>
-  <script src="js/auth.js?v=2026.auth.production"></script>
-  <script src="js/analyzer.js?v=2026.auth.production"></script>
-  <script src="js/exams.js?v=2026.auth.production"></script>
-  <script src="js/challenges.js?v=2026.auth.production"></script>
-  <script src="js/slides.js?v=2026.auth.production"></script>
-  <script src="js/ocr.js?v=2026.auth.production"></script>
-  <script src="js/chat.js?v=2026.auth.production"></script>
-  <script src="js/tracker.js?v=2026.auth.production"></script>
-  <script src="js/gamification.js?v=2026.auth.production"></script>
-  <script src="js/security.js?v=2026.auth.production"></script>
-  <script src="js/app.js?v=2026.auth.production"></script>
+  <script src="js/sound.js?v=2026.direct.login"></script>
+  <script src="js/confetti.js?v=2026.direct.login"></script>
+  <script src="js/data.js?v=2026.direct.login"></script>
+  <script src="js/api.js?v=2026.direct.login"></script>
+  <script src="js/auth.js?v=2026.direct.login"></script>
+  <script src="js/analyzer.js?v=2026.direct.login"></script>
+  <script src="js/exams.js?v=2026.direct.login"></script>
+  <script src="js/challenges.js?v=2026.direct.login"></script>
+  <script src="js/slides.js?v=2026.direct.login"></script>
+  <script src="js/ocr.js?v=2026.direct.login"></script>
+  <script src="js/chat.js?v=2026.direct.login"></script>
+  <script src="js/tracker.js?v=2026.direct.login"></script>
+  <script src="js/gamification.js?v=2026.direct.login"></script>
+  <script src="js/security.js?v=2026.direct.login"></script>
+  <script src="js/app.js?v=2026.direct.login"></script>
 
 </body>
 </html>
