@@ -107,21 +107,31 @@ window.AUTH = {
     const hasUpper = /[A-Z]/.test(p);
     const hasLower = /[a-z]/.test(p);
     const hasDigit = /[0-9]/.test(p);
-    const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(p);
+    const hasSymbol = /[^A-Za-z0-9\s]/.test(p);
 
     let score = 0;
     if (hasLength) score++;
-    if (hasUpper && hasLower) score++;
+    if (hasUpper) score++;
+    if (hasLower) score++;
     if (hasDigit) score++;
     if (hasSymbol) score++;
+
+    let missing = [];
+    if (!hasLength) missing.push('8 خانات على الأقل');
+    if (!hasUpper) missing.push('حرف كبير (A-Z)');
+    if (!hasLower) missing.push('حرف صغير (a-z)');
+    if (!hasDigit) missing.push('رقم (0-9)');
+    if (!hasSymbol) missing.push('رمز خاص (@, #, $, %, ...)');
 
     return {
       valid: hasLength && hasUpper && hasLower && hasDigit && hasSymbol,
       hasLength,
-      hasCase: hasUpper && hasLower,
+      hasUpper,
+      hasLower,
       hasDigit,
       hasSymbol,
-      score
+      score,
+      missing
     };
   },
 
@@ -150,7 +160,8 @@ window.AUTH = {
     };
 
     updateReq('req-length', res.hasLength);
-    updateReq('req-case', res.hasCase);
+    updateReq('req-upper', res.hasUpper);
+    updateReq('req-lower', res.hasLower);
     updateReq('req-digit', res.hasDigit);
     updateReq('req-symbol', res.hasSymbol);
 
@@ -161,24 +172,29 @@ window.AUTH = {
         label.textContent = 'غير مكتملة';
         label.style.color = 'var(--text-muted)';
       } else if (res.score === 1) {
-        bar.style.width = '25%';
+        bar.style.width = '20%';
         bar.style.background = '#ef4444';
-        label.textContent = 'ضعيفة جداً (1/4)';
+        label.textContent = 'ضعيفة جداً (1/5)';
         label.style.color = '#ef4444';
       } else if (res.score === 2) {
-        bar.style.width = '50%';
-        bar.style.background = '#f59e0b';
-        label.textContent = 'مقبولة (2/4)';
-        label.style.color = '#f59e0b';
+        bar.style.width = '40%';
+        bar.style.background = '#f97316';
+        label.textContent = 'ضعيفة (2/5)';
+        label.style.color = '#f97316';
       } else if (res.score === 3) {
-        bar.style.width = '75%';
-        bar.style.background = '#eab308';
-        label.textContent = 'جيدة (3/4)';
-        label.style.color = '#eab308';
+        bar.style.width = '60%';
+        bar.style.background = '#f59e0b';
+        label.textContent = 'مقبولة (3/5)';
+        label.style.color = '#f59e0b';
       } else if (res.score === 4) {
+        bar.style.width = '80%';
+        bar.style.background = '#eab308';
+        label.textContent = 'جيدة جداً (4/5) - ينقص شرط واحد';
+        label.style.color = '#eab308';
+      } else if (res.score === 5) {
         bar.style.width = '100%';
         bar.style.background = '#10b981';
-        label.textContent = 'قوية ومطابقة للمعايير الأكاديمية 🛡️';
+        label.textContent = 'قوية ومطابقة للمعايير الأكاديمية (5/5) 🛡️';
         label.style.color = '#10b981';
       }
     }
@@ -220,7 +236,8 @@ window.AUTH = {
 
     const passCheck = this.validatePassword(password);
     if (!passCheck.valid) {
-      if (window.APP) window.APP.showToast('⚠️ يرجى استيفاء شروط كلمة المرور: 8 خانات، حرف كبير وصغير (A-z)، رقم (0-9)، ورمز خاص (@, #, $).', 'danger');
+      const missingText = passCheck.missing && passCheck.missing.length ? passCheck.missing.join('، ') : 'كافة الشروط';
+      if (window.APP) window.APP.showToast(`⚠️ كلمة المرور ينقصها: (${missingText}). يجب استيفاء جميع الشروط الـ 5.`, 'danger');
       if (window.SOUNDS) window.SOUNDS.playError();
       const passBox = document.getElementById('init-password');
       if (passBox) passBox.focus();
