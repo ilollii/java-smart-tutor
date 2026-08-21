@@ -101,6 +101,102 @@ window.AUTH = {
     }
   },
 
+  validatePassword(password) {
+    const p = password || '';
+    const hasLength = p.length >= 8;
+    const hasUpper = /[A-Z]/.test(p);
+    const hasLower = /[a-z]/.test(p);
+    const hasDigit = /[0-9]/.test(p);
+    const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(p);
+
+    let score = 0;
+    if (hasLength) score++;
+    if (hasUpper && hasLower) score++;
+    if (hasDigit) score++;
+    if (hasSymbol) score++;
+
+    return {
+      valid: hasLength && hasUpper && hasLower && hasDigit && hasSymbol,
+      hasLength,
+      hasCase: hasUpper && hasLower,
+      hasDigit,
+      hasSymbol,
+      score
+    };
+  },
+
+  onPasswordInput(val) {
+    const res = this.validatePassword(val);
+    const label = document.getElementById('pass-strength-label');
+    const bar = document.getElementById('pass-strength-bar');
+
+    const updateReq = (id, valid) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const icon = el.querySelector('.req-icon') || el.querySelector('i');
+      if (valid) {
+        el.style.color = '#10b981';
+        if (icon) {
+          icon.className = 'fas fa-circle-check req-icon';
+          icon.style.color = '#10b981';
+        }
+      } else {
+        el.style.color = 'var(--text-muted)';
+        if (icon) {
+          icon.className = 'fas fa-circle-xmark req-icon';
+          icon.style.color = 'var(--danger)';
+        }
+      }
+    };
+
+    updateReq('req-length', res.hasLength);
+    updateReq('req-case', res.hasCase);
+    updateReq('req-digit', res.hasDigit);
+    updateReq('req-symbol', res.hasSymbol);
+
+    if (bar && label) {
+      if (!val) {
+        bar.style.width = '0%';
+        bar.style.background = 'var(--danger)';
+        label.textContent = 'غير مكتملة';
+        label.style.color = 'var(--text-muted)';
+      } else if (res.score === 1) {
+        bar.style.width = '25%';
+        bar.style.background = '#ef4444';
+        label.textContent = 'ضعيفة جداً (1/4)';
+        label.style.color = '#ef4444';
+      } else if (res.score === 2) {
+        bar.style.width = '50%';
+        bar.style.background = '#f59e0b';
+        label.textContent = 'مقبولة (2/4)';
+        label.style.color = '#f59e0b';
+      } else if (res.score === 3) {
+        bar.style.width = '75%';
+        bar.style.background = '#eab308';
+        label.textContent = 'جيدة (3/4)';
+        label.style.color = '#eab308';
+      } else if (res.score === 4) {
+        bar.style.width = '100%';
+        bar.style.background = '#10b981';
+        label.textContent = 'قوية ومطابقة للمعايير الأكاديمية 🛡️';
+        label.style.color = '#10b981';
+      }
+    }
+  },
+
+  togglePasswordVisibility() {
+    const input = document.getElementById('init-password');
+    const icon = document.getElementById('pass-visibility-icon');
+    if (!input) return;
+    if (input.type === 'password') {
+      input.type = 'text';
+      if (icon) icon.className = 'fas fa-eye-slash';
+    } else {
+      input.type = 'password';
+      if (icon) icon.className = 'fas fa-eye';
+    }
+  },
+
   async submitInitialCredentials() {
     const nameInput = document.getElementById('init-name');
     const emailInput = document.getElementById('init-email');
@@ -116,15 +212,18 @@ window.AUTH = {
     const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
     const password = passInput ? passInput.value : '';
 
-    if (!email || !email.includes('@')) {
-      if (window.APP) window.APP.showToast('يرجى إدخال بريد إلكتروني صحيح', 'warning');
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      if (window.APP) window.APP.showToast('يرجى إدخال بريد إلكتروني صحيح ومعتمد', 'warning');
       if (window.SOUNDS) window.SOUNDS.playError();
       return;
     }
 
-    if (!password || password.length < 4) {
-      if (window.APP) window.APP.showToast('يرجى إدخال كلمة مرور مكونة من 4 خانات على الأقل', 'warning');
+    const passCheck = this.validatePassword(password);
+    if (!passCheck.valid) {
+      if (window.APP) window.APP.showToast('⚠️ يرجى استيفاء شروط كلمة المرور: 8 خانات، حرف كبير وصغير (A-z)، رقم (0-9)، ورمز خاص (@, #, $).', 'danger');
       if (window.SOUNDS) window.SOUNDS.playError();
+      const passBox = document.getElementById('init-password');
+      if (passBox) passBox.focus();
       return;
     }
 
@@ -162,6 +261,7 @@ window.AUTH = {
       levelNumber: 1,
       streakDays: 1,
       isFreshUser: true,
+      plainPassword: password,
       badges: [
         { id: "java_pioneer", name: "رائد لغة جافا", icon: "☕", desc: "بدأت رحلة التعلم في منصة سِنَاد", unlocked: true },
         { id: "security_sentinel", name: "حارس الخصوصية PDPL", icon: "🛡️", desc: "فعلت التحقق الثنائي والمصادقة الموحدة", unlocked: true },
@@ -172,8 +272,7 @@ window.AUTH = {
       ]
     };
 
-    // Request secure Server-Side OTP generation
-    let serverOtp = null;
+    // Request secure Server-Side OTP generation & real email dispatch
     try {
       const res = await fetch('/api/auth/otp/send', {
         method: 'POST',
@@ -184,19 +283,13 @@ window.AUTH = {
           studentId: email.split('@')[0]
         })
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.otp) {
-          serverOtp = data.otp;
-          this.currentExpectedOtp = data.otp;
-        }
+      if (!res.ok) {
+        const errData = await res.json();
+        if (window.APP) window.APP.showToast(errData.error || 'تعذر إرسال رمز التحقق، يرجى المحاولة لاحقاً', 'danger');
+        return;
       }
     } catch (e) {
-      console.warn("Backend OTP send fallback:", e);
-    }
-
-    if (!serverOtp) {
-      this.currentExpectedOtp = String(Math.floor(100000 + Math.random() * 900000));
+      console.warn("Backend OTP send notice:", e);
     }
 
     // Advance to 2FA screen
@@ -205,33 +298,72 @@ window.AUTH = {
     if (studentForm) studentForm.style.display = 'none';
     if (step2Fa) step2Fa.style.display = 'block';
 
-    if (window.APP) window.APP.showToast(`تم إرسال رمز التحقق الثنائي (OTP: ${this.currentExpectedOtp}) لبريدك المسجل 📱`, 'info');
+    if (window.APP) window.APP.showToast(`تم إرسال رمز التحقق الأكاديمي المكون من 6 أرقام إلى بريدك الإلكتروني (${email}) 📩 يرجى إدخاله لتأكيد الدخول.`, 'info');
     if (window.SOUNDS) window.SOUNDS.playClick();
     this.startOtpTimer();
 
+    // STRICT: DO NOT auto-fill OTP in input field! Keep empty and wait for user to enter code from email
     const otpField = document.getElementById('init-otp-input');
     if (otpField) {
-      otpField.value = this.currentExpectedOtp;
+      otpField.value = '';
       otpField.focus();
     }
   },
 
   startOtpTimer() {
     this.resetOtpTimer();
-    this.otpTimeRemaining = 60;
+    this.otpTimeRemaining = 300; // 5 minutes standard OTP validity
     const timerEl = document.getElementById('init-otp-timer');
-    if (timerEl) timerEl.textContent = `00:${this.otpTimeRemaining < 10 ? '0' : ''}${this.otpTimeRemaining}`;
+    const formatTime = (s) => {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    };
+    if (timerEl) timerEl.textContent = formatTime(this.otpTimeRemaining);
 
     this.otpTimerInterval = setInterval(() => {
       this.otpTimeRemaining--;
       if (timerEl) {
-        timerEl.textContent = `00:${this.otpTimeRemaining < 10 ? '0' : ''}${this.otpTimeRemaining}`;
+        timerEl.textContent = formatTime(Math.max(0, this.otpTimeRemaining));
       }
       if (this.otpTimeRemaining <= 0) {
         this.resetOtpTimer();
         if (timerEl) timerEl.textContent = 'انتهت صلاحية الرمز';
       }
     }, 1000);
+  },
+
+  async resendOtp() {
+    if (!this.pendingUser || !this.pendingUser.email) {
+      if (window.APP) window.APP.showToast('يرجى إعادة تعبئة بيانات التسجيل', 'warning');
+      this.switchLoginTab('student');
+      return;
+    }
+    try {
+      const res = await fetch('/api/auth/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({
+          email: this.pendingUser.email,
+          name: this.pendingUser.name,
+          studentId: this.pendingUser.studentId
+        })
+      });
+      if (res.ok) {
+        this.startOtpTimer();
+        const otpField = document.getElementById('init-otp-input');
+        if (otpField) {
+          otpField.value = '';
+          otpField.focus();
+        }
+        if (window.APP) window.APP.showToast(`تم إرسال رمز تحقق جديد إلى بريدك (${this.pendingUser.email}) ✉️`, 'success');
+      } else {
+        const err = await res.json();
+        if (window.APP) window.APP.showToast(err.error || 'تعذر إعادة إرسال الرمز', 'danger');
+      }
+    } catch (e) {
+      if (window.APP) window.APP.showToast('تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً', 'danger');
+    }
   },
 
   resetOtpTimer() {
@@ -245,8 +377,8 @@ window.AUTH = {
     const otpInput = document.getElementById('init-otp-input');
     const otp = otpInput ? otpInput.value.trim() : '';
 
-    if (!otp) {
-      if (window.APP) window.APP.showToast('يرجى إدخال رمز التحقق الثنائي', 'danger');
+    if (!otp || otp.length !== 6) {
+      if (window.APP) window.APP.showToast('يرجى إدخال رمز التحقق الثنائي المكون من 6 أرقام والمستلم في بريدك', 'danger');
       if (window.SOUNDS) window.SOUNDS.playError();
       return;
     }
@@ -263,7 +395,8 @@ window.AUTH = {
         body: JSON.stringify({
           email: this.currentUser.email,
           otp: otp,
-          studentId: this.currentUser.studentId
+          studentId: this.currentUser.studentId,
+          student: this.currentUser
         })
       });
       if (res.ok) {
@@ -284,11 +417,9 @@ window.AUTH = {
     }
 
     if (!authenticated) {
-      if (this.currentExpectedOtp && otp !== this.currentExpectedOtp) {
-        if (window.APP) window.APP.showToast('رمز التحقق الثنائي غير صحيح', 'danger');
-        if (window.SOUNDS) window.SOUNDS.playError();
-        return;
-      }
+      if (window.APP) window.APP.showToast('رمز التحقق الثنائي غير صحيح أو منتهي الصلاحية', 'danger');
+      if (window.SOUNDS) window.SOUNDS.playError();
+      return;
     }
 
     this.isLoggedIn = true;
@@ -307,7 +438,7 @@ window.AUTH = {
     }
 
     this.showDashboard();
-    if (window.APP) window.APP.showToast(`مرحباً بك يا ${this.currentUser.name} من (${this.currentUser.university})! تم إنشاء سجلك الأكاديمي بنجاح 🚀`, 'success');
+    if (window.APP) window.APP.showToast(`مرحباً بك يا ${this.currentUser.name} من (${this.currentUser.university})! تم تسجيل وحفظ حسابك الأكاديمي بنجاح 🚀`, 'success');
   },
 
   async loginAsProfile(profileKey) {

@@ -991,7 +991,7 @@ public class SmartTutorServer {
                 }
             });
 
-            String json = "{\"success\":true,\"message\":\"تم إرسال رمز التحقق الأكاديمي إلى بريدك الإلكتروني بنجاح\",\"otp\":\"" + otp + "\",\"expiresInSeconds\":300,\"email\":\"" + escapeJson(email) + "\"}";
+            String json = "{\"success\":true,\"message\":\"تم إرسال رمز التحقق الأكاديمي إلى بريدك الإلكتروني بنجاح\",\"expiresInSeconds\":300,\"email\":\"" + escapeJson(email) + "\"}";
             sendJsonResponse(exchange, 200, json);
         }
     }
@@ -1050,6 +1050,12 @@ public class SmartTutorServer {
             String sid = (studentId != null && !studentId.trim().isEmpty()) ? studentId : ((record.studentId != null && !record.studentId.trim().isEmpty()) ? record.studentId : key.split("@")[0]);
             String sname = (record.name != null && !record.name.trim().isEmpty()) ? record.name : "طالب جامعي";
             String token = createSessionToken(sid, record.email, sname);
+
+            // Persist verified student profile to server database if profile payload is sent
+            String studentPayload = extractJsonRawField(body, "student");
+            if (studentPayload != null && !studentPayload.trim().isEmpty()) {
+                SenadDatabase.saveOrUpdateStudent(studentPayload);
+            }
 
             String json = "{\"success\":true,\"status\":\"authenticated\",\"token\":\"" + token + "\",\"expiresIn\":86400,\"student\":{\"studentId\":\"" + escapeJson(sid) + "\",\"email\":\"" + escapeJson(record.email) + "\",\"name\":\"" + escapeJson(sname) + "\"},\"timestamp\":" + System.currentTimeMillis() + "}";
             sendJsonResponse(exchange, 200, json);
